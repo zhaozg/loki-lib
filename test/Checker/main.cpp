@@ -27,15 +27,6 @@
 #include <iostream>
 #include <vector>
 
-
-#if !defined( nullptr )
-    #define nullptr NULL
-#endif
-
-#if !defined( NULL )
-    #define NULL 0
-#endif
-
 using namespace std;
 
 

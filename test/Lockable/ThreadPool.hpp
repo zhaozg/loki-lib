@@ -29,16 +29,6 @@
 
 #include <vector>
 
-#if !defined( NULL )
-    #define NULL 0
-#endif
-
-// define nullptr even though new compilers will have this keyword just so we
-// have a consistent and easy way of identifying which uses of 0 mean null.
-#if !defined( nullptr )
-    #define nullptr NULL
-#endif
-
 #if defined(_WIN32)
 
     #include <process.h>
