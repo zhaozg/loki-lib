@@ -23,4 +23,7 @@ clean: cleandeps
 	$(RM) $(LIB1)
 	$(RM) $(OBJ2)
 
+test: $(BIN1)
+	./$(BIN1)
+
 include ../../Makefile.deps

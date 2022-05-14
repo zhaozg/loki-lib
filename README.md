@@ -3,5 +3,18 @@
 
 - Remove ide support files
 - Change some to run with C++11
-- only `LockingPtr` test fail
 - source code minor change.
+- fail test
+
+  * CachedFactory
+  * Factory
+  * LevelMutex
+  * LockingPtr
+  * Longevity
+  * OrderedStatic
+  * Pimpl
+  * Register
+  * Singleton
+  * SmallObj
+  * SmartPtr
+

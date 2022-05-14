@@ -21,4 +21,8 @@ $(BIN1): $(OBJ1)
 $(BIN2): $(OBJ2)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
+test: $(BIN1) $(BIN2)
+	./$(BIN1)
+	./$(BIN2)
+
 include ../../Makefile.deps
