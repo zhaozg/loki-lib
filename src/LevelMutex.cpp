@@ -47,11 +47,6 @@
 
 using namespace ::std;
 
-// define nullptr even though new compilers will have this keyword just so we
-// have a consistent and easy way of identifying which uses of 0 mean null.
-#define nullptr 0
-
-
 LOKI_THREAD_LOCAL volatile ::Loki::LevelMutexInfo * ::Loki::LevelMutexInfo::s_currentMutex = nullptr;
 
 unsigned int ::Loki::MutexSleepWaits::sleepTime = 1;

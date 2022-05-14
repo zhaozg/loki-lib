@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Unit Test for Loki
 //
-// Copyright Terje Slettebø and Pavel Vozenilek 2002.
+// Copyright Terje Sletteb? and Pavel Vozenilek 2002.
 //
 // Permission to use, copy, modify, and distribute this software for any
 // purpose is hereby granted without fee, provided that this copyright and
@@ -38,7 +38,7 @@ class BadSuperMonster : public SuperMonster {};
 
 #ifndef LOKI_DISABLE_TYPELIST_MACROS
 
-typedef Loki::AbstractFactory<LOKI_TYPELIST_3(Soldier, Monster, SuperMonster)> AbstractEnemyFactory; 
+typedef Loki::AbstractFactory<LOKI_TYPELIST_3(Soldier, Monster, SuperMonster)> AbstractEnemyFactory;
 
 typedef Loki::ConcreteFactory<AbstractEnemyFactory, Loki::OpNewFactoryUnit,
   LOKI_TYPELIST_3(SillySoldier, SillyMonster, SillySuperMonster)> EasyLevelEnemyFactory;
@@ -48,7 +48,7 @@ typedef Loki::ConcreteFactory<AbstractEnemyFactory, Loki::OpNewFactoryUnit,
 
 #else // LOKI_DISABLE_TYPELIST_MACROS
 
-typedef Loki::AbstractFactory<Seq<Soldier, Monster, SuperMonster>::Type > AbstractEnemyFactory; 
+typedef Loki::AbstractFactory<Seq<Soldier, Monster, SuperMonster>::Type > AbstractEnemyFactory;
 
 typedef Loki::ConcreteFactory<AbstractEnemyFactory, Loki::OpNewFactoryUnit,
 Seq<SillySoldier, SillyMonster, SillySuperMonster>::Type > EasyLevelEnemyFactory;
@@ -77,7 +77,7 @@ public:
     Soldier *s;
 
     s = easyFactory->Create<Soldier>();
-    
+
     r= !!(typeid(*s)==typeid(SillySoldier)); //SGB !! eliminates bool-to-int performance warning
 
     delete s;

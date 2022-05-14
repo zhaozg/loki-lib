@@ -16,10 +16,10 @@ struct DataGeneratorsTest : public Test
   virtual void execute(TestResult& result)
     {
     this->printName(result);
-    
+
     using namespace Loki;
     using namespace Loki::TL;
-    
+
     bool b;
     typedef MakeTypelist<>::Result null_tl;
     typedef MakeTypelist<char,
@@ -27,7 +27,7 @@ struct DataGeneratorsTest : public Test
                          signed char,
                          wchar_t>::Result char_types;
     std::size_t n = Length<char_types>::value;
-    
+
     std::vector<const char*> names;
     names.reserve(n);
     //Some fascist decided that all temporaries should be const.
@@ -35,7 +35,7 @@ struct DataGeneratorsTest : public Test
     iterate_types<char_types, nameof_type>(std::back_inserter(names));
     b = names.size() == n;
     testAssert("iterate_types - Check Length", b, result);
-    
+
     std::vector<size_t> sizes;
     sizes.reserve(n);
     typedef MakeTypelist<char,
@@ -48,7 +48,7 @@ struct DataGeneratorsTest : public Test
     for(std::size_t i=0; i<n; ++i)
       b &= sizes[i] == apriori_size[i];
     testAssert("iterate_types - Check Elements", b, result);
-    
+
     sizes.resize(0);
     iterate_types<null_tl, sizeof_type>(sizes);
     b = sizes.size() == 0;

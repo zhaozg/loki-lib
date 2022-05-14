@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
 // Copyright (c) 2006 Peter Kümmel
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The author makes no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The author makes no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@
 
 #ifndef LOKI_CLASS_LEVEL_THREADING
 #define LOKI_OBJECT_LEVEL_THREADING
-#endif 
+#endif
 
 #include "Thread.h"
 
@@ -66,7 +66,7 @@ typedef Loki::LockingPtr<A,LOKI_DEFAULT_MUTEX,PropagateConst> ConstUserLockingPt
 void* RunLocked(void *id)
 {
     volatile A a;
-    static Loki::Mutex m;    
+    static Loki::Mutex m;
     for(int i=0; i<loop; i++)
     {
         UserLockingPtr l(a,m);
@@ -78,7 +78,7 @@ void* RunLocked(void *id)
 void* RunConstLocked(void *id)
 {
     const volatile A a;
-    static Loki::Mutex m;    
+    static Loki::Mutex m;
     for(int i=0; i<loop; i++)
     {
         ConstUserLockingPtr l(a,m);
@@ -139,14 +139,14 @@ int main ()
     Thread::DeleteThreads(threads);
 
     Printf("--------------------------------------------------------------------------------------\n");
-    
+
     // test pair ctor
     volatile A a;
     Loki::Mutex m;
-    UserLockingPtr::Pair pair(&a,&m);    
+    UserLockingPtr::Pair pair(&a,&m);
     UserLockingPtr l( pair );
-    
-    ConstUserLockingPtr::Pair cpair(&a,&m);    
+
+    ConstUserLockingPtr::Pair cpair(&a,&m);
     ConstUserLockingPtr cl( cpair );
 
 }

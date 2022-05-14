@@ -29,10 +29,6 @@
     #pragma warning( disable : 4738 )
 #endif
 
-#if !defined( nullptr )
-    #define nullptr 0
-#endif
-
 #include <loki/SmartAssert.hpp>
 
 #include <iostream>

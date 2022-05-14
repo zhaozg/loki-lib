@@ -31,11 +31,6 @@
 #include "Thing.hpp"
 
 
-// define nullptr even though new compilers will have this keyword just so we
-// have a consistent and easy way of identifying which uses of 0 mean null.
-#define nullptr 0
-
-
 using namespace ::Loki;
 
 static const unsigned int thingCount = 8;

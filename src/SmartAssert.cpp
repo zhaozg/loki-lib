@@ -41,11 +41,6 @@
     #pragma warning( disable : 4711 )
 #endif
 
-#if !defined( nullptr )
-    #define nullptr 0
-#endif
-
-
 using namespace ::std;
 
 namespace Loki

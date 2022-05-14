@@ -26,12 +26,12 @@
 // The set of member function pointers:
 //
 // I = T (A::* [const] [volatile] [&])([P1, P2, ---, Pn] [...]]) [const] [volatile]
-//    
+//
 // Repetition
 // ----------
 //
 // With pointers, we have an infinite number of possibilities. We can have
-// for example the type 
+// for example the type
 // "const int* volatile*** const volatile**const*volatile*volatile"
 // Naturally we can't test for every possible situation. In this case
 // we shall only test the first level of this repetition and rely on induction.
@@ -46,7 +46,7 @@
 // Is "int&" integral?
 // etc..
 //
-// The philosophy for solving these situations is: 
+// The philosophy for solving these situations is:
 // "a type is what it does". By this philosophy,
 // all of the questions above are answered affirmitively.
 //
@@ -66,7 +66,7 @@
 // Types that should not be forgotten
 // ----------------------------------
 //
-// bool, char, wchar_t 
+// bool, char, wchar_t
 // signed char, signed short, signed int, signed long
 // unsigned char, unsigned short, unsigned int, unsigned long
 // T* (normal pointers)
@@ -77,11 +77,11 @@
 // T A::(*)() (non-parametric member function pointers)
 // T A::(*)(int, float) (n-parametric member function pointers)
 // T A::(*)(int, float, ...) (variable-parametric member function pointers)
-// T A::(*)() const volatile 
+// T A::(*)() const volatile
 // (non-parametric cv-qualified member function pointers)
-// T A::(*)(int, float) const volatile 
+// T A::(*)(int, float) const volatile
 // (n-parametric cv-qualified member function pointers)
-// T A::(*)(int, float, ...) const volatile 
+// T A::(*)(int, float, ...) const volatile
 // (variable-parametric cv-qualified member function pointers)
 // T() (non-parametric functions)
 // T(int, float) (n-parametric functions)
@@ -98,7 +98,7 @@
 // do affect the overall type. (void (A::*)f() const != void (A::*)f())
 // 3) The ellipsis "..." does not correspond to any explicit parameter list
 // such as () or (int, float)
-// 4) You can have a reference to a function, for example: 
+// 4) You can have a reference to a function, for example:
 // int (&)(int, float)
 
 #ifndef TYPETRAITSTEST2_H
@@ -148,7 +148,7 @@
 class TypeTraitsTest2 : public Test
 {
 public:
-    TypeTraitsTest2() 
+    TypeTraitsTest2()
         : Test("TypeTraits.h"),
         testedConditions_(0),
         erroneousConditions_(0),
@@ -167,7 +167,7 @@ private:
     void testEnd();
 
     void testCount(bool result);
-    void testType(bool result, std::string conditionText, 
+    void testType(bool result, std::string conditionText,
         std::string typeText,
         std::string rightTypeText);
     void testCondition(bool result, bool answer, std::string text);
@@ -179,7 +179,7 @@ private:
     void testPointer();
     void testReference();
     void testMemberPointer();
-    
+
     void testFunction();
     void testFunctionPointer();
     void testMemberFunctionPointer();
@@ -219,15 +219,15 @@ inline void TypeTraitsTest2::execute(TestResult &result)
     testNonConstType();
     testNonVolatileType();
     testUnqualifiedType();
-    
+
     testFunction();
     testFunctionPointer();
     testMemberFunctionPointer();
 
     bool r = erroneousConditions_ == 0;
 
-    cout << endl << "Tested " << testedConditions_ 
-        << " conditions of which " << erroneousConditions_ 
+    cout << endl << "Tested " << testedConditions_
+        << " conditions of which " << erroneousConditions_
         << " were erroneous" << endl;
 
     testAssert("TypeTraits",r,result);
@@ -253,9 +253,9 @@ inline void TypeTraitsTest2::testEnd()
     if (groupErrors_ > 0)
     {
         cout << endl;
-        cout << groupName_ << ": " << groupErrors_ 
+        cout << groupName_ << ": " << groupErrors_
             << " error(s) found." << endl;
-        cout << "---------------------------" 
+        cout << "---------------------------"
             << "-----------------------" << endl;
 
         for (size_t i = 0;i < textBuffer_.size();++i)
@@ -278,9 +278,9 @@ inline void TypeTraitsTest2::testCount(bool result)
     ++testedConditions_;
 }
 
-inline void TypeTraitsTest2::testType(bool result, 
-                                     std::string conditionText, 
-                                     std::string typeText, 
+inline void TypeTraitsTest2::testType(bool result,
+                                     std::string conditionText,
+                                     std::string typeText,
                                      std::string rightTypeText)
 {
     using std::string;
@@ -298,7 +298,7 @@ inline void TypeTraitsTest2::testType(bool result,
         message = string("PASSED:\n");
     }
 
-    message += string("    TypeTraits<") + typeText + string(">::") 
+    message += string("    TypeTraits<") + typeText + string(">::")
         + conditionText + string("\n");
     message += string("    Expected: ") + rightTypeText + string("\n");
 
@@ -324,11 +324,11 @@ inline void TypeTraitsTest2::testCondition(
     }
 
     message += string("    ") + text + string("\n");
-    message += 
-        string("    Result: ") + 
+    message +=
+        string("    Result: ") +
         string(result ? "true" : "false") + string("\n");
-    message += 
-        string("    Expected: ") + 
+    message +=
+        string("    Expected: ") +
         string(answer ? "true" : "false") + string("\n");
 
     textBuffer_.push_back(message);
@@ -553,7 +553,7 @@ inline void TypeTraitsTest2::testReferredType()
     TEST_TYPE(int (*)(), int (*)());
     TEST_TYPE(int (*&)(int, float, ...), int (*)(int, float, ...));
     TEST_TYPE(int (A::*&)() const volatile, int (A::*)() const volatile);
-    TEST_TYPE(int (A::*&)(int, float, ...) const volatile, 
+    TEST_TYPE(int (A::*&)(int, float, ...) const volatile,
         int (A::*)(int, float, ...) const volatile);
 
     testEnd();
@@ -569,7 +569,7 @@ inline void TypeTraitsTest2::testPointeeType()
     TEST_TYPE(void, Loki::NullType);
     TEST_TYPE(void*, void);
     TEST_TYPE(const volatile int*, const volatile int);
-    TEST_TYPE(const volatile int* const volatile&, 
+    TEST_TYPE(const volatile int* const volatile&,
         const volatile int);
     TEST_TYPE(void(*)(int, float), void(int, float));
     TEST_TYPE(void(int, float), Loki::NullType);
@@ -609,7 +609,7 @@ inline void TypeTraitsTest2::testFunctionPointer()
     FAIL(void (A::* const volatile&)() const volatile);
     PASS(void (* const volatile)());
     PASS(void (* const volatile&)());
-    
+
     PASS(void (* const volatile&)(int, float));
     FAIL(void (A::* const volatile&)(int, float) const volatile);
 
@@ -635,7 +635,7 @@ inline void TypeTraitsTest2::testMemberFunctionPointer()
     PASS(void (A::* const volatile&)() const volatile);
     FAIL(void (* const volatile)());
     FAIL(void (* const volatile&)());
-    
+
     FAIL(void (* const volatile&)(int, float));
     PASS(void (A::* const volatile&)(int, float) const volatile);
 
@@ -659,30 +659,30 @@ inline void TypeTraitsTest2::testNonConstType()
     TEST_TYPE(const int, int);
     TEST_TYPE(const volatile int, volatile int);
     TEST_TYPE(
-        const volatile int* const volatile, 
+        const volatile int* const volatile,
         const volatile int* volatile);
     TEST_TYPE(int(int, float,...), int(int, float, ...));
     TEST_TYPE(
-        int(* const volatile)(int, float,...), 
+        int(* const volatile)(int, float,...),
         int(* volatile)(int, float, ...));
     TEST_TYPE(
-        int(A::* const volatile)(int, float,...), 
+        int(A::* const volatile)(int, float,...),
         int(A::* volatile)(int, float, ...));
 
     // Reference versions
-    
+
     TEST_TYPE(const int&, int&);
     TEST_TYPE(const volatile int&, volatile int&);
     TEST_TYPE(int&, int&);
     TEST_TYPE(
-        const volatile int* const volatile&, 
+        const volatile int* const volatile&,
         const volatile int* volatile&);
     TEST_TYPE(int(&)(int, float,...), int(&)(int, float, ...));
     TEST_TYPE(
-        int(* const volatile&)(int, float,...), 
+        int(* const volatile&)(int, float,...),
         int(* volatile&)(int, float, ...));
     TEST_TYPE(
-        int(A::* const volatile&)(int, float,...), 
+        int(A::* const volatile&)(int, float,...),
         int(A::* volatile&)(int, float, ...));
 
     testEnd();
@@ -700,30 +700,30 @@ inline void TypeTraitsTest2::testNonVolatileType()
     TEST_TYPE(volatile int, int);
     TEST_TYPE(const volatile int, const int);
     TEST_TYPE(
-        const volatile int* const volatile, 
+        const volatile int* const volatile,
         const volatile int* const);
     TEST_TYPE(int(int, float,...), int(int, float, ...));
     TEST_TYPE(
-        int(* const volatile)(int, float,...), 
+        int(* const volatile)(int, float,...),
         int(* const)(int, float, ...));
     TEST_TYPE(
-        int(A::* const volatile)(int, float,...), 
+        int(A::* const volatile)(int, float,...),
         int(A::* const)(int, float, ...));
 
     // Reference versions
-    
+
     TEST_TYPE(volatile int&, int&);
     TEST_TYPE(const volatile int&, const int&);
     TEST_TYPE(int&, int&);
     TEST_TYPE(
-        const volatile int* const volatile&, 
+        const volatile int* const volatile&,
         const volatile int* const&);
     TEST_TYPE(int(&)(int, float,...), int(&)(int, float, ...));
     TEST_TYPE(
-        int(* const volatile&)(int, float,...), 
+        int(* const volatile&)(int, float,...),
         int(* const&)(int, float, ...));
     TEST_TYPE(
-        int(A::* const volatile&)(int, float,...), 
+        int(A::* const volatile&)(int, float,...),
         int(A::* const&)(int, float, ...));
 
     testEnd();

@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Unit Test for Loki
 //
-// Copyright Terje Slettebø and Pavel Vozenilek 2002.
-// Copyright Peter Kümmel, 2006
+// Copyright Terje Sletteb? and Pavel Vozenilek 2002.
+// Copyright Peter K?mmel, 2006
 
 // Permission to use, copy, modify, and distribute this software for any
 // purpose is hereby granted without fee, provided that this copyright and

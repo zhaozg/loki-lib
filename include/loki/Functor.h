@@ -1190,14 +1190,7 @@ namespace Loki
 
 #ifdef LOKI_ENABLE_FUNCTION
 
-    class bad_function_call : public std::runtime_error
-    {
-    public:
-        bad_function_call() : std::runtime_error("bad_function_call in Loki::Functor")
-        {}
-    };
-
-#define LOKI_FUNCTION_THROW_BAD_FUNCTION_CALL if(empty()) throw bad_function_call();
+#define LOKI_FUNCTION_THROW_BAD_FUNCTION_CALL if(empty()) throw std::bad_function_call();
 
 #else
 

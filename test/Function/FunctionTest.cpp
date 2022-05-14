@@ -735,7 +735,7 @@ static void test_ref()
         //Loki::Function<int (int, int)> f(Loki::ref(atc));
         //BOOST_CHECK(f(1, 3) == 4);
 #endif
-        
+
     }
     catch(runtime_error e)
     {

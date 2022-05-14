@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
 // Copyright (c) 2005 Peter Kümmel
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The authors make no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The authors make no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -33,7 +33,7 @@ struct SingletonDataObject
 {
     SingletonDataObject() {std::cout<<"new SingletonDataObject"<<Nr<<"\n\n";}
     ~SingletonDataObject(){std::cout<<"delete SingletonDataObject"<<Nr<<"\n\n";}
-    
+
     int i[Nr];
 };
 
@@ -41,14 +41,14 @@ struct SingletonDataObject
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
-//    How to use LongevityLifetime policies 
+//    How to use LongevityLifetime policies
 //    DieAsSmallObjectParent/DieAsSmallObjectChild with SmallObjects?
 //
 ////////////////////////////////////////////////////////////////////////////////////
 
-//  LongevityLifetime::DieAsSmallObjectParent is the default lifetime 
+//  LongevityLifetime::DieAsSmallObjectParent is the default lifetime
 //  of SmallObject template:
-typedef Loki::SmallObject<> 
+typedef Loki::SmallObject<>
 SmallObject_DieAs;
 
 class MySmallObject_DieAs : public SmallObject_DieAs
@@ -56,8 +56,8 @@ class MySmallObject_DieAs : public SmallObject_DieAs
 
 typedef SingletonHolder
 <
-    MySmallObject_DieAs, 
-    CreateUsingNew, 
+    MySmallObject_DieAs,
+    CreateUsingNew,
     LongevityLifetime::DieAsSmallObjectChild
 >
 Singleton_with_MySmallObject_DieAs;
@@ -66,8 +66,8 @@ Singleton_with_MySmallObject_DieAs;
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
-//    How to use LongevityLifetime policies 
-//    DieAsSmallObjectParent/DieAsSmallObjectChild with 
+//    How to use LongevityLifetime policies
+//    DieAsSmallObjectParent/DieAsSmallObjectChild with
 //    classes containing a Functor/Function?
 //
 ////////////////////////////////////////////////////////////////////////////////////
@@ -84,13 +84,13 @@ struct MyFunctionObject_DieAs
     void f(){}
     Functor<void> functor;
     Function<void()> function;
-    
+
 };
 
 typedef SingletonHolder
 <
-    MyFunctionObject_DieAs, 
-    CreateUsingNew, 
+    MyFunctionObject_DieAs,
+    CreateUsingNew,
     LongevityLifetime::DieAsSmallObjectChild
 >
 Singleton_MyFunctionObject_DieAs;
@@ -105,7 +105,7 @@ Singleton_MyFunctionObject_DieAs;
 template<template <class> class Lifetime>
 struct Master_die_first
 {
-    Master_die_first() 
+    Master_die_first()
     {
         data = &Singleton::Instance();
     }
@@ -122,7 +122,7 @@ struct Master_die_first
 template<template <class> class Lifetime>
 struct Master_die_last
 {
-    Master_die_last() 
+    Master_die_last()
     {
         data = &Singleton::Instance();
     }
@@ -145,11 +145,11 @@ Master1_die_last;
 class B1_die_first;
 class B1_die_last;
 
-typedef SingletonHolder<B1_die_first,CreateUsingNew, 
+typedef SingletonHolder<B1_die_first,CreateUsingNew,
 LongevityLifetime::DieFirst
 > Follower1_Singleton_B1_die_first;
 
-typedef SingletonHolder<B1_die_last,CreateUsingNew, 
+typedef SingletonHolder<B1_die_last,CreateUsingNew,
 LongevityLifetime::DieLast
 > Follower1_Singleton_B1_die_last;
 
@@ -177,11 +177,11 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////
 
 typedef Loki::SmallObject
-< 
+<
     LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL,
-    LOKI_DEFAULT_CHUNK_SIZE, 
+    LOKI_DEFAULT_CHUNK_SIZE,
     LOKI_MAX_SMALL_OBJECT_SIZE,
-    LOKI_DEFAULT_OBJECT_ALIGNMENT, 
+    LOKI_DEFAULT_OBJECT_ALIGNMENT,
     FollowIntoDeath::With<DefaultLifetime>::AsMasterLifetime
 >
 MySmallObjectBase;
@@ -192,8 +192,8 @@ struct MySmallObject : public MySmallObjectBase
 
 typedef SingletonHolder
 <
-    MySmallObject, 
-    CreateUsingNew, 
+    MySmallObject,
+    CreateUsingNew,
     FollowIntoDeath::AfterMaster<MySmallObjectBase::ObjAllocatorSingleton>::IsDestroyed
 >
 Singleton_of_with_a_MySmallObject;
@@ -210,7 +210,7 @@ Singleton_of_with_a_MySmallObject;
 template<template <class> class Lifetime>
 struct Master1
 {
-    Master1() 
+    Master1()
     {
         data = &Singleton::Instance();
     }
@@ -265,19 +265,19 @@ public:
     ~B1_DeletableSingleton(){std::cout<<"delete B1_DeletableSingleton\n";}
 };
 
-typedef SingletonHolder<B1_DefaultLifetime,CreateUsingNew, 
+typedef SingletonHolder<B1_DefaultLifetime,CreateUsingNew,
 FollowIntoDeath::AfterMaster<Master1_DefaultLifetime::MasterSingleton>::IsDestroyed
 > Follower1_Singleton_DefaultLifetime;
 
-typedef SingletonHolder<B1_NoDestroy,CreateUsingNew, 
+typedef SingletonHolder<B1_NoDestroy,CreateUsingNew,
     FollowIntoDeath::AfterMaster<Master1_NoDestroy::MasterSingleton>::IsDestroyed
 > Follower1_Singleton_NoDestroy;
 
-typedef SingletonHolder<B1_PhoenixSingleton,CreateUsingNew, 
+typedef SingletonHolder<B1_PhoenixSingleton,CreateUsingNew,
     FollowIntoDeath::AfterMaster<Master1_PhoenixSingleton::MasterSingleton>::IsDestroyed
 > Follower1_Singleton_PhoenixSingleton;
 
-typedef SingletonHolder<B1_DeletableSingleton,CreateUsingNew, 
+typedef SingletonHolder<B1_DeletableSingleton,CreateUsingNew,
     FollowIntoDeath::AfterMaster<Master1_DeletableSingleton::MasterSingleton>::IsDestroyed
 > Follower1_Singleton_DeletableSingleton;
 
@@ -291,7 +291,7 @@ typedef SingletonHolder<B1_DeletableSingleton,CreateUsingNew,
 template<template <class> class Lifetime>
 struct Master2
 {
-    Master2() 
+    Master2()
     {
         // don't create a MasterSingleton2 object!!
         // to test the FollowIntoDeath policy
@@ -348,19 +348,19 @@ public:
     ~B2_DeletableSingleton(){std::cout<<"delete B2_DeletableSingleton\n";}
 };
 
-typedef SingletonHolder<B2_DefaultLifetime,CreateUsingNew, 
+typedef SingletonHolder<B2_DefaultLifetime,CreateUsingNew,
 FollowIntoDeath::AfterMaster<Master2_DefaultLifetime::MasterSingleton>::IsDestroyed
 > Follower2_Singleton_DefaultLifetime;
 
-typedef SingletonHolder<B2_NoDestroy,CreateUsingNew, 
+typedef SingletonHolder<B2_NoDestroy,CreateUsingNew,
     FollowIntoDeath::AfterMaster<Master2_NoDestroy::MasterSingleton>::IsDestroyed
 > Follower2_Singleton_NoDestroy;
 
-typedef SingletonHolder<B2_PhoenixSingleton,CreateUsingNew, 
+typedef SingletonHolder<B2_PhoenixSingleton,CreateUsingNew,
     FollowIntoDeath::AfterMaster<Master2_PhoenixSingleton::MasterSingleton>::IsDestroyed
 > Follower2_Singleton_PhoenixSingleton;
 
-typedef SingletonHolder<B2_DeletableSingleton,CreateUsingNew, 
+typedef SingletonHolder<B2_DeletableSingleton,CreateUsingNew,
     FollowIntoDeath::AfterMaster<Master2_DeletableSingleton::MasterSingleton>::IsDestroyed
 > Follower2_Singleton_DeletableSingleton;
 
@@ -403,7 +403,7 @@ void heap_debug()
 
 int main()
 {
-    
+
 #ifdef _MSC_VER
     heap_debug();
 #endif
@@ -427,7 +427,7 @@ int main()
     p = static_cast<void*>(&Follower1_Singleton_DefaultLifetime::Instance());
     p = static_cast<void*>(&Follower1_Singleton_PhoenixSingleton::Instance());
     p = static_cast<void*>(&Follower1_Singleton_DeletableSingleton::Instance());
-    
+
 
     std::cout << "\n\nMaster2:\n\n";
 
@@ -439,7 +439,7 @@ int main()
 
     B2_DeletableSingleton *del2 = &Follower2_Singleton_DeletableSingleton::Instance();
     del2->data = &Master2_DeletableSingleton::Singleton::Instance();
-    
+
     // memory leak when code is enabled
 //#define ENABLE_MEMORY_LEAK
 #ifdef ENABLE_MEMORY_LEAK

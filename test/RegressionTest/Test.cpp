@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Unit Test for Loki
 //
-// Copyright Terje Slettebø and Pavel Vozenilek 2002.
+// Copyright Terje Sletteb? and Pavel Vozenilek 2002.
 //
 // Permission to use, copy, modify, and distribute this software for any
 // purpose is hereby granted without fee, provided that this copyright and
@@ -37,7 +37,7 @@ Test::tests_type Test::tests;
 // Merely comment out any of the following headers to
 // prevent thier execution during the test.
 //
-// A pluggable-factory-like method is used to 
+// A pluggable-factory-like method is used to
 // auto-register the test, so all that is needed
 // is the header inclusion to execute the correspond
 // unit test.
@@ -111,6 +111,6 @@ int main()
  * Intel 7.0     AP
  * BCC   5.5     ?
  * BCC   5.6     ?
- * CW    6.0     ?                 
+ * CW    6.0     ?
 
- */ 
+ */

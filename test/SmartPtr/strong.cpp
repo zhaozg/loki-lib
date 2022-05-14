@@ -30,14 +30,6 @@
 
 // ----------------------------------------------------------------------------
 
-#if !defined( NULL )
-    #define nullptr 0
-#endif
-
-#if !defined( nullptr )
-    #define nullptr NULL
-#endif
-
 using namespace std;
 using namespace Loki;
 

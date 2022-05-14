@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
 // Copyright (c) 2005 Peter Kümmel
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The authors make no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The authors make no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef LOKI_TEST_TIMER_H
@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <cmath>
 
-class Timer 
+class Timer
 {
 public:
 
@@ -45,15 +45,15 @@ public:
     }
 
     double sec(int t)
-    { 
-        return floor(100.0*double(t)/1000.0 )/100.0; 
+    {
+        return floor(100.0*double(t)/1000.0 )/100.0;
     }
-    
+
     int rel(int t)
     {
-        return ( t100==0 ? 100 : static_cast<int>(floor(100.0*t/t100+0.5)) ); 
+        return ( t100==0 ? 100 : static_cast<int>(floor(100.0*t/t100+0.5)) );
     }
-    
+
     double speedup(int t)
     {
         double tup=t;

@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
 // Copyright (c) 2005 Peter Kümmel
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The author makes no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The author makes no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +24,7 @@
 
 #ifdef TEST_ORDERED_STATIC
 #include <loki/OrderedStatic.h>
-#endif 
+#endif
 
 struct L1
 {
@@ -73,10 +73,10 @@ Loki::OrderedStatic<2,M2> MemberTest::m2;
 Loki::OrderedStatic<1,L1> l1;
 Loki::OrderedStatic<2,L2> l2;
 
-Loki::OrderedStatic<1, std::string, std::string(*)() >            s1( &func ); 
-Loki::OrderedStatic<2, std::string, Loki::Seq<const char *> >    s2( "s2" ); 
+Loki::OrderedStatic<1, std::string, std::string(*)() >            s1( &func );
+Loki::OrderedStatic<2, std::string, Loki::Seq<const char *> >    s2( "s2" );
 
-Loki::OrderedStatic<1, Loki::Functor<int>, Loki::Seq<int(*)()> >  f1(f); 
+Loki::OrderedStatic<1, Loki::Functor<int>, Loki::Seq<int(*)()> >  f1(f);
 
 #else
 
@@ -91,8 +91,8 @@ M2 MemberTest::m2;
 L1 l1;
 L2 l2;
 
-std::string s1( func() ); 
-std::string s2("s2"); 
+std::string s1( func() );
+std::string s2("s2");
 
 Loki::Functor<int> f1(f);
 
@@ -110,28 +110,28 @@ std::string func()
 
 
 int main()
-{    
-    
+{
+
 #ifdef TEST_ORDERED_STATIC
 
     Loki::OrderedStaticManager::Instance().createObjects();
-    
+
     std::cout << "\n";
 
     (*f1)();
 
     std::cout << "value of s1: " << (*s1).c_str() << "\n";
     std::cout << "value of s2: " << (*s2).c_str() << "\n";
-    
+
     std::string s("text11");
     *s1=s;
     std::cout << "value of s1: " << s1->c_str() << "\n";
-    
+
 #else
-    
+
     std::cout << "\n";
     f1();
-    
+
     std::cout << "s1 = " << s1.c_str() << "\n";
     std::cout << "s2 = " << s2.c_str() << "\n";
 

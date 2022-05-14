@@ -38,11 +38,7 @@
     #pragma warning( disable : 4711 )
 #endif
 
-#if !defined( nullptr )
-    #define LOKI_DEFINED_NULLPTR
-    #define nullptr 0
-#endif
-
+#define LOKI_DEFINED_NULLPTR
 
 namespace Loki
 {
@@ -159,7 +155,7 @@ namespace Loki
   macro, and not the LOKI_SMART_ASSERT macro.
 
  @code
-  class MyPolicy 
+  class MyPolicy
   {
     static bool FixedProblem( const SmartAssertBase * asserter );
 	static void Output( const SmartAssertBase * asserter );

@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Unit Test framework
 //
-// Copyright Terje Slettebø and Pavel Vozenilek 2002.
+// Copyright Terje Sletteb? and Pavel Vozenilek 2002.
 //
 // Permission to use, copy, modify, and distribute this software for any
 // purpose is hereby granted without fee, provided that this copyright and
@@ -37,7 +37,7 @@ struct SameType
 {
 private:
   template<class>
-  struct In 
+  struct In
   { enum { value = false }; };
 
   template<>
@@ -96,7 +96,7 @@ public:
     }
 
   virtual void execute(TestResult &) =0;
-  
+
 protected:
   virtual ~Test() {}
 
@@ -146,15 +146,15 @@ public:
 
 protected:
   const std::string name;
-  
+
 public:
   static int run(const std::string &title)
     {
     std::cout << title << std::string(Test::offset-title.length(),' ') << "Result\n";
     std::cout << std::string(76,'-') << '\n';
-    
+
     TestResult testResult;
-    
+
     tests_type::iterator it;
     tests_type::const_iterator itEnd = Test::tests.end();
     for(it=Test::tests.begin(); it!=itEnd; ++it)
@@ -162,7 +162,7 @@ public:
       Test* test = *it;
       test->execute(testResult);
       }
-    
+
     std::cout << std::string(76,'-') << '\n';
 
     const int total=testResult.passed+testResult.failed;

@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
 // Copyright (c) 2006 Peter Kümmel
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The author makes no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The author makes no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -60,8 +60,8 @@ public:
     void foo();
 
 private:
-    PimplOf<C2>::Type rint; 
-    RimplOf<C2>::Type d; 
+    PimplOf<C2>::Type rint;
+    RimplOf<C2>::Type d;
 };
 
 
@@ -101,7 +101,7 @@ private:
 };
 
 
-// Test: don't compile with inline destructor 
+// Test: don't compile with inline destructor
 #if 0
 
 class Incomplete3

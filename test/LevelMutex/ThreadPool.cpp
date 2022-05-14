@@ -27,10 +27,6 @@
 
 using namespace ::std;
 
-// define nullptr even though new compilers will have this keyword just so we
-// have a consistent and easy way of identifying which uses of 0 mean null.
-#define nullptr 0
-
 #if defined( DEBUG ) || defined( _DEBUG )
     #define LOKI_DEBUG_CODE( code ) code;
 #else

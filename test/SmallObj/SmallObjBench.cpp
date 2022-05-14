@@ -2,12 +2,12 @@
 // The Loki Library
 // Copyright (c) 2005 Peter Kümmel
 // Copyright (c) 2005 Richard Sposato
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The authors make no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The authors make no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +28,7 @@
 #include <iostream>
 #include <string>
 
-//#define COMPARE_BOOST_POOL 
+//#define COMPARE_BOOST_POOL
 #ifdef COMPARE_BOOST_POOL
     #include <boost\pool\object_pool.hpp>
 #endif
@@ -44,12 +44,12 @@ class ThisIsASmallObject
     char data[N];
 };
 
-template<unsigned int N, class T>        
-struct Base : public ThisIsASmallObject<N>, public T 
+template<unsigned int N, class T>
+struct Base : public ThisIsASmallObject<N>, public T
 {};
 
-template<unsigned int N>        
-struct Base<N, void> : public ThisIsASmallObject<N> 
+template<unsigned int N>
+struct Base<N, void> : public ThisIsASmallObject<N>
 {};
 
 
@@ -216,20 +216,20 @@ LOKI_SMALLOBJ_BENCH(delete_new_array    ,delete[] new T[N];)
 LOKI_SMALLOBJ_BENCH(delete_new_array_mal,std::free(std::malloc(sizeof(T[TN])));)
 LOKI_SMALLOBJ_BENCH(delete_new_array_all,std::allocator<T[TN]> st;st.deallocate(st.allocate(1), 1);)
 
-LOKI_SMALLOBJ_BENCH_ARRAY(new_del_on_arr    , , arr[i] = new T; , 
+LOKI_SMALLOBJ_BENCH_ARRAY(new_del_on_arr    , , arr[i] = new T; ,
                                                 delete arr[i];)
-LOKI_SMALLOBJ_BENCH_ARRAY(new_del_on_arr_mal, , arr[i] = static_cast<T*>(std::malloc(sizeof(T))); , 
+LOKI_SMALLOBJ_BENCH_ARRAY(new_del_on_arr_mal, , arr[i] = static_cast<T*>(std::malloc(sizeof(T))); ,
                                                 std::free(arr[i]);)
-LOKI_SMALLOBJ_BENCH_ARRAY(new_del_on_arr_all,    std::allocator<T> st , 
-                                                arr[i]=st.allocate(1); , 
+LOKI_SMALLOBJ_BENCH_ARRAY(new_del_on_arr_all,    std::allocator<T> st ,
+                                                arr[i]=st.allocate(1); ,
                                                 st.deallocate(arr[i], 1);)
 
-LOKI_SMALLOBJ_BENCH_ARRAY(new_del_a_on_a    , , arr[i] = new T[TN]; , 
+LOKI_SMALLOBJ_BENCH_ARRAY(new_del_a_on_a    , , arr[i] = new T[TN]; ,
                                                 delete[] arr[i];)
-LOKI_SMALLOBJ_BENCH_ARRAY(new_del_a_on_a_mal, , arr[i] = static_cast<T*>(std::malloc(sizeof(T[TN]))); , 
+LOKI_SMALLOBJ_BENCH_ARRAY(new_del_a_on_a_mal, , arr[i] = static_cast<T*>(std::malloc(sizeof(T[TN]))); ,
                                                 std::free(arr[i]);)
-LOKI_SMALLOBJ_BENCH_ARRAY(new_del_a_on_a_all,std::allocator<T[TN]> st , 
-                                                arr[i]=reinterpret_cast<T*>(st.allocate(1)); , 
+LOKI_SMALLOBJ_BENCH_ARRAY(new_del_a_on_a_all,std::allocator<T[TN]> st ,
+                                                arr[i]=reinterpret_cast<T*>(st.allocate(1)); ,
                                                 st.deallocate(reinterpret_cast<T(*)[TN]>(arr[i]), 1);)
 
 
@@ -245,7 +245,7 @@ LOKI_SMALLOBJ_BENCH_ARRAY(new_del_a_on_a_all,std::allocator<T[TN]> st ,
     FUNC<C,N>(a,N,LOOP,TIMER,"ValueObj :");                            \
     FUNC##_all<A,N>(a,N,LOOP,TIMER,"allocator:");                      \
     FUNC##_mal<A,N>(a,N,LOOP,TIMER,"malloc   :");                      \
-    cout << endl << endl;    
+    cout << endl << endl;
 #else
 #define LOKI_SMALL_OBJECT_BENCH_ABCD(FUNC,N,LOOP,TIMER,MESSAGE)              \
     array_test_nr = 0;                                                 \
@@ -302,7 +302,7 @@ void testSize()
 
     Timer t;
 
-    const int N = 3;    
+    const int N = 3;
     int Narr = 1000*1000;
 
     void** a= new void*[Narr];
@@ -310,7 +310,7 @@ void testSize()
     cout << loop  << " times ";
     LOKI_SMALL_OBJECT_BENCH_ABCD(delete_new        ,0,loop,t,"'delete new T'");
     assert( (!AllocatorSingleton::IsCorrupted()) );
-    
+
     cout << "N=" << N <<" :  " << loop  << " times ";
     LOKI_SMALL_OBJECT_BENCH_ABCD(delete_new_array    ,N,loop,t,"'delete[] new T[N]'");
     assert( (!AllocatorSingleton::IsCorrupted()) );
@@ -318,14 +318,14 @@ void testSize()
     cout << "i=0..." << Narr << " :  ";
     LOKI_SMALL_OBJECT_BENCH_ABCD(new_del_on_arr    ,0,Narr,t,"1. 'arr[i] = new T'   2. 'delete arr[i]'");
     assert( (!AllocatorSingleton::IsCorrupted()) );
-    
+
     cout << "i=0..." << Narr << ",  N=" << N <<" :  ";
     LOKI_SMALL_OBJECT_BENCH_ABCD(new_del_a_on_a    ,N,Narr,t,"1. 'arr[i] = new T[N]'   2. 'delete[] arr[i]'");
     assert( (!AllocatorSingleton::IsCorrupted()) );
 
 
     delete [] a;
-    
+
     cout << "_________________________________________________________________" << endl;
     assert( (!AllocatorSingleton::IsCorrupted()) );
     AllocatorSingleton::ClearExtraMemory();

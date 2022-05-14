@@ -2,7 +2,7 @@
 // The Loki Library
 // Copyright (c) 2001 by Andrei Alexandrescu
 // This code is from the article:
-//     "Generic<Programming>: volatile — Multithreaded Programmer’s Best Friend
+//     "Generic<Programming>: volatile ? Multithreaded Programmer?s Best Friend
 //     Volatile-Correctness or How to Have Your Compiler Detect Race Conditions
 //     for You" by Alexandrescu, Andrei.
 //     Published in the February 2001 issue of the C/C++ Users Journal.
@@ -74,7 +74,7 @@ namespace Loki
         /** Constructor locks mutex associated with an object.
          @param lockpair a std::pair of pointers to the object and the mutex
          */
-        explicit LockingPtr( Pair lockpair )
+        LockingPtr( Pair lockpair )
            : pObject_( const_cast< SharedObject * >( lockpair.first ) ),
             pMutex_( lockpair.second )
         {

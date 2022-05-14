@@ -4,16 +4,16 @@
 //
 // Code covered by the MIT License
 //
-// Permission to use, copy, modify, distribute and sell this software for any 
-// purpose is hereby granted without fee, provided that the above copyright 
-// notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+// purpose is hereby granted without fee, provided that the above copyright
+// notice appear in all copies and that both that copyright notice and this
 // permission notice appear in supporting documentation.
 //
 // The authors make no representations about the suitability of this software
 // for any purpose. It is provided "as is" without express or implied warranty.
 //
 // This code DOES NOT accompany the book:
-// Alexandrescu, Andrei. "Modern C++ Design: Generic Programming and Design 
+// Alexandrescu, Andrei. "Modern C++ Design: Generic Programming and Design
 //     Patterns Applied". Copyright (c) 2001. Addison-Wesley.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ typedef long milliSec;
     /**
      * Returns the number of milliseconds elapsed from the epoch.
      * This counter might overrun and come back to 0.
-     * This might give a false result in the following tests.  
+     * This might give a false result in the following tests.
      */
     #include <sys/time.h>
     milliSec getmilliSeconds()
@@ -75,7 +75,7 @@ class AbstractProduct{
 public:
     virtual ~AbstractProduct(){}
 };
- 
+
 class Product : public AbstractProduct
 {
 public:
@@ -102,22 +102,22 @@ public:
 };
 
 CostlyProduct* createCostlyProductNull()
-{ 
+{
     return new CostlyProduct;
 }
 
 DebugProduct* createDebugProductNull()
-{ 
+{
     return new DebugProduct;
 }
 
-Product* createProductNull()             
-{ 
+Product* createProductNull()
+{
     return new Product;
 }
 
-Product* createProductInt(int a, int b)             
-{ 
+Product* createProductInt(int a, int b)
+{
     return new Product(a,b);
 }
 
@@ -321,7 +321,7 @@ bool testRateLimitedFetchPolicy(bool waitBetweenFetch)
     CCache CC;
     CC.Register(nullID, createProductNull);
     CC.setRate(2/*max two fetchs*/,100/*within 100 ms*/);
- 
+
     bool exceptionOccured = false;
     const int number(5);
     const int sleepTime(70);
@@ -338,8 +338,8 @@ bool testRateLimitedFetchPolicy(bool waitBetweenFetch)
         exceptionOccured = true;
         cout << "Exception occured" << endl << e.what() <<endl;
     }
-    
-    // Cleaning things by releasing 
+
+    // Cleaning things by releasing
     for(int i=0;i<number;i++)
         if(products[i]!=NULL)
             CC.ReleaseObject(products[i]);
@@ -477,7 +477,7 @@ void reliabilityTests()
     dispText("Smart pointer", "The factory provides smart pointers, when pointers go out of scope, the object returns to Cache");
     bool spTest = dispResult("Smart Pointer test result", testSmartPointer());
     separator();
-    
+
     if(cacheResult&&rateLimitedResult&&amountLimitedResult&&evictionTest&&spTest)
         dispText("All tests passed successfully");
     else

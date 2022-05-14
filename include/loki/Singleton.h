@@ -169,7 +169,7 @@ namespace Loki
             pTrackerArray = new TrackerArray;
 
         // automatically delete the ConcreteLifetimeTracker object when a exception is thrown
-        std::auto_ptr<LifetimeTracker>
+        std::shared_ptr<LifetimeTracker>
             p( new ConcreteLifetimeTracker<T, Destroyer>(pDynObject, longevity, d) );
 
         // Find correct position
@@ -183,7 +183,7 @@ namespace Loki
         pTrackerArray->insert(pos, p.get());
 
         // nothing has thrown: don't delete the ConcreteLifetimeTracker object
-        p.release();
+        // p.release(); shared_ptr not need this op, it's for auto_ptr
 
         // Register a call to AtExitFn
         std::atexit(Private::AtExitFn);

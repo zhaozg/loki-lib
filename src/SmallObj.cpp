@@ -31,6 +31,7 @@
 
 #include <loki/SmallObj.h>
 
+#include <cstddef>
 #include <cassert>
 #include <climits>
 #include <vector>
@@ -43,11 +44,6 @@
 #ifdef DO_EXTRA_LOKI_TESTS
     #include <iostream>
 #endif
-
-#if !defined( nullptr )
-    #define nullptr 0
-#endif
-
 
 namespace Loki
 {

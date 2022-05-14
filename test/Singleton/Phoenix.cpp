@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
     Example *example = new Example();
      SetLongevity<Example, void (*)(Example*)>(example, 1, &Loki::Private::Deleter<Example>::Delete);
     LogBook::Instance().echo("LogClass now instantiated.");
-    
+
 #if defined(__BORLANDC__) || defined(_MSC_VER)
     system("PAUSE");
 #endif

@@ -2,12 +2,12 @@
 // The Loki Library
 // Copyright (c) 2005 Richard Sposato
 // Copyright (c) 2005 Peter Kümmel
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The authors make no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The authors make no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@
 #include <loki/Singleton.h>
 #include <iostream>
 
-// define DO_EXTRA_LOKI_TESTS in src/SmallObj.cpp to get 
+// define DO_EXTRA_LOKI_TESTS in src/SmallObj.cpp to get
 // a message when a SmallObject is created/deleted.
 
 using namespace std;
@@ -73,8 +73,8 @@ private:
 
 typedef Loki::SmallValueObject< LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL,
     LOKI_DEFAULT_CHUNK_SIZE, LOKI_MAX_SMALL_OBJECT_SIZE,
-    LOKI_DEFAULT_OBJECT_ALIGNMENT, 
-    Loki::SingletonWithLongevity 
+    LOKI_DEFAULT_OBJECT_ALIGNMENT,
+    Loki::SingletonWithLongevity
 >
 LongLivedObject;
 
@@ -124,8 +124,8 @@ inline unsigned int GetLongevity( LongLivedSingleton * )
 
 typedef Loki::SmallValueObject< LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL,
     LOKI_DEFAULT_CHUNK_SIZE, LOKI_MAX_SMALL_OBJECT_SIZE,
-    LOKI_DEFAULT_OBJECT_ALIGNMENT, 
-    Loki::FollowIntoDeath::With<Loki::DefaultLifetime>::AsMasterLifetime 
+    LOKI_DEFAULT_OBJECT_ALIGNMENT,
+    Loki::FollowIntoDeath::With<Loki::DefaultLifetime>::AsMasterLifetime
 >
 MasterObject;
 
@@ -295,11 +295,11 @@ int main()
     cout << endl
          << "This program tests the lifetime policies for Loki's " << endl
          << "Small-Object Allocator and singleton objects that are derived " << endl
-         << "from SmallObject or SmallValueObject." << endl 
+         << "from SmallObject or SmallValueObject." << endl
          << endl
          << "Use one of the following lifetime policies" << endl
          << "to manage the lifetime dependency:" << endl
-         << endl 
+         << endl
          << "-  LongevityLifetime Parent/Child: SmallObject has" << endl
          << "       LongevityLifetime::DieAsSmallObjectParent" << endl
          << "   policy and the derived Singleton has " << endl
@@ -310,7 +310,7 @@ int main()
          << "       SingletonWithLongevity" << endl
          << "   policy. This is tested by the LongLivedSingleton class." << endl
          << endl
-#if !defined(_MSC_VER) || (_MSC_VER>=1400)         
+#if !defined(_MSC_VER) || (_MSC_VER>=1400)
          << "-  FollowIntoDeath: SmallObject has" << endl
          << "       FollowIntoDeath::With<LIFETIME>::AsMasterLiftime" << endl
          << "   policy and the derived Singleton has " << endl
@@ -333,15 +333,15 @@ int main()
          << endl << endl
          << "If this program executes without crashing or asserting" << endl
          << "at exit time, then all policies work." << endl << endl;
-    
-    
+
+
     SmallObjectChild::Instance().DoThat();
     LongLivedSingleton::Instance().DoThat();
-    
-#if !defined(_MSC_VER) || (_MSC_VER>=1400)         
+
+#if !defined(_MSC_VER) || (_MSC_VER>=1400)
     FollowerSingleton::Instance().DoThat();
 #endif
-    
+
 #define ENABLE_MEMORY_LEAK
 #ifdef ENABLE_MEMORY_LEAK
     ImmortalSingleton::Instance().DoThat();
@@ -352,7 +352,7 @@ int main()
     cout << "are disabled due to the test on memory leaks.";
     cout << endl << endl;
 #endif
-    
+
 #if defined(__BORLANDC__) || defined(_MSC_VER)
     system("PAUSE");
 #endif

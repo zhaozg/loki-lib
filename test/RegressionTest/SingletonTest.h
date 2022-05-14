@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Unit Test for Loki
 //
-// Copyright Terje Slettebø and Pavel Vozenilek 2002.
+// Copyright Terje Sletteb? and Pavel Vozenilek 2002.
 //
 // Permission to use, copy, modify, and distribute this software for any
 // purpose is hereby granted without fee, provided that this copyright and
@@ -77,7 +77,7 @@ namespace
   typedef SingletonHolder<MyClass<19>, CreateStatic, SingletonWithLongevity, SingleThreaded> t19;
   typedef SingletonHolder<MyClass<20>, CreateStatic, NoDestroy, SingleThreaded> t20;
 
-#if defined(_WINDOWS_) || defined(_WINDOWS_H) 
+#if defined(_WINDOWS_) || defined(_WINDOWS_H)
 
   typedef SingletonHolder<MyClass<5>, CreateUsingNew, DefaultLifetime, ClassLevelLockable> t5;
   typedef SingletonHolder<MyClass<6>, CreateUsingNew, PhoenixSingleton, ClassLevelLockable> t6;
@@ -128,7 +128,7 @@ public:
     MAKE_TEST(t20)
 
 
-#if defined(_WINDOWS_) || defined(_WINDOWS_H) 
+#if defined(_WINDOWS_) || defined(_WINDOWS_H)
 
     MAKE_TEST(t5)
     MAKE_TEST(t6)

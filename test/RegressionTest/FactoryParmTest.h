@@ -1,9 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Unit Test for Loki
 //
-// Copyright (C) 2002 Terje Slettebø
+// Copyright (C) 2002 Terje Sletteb?
 // Copyright (C) 2002 Pavel Vozenilek
-// Copyright (C) 2005 Peter Kümmel
+// Copyright (C) 2005 Peter K?mmel
 
 // Permission to use, copy, modify, and distribute this software for any
 // purpose is hereby granted without fee, provided that this copyright and
@@ -177,12 +177,12 @@ namespace FactoryTestParmPrivate
         }
     };
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int >
     >Factory0;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_1( int ) >
     >Factory1;
@@ -191,81 +191,81 @@ namespace FactoryTestParmPrivate
     Factory< AbstractProduct, int, LOKI_TYPELIST_2( int, int ) >
     >Factory2;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_3( int, int, int ) >
     >Factory3;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_4( int, int, int, int ) >
     >Factory4;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_5( int, int, int, int, int ) >
     >Factory5;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_6(  int, int, int, int, int,
                                                 int ) >
     >Factory6;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_7(  int, int, int, int, int,
                                                 int, int ) >
     >Factory7;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_8(  int, int, int, int, int,
                                                 int, int, int ) >
     >Factory8;
 
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_9(  int, int, int, int, int,
                                                 int, int, int, int ) >
     >Factory9;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_10( int, int, int, int, int,
                                                 int, int, int, int, int ) >
     >Factory10;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_11( int, int, int, int, int,
                                                 int, int, int, int, int,
                                                 int ) >
     >Factory11;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_12( int, int, int, int, int,
                                                 int, int, int, int, int,
                                                 int, int ) >
     >Factory12;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_13( int, int, int, int, int,
                                                 int, int, int, int, int,
                                                 int, int, int ) >
     >Factory13;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_14( int, int, int, int, int,
                                                 int, int, int, int, int,
                                                 int, int, int, int ) >
     >Factory14;
 
-    typedef 
+    typedef
     SingletonHolder<
     Factory< AbstractProduct, int, LOKI_TYPELIST_15( int, int, int, int, int,
                                                 int, int, int, int, int,
@@ -293,7 +293,7 @@ namespace FactoryTestParmPrivate
         bool const o13 = Factory13::Instance().Register( 1, &creaClass, &CreatorClass<Product>::create13 );
         bool const o14 = Factory14::Instance().Register( 1, &creaClass, &CreatorClass<Product>::create14 );
         bool const o15 = Factory15::Instance().Register( 1, &creaClass, &CreatorClass<Product>::create15 );
-        
+
         return o0 && o1 && o2 && o3 && o4 && o5 && o6 && o7 && o8 && o9 && o10 && o11 && o12 && o13 && o14 && o15;
     }
 
@@ -302,11 +302,11 @@ namespace FactoryTestParmPrivate
         bool reg = registerAll();
 
         AbstractProduct* p;
-        
+
         p = Factory0::Instance().CreateObject(1);
         delete p;
         bool test0=p!=NULL;
-        
+
         p = Factory1::Instance().CreateObject(1,64);
         delete p;
         bool test1=p!=NULL;
@@ -335,13 +335,13 @@ namespace FactoryTestParmPrivate
         p = Factory7::Instance().CreateObject(1,    64,64,64,64,64,
                                                     64,64);
         delete p;
-        bool test7=p!=NULL;    
+        bool test7=p!=NULL;
 
         p = Factory8::Instance().CreateObject(1,    64,64,64,64,64,
-                                                    64,64,64);    
+                                                    64,64,64);
         delete p;
         bool test8=p!=NULL;
-        
+
         p = Factory9::Instance().CreateObject(1,    64,64,64,64,64,
                                                     64,64,64,64);
         delete p;
@@ -408,7 +408,7 @@ public:
 
         std::cout << '\n';
     }
-    
+
 } factoryParmTest;
 
 

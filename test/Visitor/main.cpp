@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
 // Copyright (c) 2006 Peter Kümmel
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The author makes no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The author makes no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -29,8 +29,8 @@ public:
     LOKI_DEFINE_VISITABLE()
 };
 
-class VariableVisitor : 
-    public Loki::BaseVisitor, 
+class VariableVisitor :
+    public Loki::BaseVisitor,
     //public Loki::Visitor<Base>,
     //public Loki::Visitor<Type1>
 #ifndef LOKI_DISABLE_TYPELIST_MACROS
@@ -38,11 +38,11 @@ class VariableVisitor :
 #else
     public Loki::Visitor<Loki::Seq<Base,Type1>::Type>
 #endif
-{ 
-public: 
+{
+public:
     void Visit(Base&){std::cout << "void Visit(Base&)\n";}
     void Visit(Type1&){std::cout << "void Visit(Type1&)\n";}
-}; 
+};
 
 
 class CBase : public Loki::BaseVisitable<void, Loki::DefaultCatchAll, true>
@@ -57,8 +57,8 @@ public:
     LOKI_DEFINE_CONST_VISITABLE()
 };
 
-class CVariableVisitor : 
-    public Loki::BaseVisitor, 
+class CVariableVisitor :
+    public Loki::BaseVisitor,
     //public Loki::Visitor<CBase,void,true>,
     //public Loki::Visitor<CType1,void,true>
 #ifndef LOKI_DISABLE_TYPELIST_MACROS
@@ -66,11 +66,11 @@ class CVariableVisitor :
 #else
     public Loki::Visitor<Loki::Seq<CBase,CType1>::Type,void,true>
 #endif
-{ 
-public: 
+{
+public:
     void Visit(const CBase&){std::cout << "void Visit(CBase&)\n";}
     void Visit(const CType1&){std::cout << "void Visit(CType1&)\n";}
-}; 
+};
 
 int main()
 {

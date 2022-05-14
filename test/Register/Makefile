@@ -11,7 +11,7 @@ CPPFLAGS += -DLOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
 .PHONY: all clean
 all: $(BIN1)
 
-$(BIN1): $(OBJ1) $(LIB1) 
+$(BIN1): $(OBJ1) $(LIB1)
 	$(CXX) $(CXXFLAGS) -L. $(LDFLAGS) $(CPPFLAGS) -o $@ $(OBJ1) $(LDLIBS) -lfoo
 
 $(LIB1): $(OBJ2)

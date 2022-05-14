@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Unit Test for Loki
 //
-// Copyright Terje Slettebø and Pavel Vozenilek 2002.
+// Copyright Terje Sletteb? and Pavel Vozenilek 2002.
 //
 // Permission to use, copy, modify, and distribute this software for any
 // purpose is hereby granted without fee, provided that this copyright and
@@ -78,7 +78,7 @@ public:
       !SuperSubclass<Derived1,Base>::value &&
       !SuperSubclass<Derived2,Base>::value &&
       !SuperSubclass<void,Base>::value;
-    
+
     testAssert("SuperSubclass",r,result);
 
     r=SuperSubclassStrict<Base,Derived1>::value &&

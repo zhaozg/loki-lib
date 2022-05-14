@@ -38,12 +38,12 @@ int main()
     Loki::SetLongevity
                 (new L1, 1);
     Loki::SetLongevity<L1,    void (*)(L1*)>
-                (new L1, 1, Loki::Private::Deleter<L1>::Delete);    
+                (new L1, 1, Loki::Private::Deleter<L1>::Delete);
     Loki::SetLongevity<L1,    Loki::Private::Deleter<L1>::Type>
                 (new L1, 1, Loki::Private::Deleter<L1>::Delete);
     Loki::SetLongevity(new L2, 2);
-    Loki::SetLongevity(new L1, 1);    
-    Loki::SetLongevity(new L3, 3);    
+    Loki::SetLongevity(new L1, 1);
+    Loki::SetLongevity(new L3, 3);
     Loki::SetLongevity(new L1, 1);
 
     std::cout << "\n";
