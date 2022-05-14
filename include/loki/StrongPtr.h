@@ -873,7 +873,7 @@ private:
     /// Copy-assignment operator is not available.
     Lockable1OwnerRefCountInfo & operator = ( const Lockable1OwnerRefCountInfo & );
 
-    mutable LOKI_DEFAULT_MUTEX m_Mutex;
+    mutable LOKI_DEFAULT_RECURSIVE_MUTEX m_Mutex;
 };
 
 #endif // if object-level-locking or class-level-locking

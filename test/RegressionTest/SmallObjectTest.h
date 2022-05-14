@@ -145,7 +145,7 @@ private:
 
       for (int j = 0; j < 1024; ++j)
       {
-        size_t pos = std::rand() % vec.size();
+        size_t pos = static_cast<size_t>(std::rand()) % vec.size();
 
         delete vec[pos];
 

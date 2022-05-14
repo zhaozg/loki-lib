@@ -34,28 +34,13 @@
 
 
 // ----------------------------------------------------------------------------
-
-#if defined( _MSC_VER )
-    #include <Windows.h>
-#else
-    #include <pthread.h>
-#endif
-
 #include <exception>
 #include <vector>
 #include <assert.h>
 #include <time.h>
+#include <thread>
 
-#if !defined( _WIN32 ) && !defined( _WIN64 )
-    #include <unistd.h> // declares usleep under Linux
-#endif
-
-#include <loki/ThreadLocal.h> // Include Loki's form of thread_local declaration.
 #include <loki/Checker.h> // Needed to check class invariants.
-
-#if !defined( LOKI_THREAD_LOCAL )
-    #warning "Your compiler will not allow Loki::LevelMutex."
-#else
 
 #if defined( DEBUG ) || defined( _DEBUG )
     #define LOKI_MUTEX_DEBUG_CODE( x ) x
@@ -416,7 +401,7 @@ private:
     bool IsNotLockedByCurrentThread( void ) const;
 
     /// Pointer to singly-linked list of mutexes locked by the current thread.
-    static LOKI_THREAD_LOCAL volatile LevelMutexInfo * s_currentMutex;
+    static thread_local volatile LevelMutexInfo * s_currentMutex;
 
     /// Level of this mutex.
     const unsigned int m_level;
@@ -1239,7 +1224,5 @@ private:
 // ----------------------------------------------------------------------------
 
 } // end namespace Loki
-
-#endif // end else if compiler allows thread_local storage
 
 #endif  // end file guardian

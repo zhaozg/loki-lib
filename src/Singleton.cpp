@@ -55,9 +55,6 @@ void LOKI_C_CALLING_CONVENTION_QUALIFIER Loki::Private::AtExitFn()
     // Remove that object off the stack _before_ deleting pTop
     pTrackerArray->pop_back();
 
-    // Destroy the element
-    delete pTop;
-
     // Destroy stack when it's empty _after_ deleting pTop
     if(pTrackerArray->empty())
     {

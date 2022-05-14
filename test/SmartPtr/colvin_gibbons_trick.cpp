@@ -16,9 +16,6 @@
 // ----------------------------------------------------------------------------
 
 
-// loki_smart_auto_ptr.cpp Test program for Loki::SmartPtr configured as
-// auto_ptr using Colvin-Gibbons trick
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -55,8 +52,8 @@ public:
 
 // ----------------------------------------------------------------------------
 
-typedef auto_ptr< Base > AutoPtrBase;
-typedef auto_ptr< Derived > AutoPtrDerived;
+typedef shared_ptr< Base > AutoPtrBase;
+typedef shared_ptr< Derived > AutoPtrDerived;
 
 typedef SmartPtr< Base, DestructiveCopy > SmartAutoPtrBase;
 typedef SmartPtr< Derived, DestructiveCopy > SmartAutoPtrDerived;
@@ -99,7 +96,6 @@ void DoTest()
     TPtrDerived spd1 = CreateDerived< TPtrDerived >();
     TPtrBase spb2( spd1 );
 
-    // NOTE: this does not compile with gcc 4.3.1 also for std::auto_ptr;
     // it should work (Copy-initialization, base-from-derived)
     // according to http://www.open-std.org/jtc1/sc22/wg21/docs/papers/1997/N1128.pdf
     // It does compile with Visual C++ 8 (need to test with 9)

@@ -582,58 +582,48 @@ namespace Loki
         public:
 
             typedef ThreadingModel< RefCountedMT<P>, MX > base_type;
-            typedef typename base_type::IntType       CountType;
-            typedef volatile CountType               *CountPtrType;
+            typedef typename std::atomic<uintptr_t>       CountType;
 
         protected:
             RefCountedMT()
             {
-                pCount_ = static_cast<CountPtrType>(
-                    SmallObject<LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL>::operator new(
-                        sizeof(*pCount_)));
-                assert(pCount_);
-                //*pCount_ = 1;
-                ThreadingModel<RefCountedMT, MX>::AtomicAssign(*pCount_, 1);
+                Count_ = 1;
             }
 
             RefCountedMT(const RefCountedMT& rhs)
-            : pCount_(rhs.pCount_)
-            {}
+            {
+                Count_.store( rhs.Count_ );
+            }
 
             //MWCW lacks template friends, hence the following kludge
             template <typename P1>
             RefCountedMT(const RefCountedMT<P1>& rhs)
-            : pCount_(reinterpret_cast<const RefCountedMT<P>&>(rhs).pCount_)
+            : Count_(reinterpret_cast<const RefCountedMT<P>&>(rhs).Count_)
             {}
 
             P Clone(const P& val)
             {
-                ThreadingModel<RefCountedMT, MX>::AtomicIncrement(*pCount_);
+                Count_++;
                 return val;
             }
 
             bool Release(const P&)
             {
-                bool isZero = false;
-                ThreadingModel< RefCountedMT, MX >::AtomicDecrement( *pCount_, 0, isZero );
-                if ( isZero )
+                if ( Count_.fetch_sub(1) )
                 {
-                    SmallObject<LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL>::operator delete(
-                        const_cast<CountType *>(pCount_),
-                        sizeof(*pCount_));
                     return true;
                 }
                 return false;
             }
 
             void Swap(RefCountedMT& rhs)
-            { std::swap(pCount_, rhs.pCount_); }
+            { std::swap(Count_, rhs.Count_); }
 
             enum { destructiveCopy = false };
 
         private:
             // Data
-            CountPtrType pCount_;
+            CountType Count_;
         };
     };
 
@@ -781,7 +771,7 @@ namespace Loki
 ///
 ///  \ingroup  SmartPointerOwnershipGroup
 ///  Implementation of the OwnershipPolicy used by SmartPtr
-///  Implements destructive copy semantics (a la std::auto_ptr)
+///  Implements destructive copy semantics (a la std::shared_ptr)
 ////////////////////////////////////////////////////////////////////////////////
 
     template <class P>

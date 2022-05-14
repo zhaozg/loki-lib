@@ -46,9 +46,6 @@ namespace yasli {
 
     template <class ForwardIterator, class Size, class T>
     void uninitialized_fill_n(ForwardIterator first, Size n, const T& x);
-    // 20.4.5, pointers:
-    // @@@ not defined, use the std one @@@
-    // template<class X> class auto_ptr;
 }
 
 namespace yasli {

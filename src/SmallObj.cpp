@@ -418,7 +418,7 @@ void Chunk::Deallocate(void* p, ::std::size_t blockSize)
     // Alignment check
     assert((toRelease - pData_) % blockSize == 0);
     unsigned char index = static_cast< unsigned char >(
-        ( toRelease - pData_ ) / blockSize);
+        static_cast<size_t>( toRelease - pData_ ) / blockSize);
 
 #if defined(DEBUG) || defined(_DEBUG)
     // Check if block was already deleted.  Attempting to delete the same
@@ -551,7 +551,7 @@ bool Chunk::IsBlockAvailable( void * p, unsigned char numBlocks,
     // Alignment check
     assert( ( place - pData_ ) % blockSize == 0 );
     unsigned char blockIndex = static_cast< unsigned char >(
-        ( place - pData_ ) / blockSize );
+        static_cast<size_t>( place - pData_ ) / blockSize );
 
     unsigned char index = firstAvailableBlock_;
     assert( numBlocks > index );

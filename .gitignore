@@ -1,0 +1,9 @@
+*.lo
+*.o
+*.a
+*.dylib
+.shared-dep/
+.static-dep/
+main
+*Test
+

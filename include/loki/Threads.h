@@ -63,278 +63,27 @@
 
 
 #include <cassert>
+#include <mutex>
 
-#if defined( LOKI_CLASS_LEVEL_THREADING ) || defined( LOKI_OBJECT_LEVEL_THREADING )
 
-    #define LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL ::Loki::ClassLevelLockable
+#define LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL ::Loki::ClassLevelLockable
 
-    #if defined(LOKI_CLASS_LEVEL_THREADING) && !defined(LOKI_OBJECT_LEVEL_THREADING)
-        #define LOKI_DEFAULT_THREADING ::Loki::ClassLevelLockable
-    #else
-        #define LOKI_DEFAULT_THREADING ::Loki::ObjectLevelLockable
-    #endif
-
-    #if defined(_WIN32) || defined(_WIN64)
-        #include <windows.h>
-        #define LOKI_WINDOWS_H
-    #else
-        #include <pthread.h>
-        #define LOKI_PTHREAD_H
-    #endif
-
+#if defined(LOKI_CLASS_LEVEL_THREADING) && !defined(LOKI_OBJECT_LEVEL_THREADING)
+    #define LOKI_DEFAULT_THREADING ::Loki::ClassLevelLockable
 #else
-
-    #define LOKI_DEFAULT_THREADING ::Loki::SingleThreaded
-    #define LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL ::Loki::SingleThreaded
-
+    #define LOKI_DEFAULT_THREADING ::Loki::ObjectLevelLockable
 #endif
+
 
 #if !defined( LOKI_DEFAULT_MUTEX )
-    #define LOKI_DEFAULT_MUTEX ::Loki::Mutex
+    #define LOKI_DEFAULT_MUTEX Loki::Mutex<std::mutex>
 #endif
-
-#if defined( LOKI_WINDOWS_H )
-
-#define LOKI_THREADS_MUTEX(x)           CRITICAL_SECTION (x);
-#define LOKI_THREADS_MUTEX_INIT(x)      ::InitializeCriticalSection (x)
-#define LOKI_THREADS_MUTEX_DELETE(x)    ::DeleteCriticalSection (x)
-#define LOKI_THREADS_MUTEX_LOCK(x)      ::EnterCriticalSection (x)
-#define LOKI_THREADS_MUTEX_UNLOCK(x)    ::LeaveCriticalSection (x)
-#define LOKI_THREADS_LONG               LONG
-#define LOKI_THREADS_MUTEX_CTOR(x)
-
-#define LOKI_THREADS_ATOMIC_FUNCTIONS                                   \
-    private:                                                            \
-        static CRITICAL_SECTION atomic_mutex_;                          \
-    public:                                                             \
-        static IntType AtomicMultiply(volatile IntType& lval, const IntType val) \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                   \
-            lval *= val;                                                \
-            ::LeaveCriticalSection( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicDivide(volatile IntType& lval, const IntType val)  \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                   \
-            lval /= val;                                                \
-            ::LeaveCriticalSection( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicIncrement(volatile IntType& lval)          \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                   \
-            ++lval;                                                     \
-            ::LeaveCriticalSection( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicDecrement(volatile IntType& lval)          \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                   \
-            --lval;                                                     \
-            ::LeaveCriticalSection( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicAssign(volatile IntType& lval, const IntType val)   \
-        {                                                               \
-            InterlockedExchange(&const_cast<IntType&>(lval), val);      \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicAssign(IntType& lval, volatile const IntType& val)  \
-        {                                                               \
-            InterlockedExchange(&lval, val);                            \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicIncrement(volatile IntType& lval, const IntType compare, bool & matches )  \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                   \
-            ++lval;                                                     \
-            matches = ( lval == compare );                              \
-            ::LeaveCriticalSection( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicDecrement(volatile IntType& lval, const IntType compare, bool & matches )  \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                   \
-            --lval;                                                     \
-            matches = ( lval == compare );                              \
-            ::LeaveCriticalSection( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicAdd(volatile IntType& lval, const IntType val, const IntType compare, bool & matches )  \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                   \
-            lval += val;                                                \
-            matches = ( lval == compare );                              \
-            ::LeaveCriticalSection( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicSubtract(volatile IntType& lval, const IntType val, const IntType compare, bool & matches ) \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                   \
-            lval -= val;                                                \
-            matches = ( lval == compare );                              \
-            ::LeaveCriticalSection( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicMultiply(volatile IntType& lval, const IntType val, const IntType compare, bool & matches ) \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                   \
-            lval *= val;                                                \
-            matches = ( lval == compare );                              \
-            ::LeaveCriticalSection( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicDivide(volatile IntType& lval, const IntType val, const IntType compare, bool & matches )   \
-        {                                                               \
-            ::EnterCriticalSection( &atomic_mutex_ );                    \
-            lval /= val;                                                \
-            matches = ( lval == compare );                              \
-            ::LeaveCriticalSection( &atomic_mutex_ );                    \
-            return lval;                                                \
-        }
-
-#elif defined(LOKI_PTHREAD_H)
-
-
-#define LOKI_THREADS_MUTEX(x)           pthread_mutex_t (x);
-
-#define LOKI_THREADS_MUTEX_INIT(x)      ::pthread_mutex_init(x, 0)
-
-// define to 1 to enable recursive mutex support
-#if 0
-// experimental recursive mutex support
-#define LOKI_THREADS_MUTEX_CTOR(x)      : x(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP)
-#else
-// no recursive mutex support
-#define LOKI_THREADS_MUTEX_CTOR(x)
+#if !defined( LOKI_DEFAULT_RECURSIVE_MUTEX )
+    #define LOKI_DEFAULT_RECURSIVE_MUTEX Loki::Mutex<std::recursive_mutex>
 #endif
-
-#define LOKI_THREADS_MUTEX_DELETE(x)    ::pthread_mutex_destroy (x)
-#define LOKI_THREADS_MUTEX_LOCK(x)      ::pthread_mutex_lock (x)
-#define LOKI_THREADS_MUTEX_UNLOCK(x)    ::pthread_mutex_unlock (x)
-#define LOKI_THREADS_LONG               long
-
-#define LOKI_THREADS_ATOMIC(x)                                           \
-                pthread_mutex_lock(&atomic_mutex_);                      \
-                x;                                                       \
-                pthread_mutex_unlock(&atomic_mutex_)
-
-#define LOKI_THREADS_ATOMIC_FUNCTIONS                                \
-    private:                                                         \
-        static pthread_mutex_t atomic_mutex_;                        \
-    public:                                                          \
-        static IntType AtomicMultiply(volatile IntType& lval, const IntType val) \
-        {                                                                \
-            ::pthread_mutex_lock( &atomic_mutex_ );                      \
-            lval *= val;                                                 \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
-        }                                                                \
-                                                                         \
-        static IntType AtomicDivide(volatile IntType& lval, const IntType val) \
-        {                                                                \
-            ::pthread_mutex_lock( &atomic_mutex_ );                      \
-            lval /= val;                                                 \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
-        }                                                                \
-                                                                         \
-        static IntType AtomicIncrement(volatile IntType& lval)           \
-        {                                                                \
-            ::pthread_mutex_lock( &atomic_mutex_ );                      \
-            ++lval;                                                      \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
-        }                                                                \
-                                                                         \
-        static IntType AtomicDecrement(volatile IntType& lval)           \
-        {                                                                \
-            ::pthread_mutex_lock( &atomic_mutex_ );                      \
-            --lval;                                                      \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
-        }                                                                \
-                                                                         \
-        static IntType AtomicAssign(volatile IntType& lval, const IntType val) \
-        {                                                                \
-            ::pthread_mutex_lock( &atomic_mutex_ );                      \
-            lval = val;                                                  \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
-        }                                                                \
-                                                                         \
-        static IntType AtomicAssign(IntType& lval, volatile const IntType& val) \
-        {                                                                \
-            ::pthread_mutex_lock( &atomic_mutex_ );                      \
-            lval = val;                                                  \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
-        }                                                                \
-                                                                         \
-        static IntType AtomicIncrement(volatile IntType& lval, const IntType compare, bool & matches ) \
-        {                                                                \
-            ::pthread_mutex_lock( &atomic_mutex_ );                      \
-            ++lval;                                                      \
-            matches = ( compare == lval );                               \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
-        }                                                                \
-                                                                         \
-        static IntType AtomicDecrement(volatile IntType& lval, const IntType compare, bool & matches ) \
-        {                                                                \
-            ::pthread_mutex_lock( &atomic_mutex_ );                      \
-            --lval;                                                      \
-            matches = ( compare == lval );                               \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
-        }                                                                \
-        static IntType AtomicMultiply(volatile IntType& lval, const IntType val, const IntType compare, bool & matches ) \
-        {                                                               \
-            ::pthread_mutex_lock( &atomic_mutex_ );                     \
-            lval *= val;                                                \
-            matches = ( lval == compare );                              \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }                                                               \
-                                                                        \
-        static IntType AtomicDivide(volatile IntType& lval, const IntType val, const IntType compare, bool & matches ) \
-        {                                                               \
-            ::pthread_mutex_lock( &atomic_mutex_ );                     \
-            lval /= val;                                                \
-            matches = ( lval == compare );                              \
-            ::pthread_mutex_unlock( &atomic_mutex_ );                   \
-            return lval;                                                \
-        }
-
-#else // single threaded
-
-#define LOKI_THREADS_MUTEX(x)
-#define LOKI_THREADS_MUTEX_INIT(x)
-#define LOKI_THREADS_MUTEX_DELETE(x)
-#define LOKI_THREADS_MUTEX_LOCK(x)
-#define LOKI_THREADS_MUTEX_UNLOCK(x)
-#define LOKI_THREADS_LONG
-#define LOKI_THREADS_MUTEX_CTOR(x)
-
-#endif
-
-
 
 namespace Loki
 {
-
     ////////////////////////////////////////////////////////////////////////////////
     ///  \class Mutex
     //
@@ -342,35 +91,33 @@ namespace Loki
     ///  A simple and portable Mutex.  A default policy class for locking objects.
     ////////////////////////////////////////////////////////////////////////////////
 
+    template<class T = std::mutex>
     class Mutex
     {
     public:
-        Mutex() LOKI_THREADS_MUTEX_CTOR(mtx_)
+        Mutex()
         {
-            LOKI_THREADS_MUTEX_INIT(&mtx_);
         }
         ~Mutex()
         {
-            LOKI_THREADS_MUTEX_DELETE(&mtx_);
         }
         void Lock()
         {
-            LOKI_THREADS_MUTEX_LOCK(&mtx_);
+            mtx_.lock();
         }
-        void Unlock()
+        inline void Unlock()
         {
-            LOKI_THREADS_MUTEX_UNLOCK(&mtx_);
+            mtx_.unlock();
         }
     private:
         /// Copy-constructor not implemented.
         Mutex(const Mutex &);
         /// Copy-assignement operator not implemented.
         Mutex & operator = (const Mutex &);
-        LOKI_THREADS_MUTEX(mtx_)
+        T mtx_;
     };
 
-
-     ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     ///  \class SingleThreaded
     ///
     ///  \ingroup ThreadingGroup
@@ -393,83 +140,8 @@ namespace Loki
         typedef Host VolatileType;
 
         typedef int IntType;
-
-        static IntType AtomicAdd(volatile IntType& lval, const IntType val)
-        { return lval += val; }
-
-        static IntType AtomicSubtract(volatile IntType& lval, const IntType val)
-        { return lval -= val; }
-
-        static IntType AtomicMultiply(volatile IntType& lval, const IntType val)
-        { return lval *= val; }
-
-        static IntType AtomicDivide(volatile IntType& lval, const IntType val)
-        { return lval /= val; }
-
-        static IntType AtomicIncrement(volatile IntType& lval)
-        { return ++lval; }
-
-        static IntType AtomicDecrement(volatile IntType& lval)
-        { return --lval; }
-
-        static IntType AtomicAssign(volatile IntType & lval, const IntType val)
-        {
-            lval = val;
-            return lval;
-        }
-
-        static IntType AtomicAssign(IntType & lval, volatile IntType & val)
-        {
-            lval = val;
-            return lval;
-        }
-
-        static IntType AtomicAdd(volatile IntType& lval, const IntType val, const IntType compare, bool & matches )
-        {
-            lval += val;
-            matches = ( lval == compare );
-            return lval;
-        }
-
-        static IntType AtomicSubtract(volatile IntType& lval, const IntType val, const IntType compare, bool & matches )
-        {
-            lval -= val;
-            matches = ( lval == compare );
-            return lval;
-        }
-
-        static IntType AtomicMultiply(volatile IntType& lval, const IntType val, const IntType compare, bool & matches )
-        {
-            lval *= val;
-            matches = ( lval == compare );
-            return lval;
-        }
-
-        static IntType AtomicDivide(volatile IntType& lval, const IntType val, const IntType compare, bool & matches )
-        {
-            lval /= val;
-            matches = ( lval == compare );
-            return lval;
-        }
-
-        static IntType AtomicIncrement(volatile IntType& lval, const IntType compare, bool & matches )
-        {
-            ++lval;
-            matches = ( lval == compare );
-            return lval;
-        }
-
-        static IntType AtomicDecrement(volatile IntType& lval, const IntType compare, bool & matches )
-        {
-            --lval;
-            matches = ( lval == compare );
-            return lval;
-        }
-
     };
 
-
-#if defined(LOKI_WINDOWS_H) || defined(LOKI_PTHREAD_H)
 
     ////////////////////////////////////////////////////////////////////////////////
     ///  \class ObjectLevelLockable
@@ -526,17 +198,11 @@ namespace Loki
         };
 
         typedef volatile Host VolatileType;
-
-        typedef LOKI_THREADS_LONG IntType;
-
-        LOKI_THREADS_ATOMIC_FUNCTIONS
-
+        static MutexPolicy atomic_mutex_;
     };
 
-#ifdef LOKI_PTHREAD_H
     template <class Host, class MutexPolicy>
-    pthread_mutex_t ObjectLevelLockable<Host, MutexPolicy>::atomic_mutex_ = PTHREAD_MUTEX_INITIALIZER;
-#endif
+    MutexPolicy ObjectLevelLockable<Host, MutexPolicy>::atomic_mutex_;
 
     ////////////////////////////////////////////////////////////////////////////////
     ///  \class ClassLevelLockable
@@ -629,20 +295,11 @@ namespace Loki
         };
 
         typedef volatile Host VolatileType;
-
-        typedef LOKI_THREADS_LONG IntType;
-
-        LOKI_THREADS_ATOMIC_FUNCTIONS
-
+        static MutexPolicy atomic_mutex_;
     };
 
-#ifdef LOKI_PTHREAD_H
     template <class Host, class MutexPolicy>
-    pthread_mutex_t ClassLevelLockable<Host, MutexPolicy>::atomic_mutex_ = PTHREAD_MUTEX_INITIALIZER;
-#endif
-
-#endif // #if defined(LOKI_WINDOWS_H) || defined(LOKI_PTHREAD_H)
-
+    MutexPolicy ClassLevelLockable<Host, MutexPolicy>::atomic_mutex_;
 } // namespace Loki
 
 

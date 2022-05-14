@@ -34,7 +34,7 @@ using namespace ::std;
 #endif
 
 
-volatile LOKI_THREAD_LOCAL Thread * Thread::s_thread = nullptr;
+volatile thread_local Thread * Thread::s_thread = nullptr;
 
 
 // ----------------------------------------------------------------------------

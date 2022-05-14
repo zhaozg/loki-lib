@@ -50,7 +50,7 @@ namespace Loki
      the mutex type as a LockingPolicy class.  The only requirements for a
      LockingPolicy class are to provide Lock and Unlock methods.
      */
-    template < typename SharedObject, typename LockingPolicy = LOKI_DEFAULT_MUTEX,
+    template < typename SharedObject, typename LockingPolicy = LOKI_DEFAULT_RECURSIVE_MUTEX,
                template<class> class ConstPolicy = LOKI_DEFAULT_CONSTNESS >
     class LockingPtr
     {

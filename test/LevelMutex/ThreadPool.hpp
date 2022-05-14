@@ -19,9 +19,6 @@
 
 #include <vector>
 
-#include <loki/ThreadLocal.h>
-
-
 // ----------------------------------------------------------------------------
 
 typedef void * ( * CallFunction )( void * );
@@ -113,7 +110,7 @@ private:
 
     bool IsValid( const volatile ThreadPool * owner ) const volatile;
 
-    static LOKI_THREAD_LOCAL volatile Thread * s_thread;
+    static thread_local volatile Thread * s_thread;
 
     LokiThread m_thread;
     CallFunction m_func;

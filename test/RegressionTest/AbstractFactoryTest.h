@@ -71,8 +71,8 @@ public:
 
     bool r;
 
-    std::auto_ptr<AbstractEnemyFactory> easyFactory(new EasyLevelEnemyFactory);
-    std::auto_ptr<AbstractEnemyFactory> hardFactory(new HardLevelEnemyFactory);
+    std::shared_ptr<AbstractEnemyFactory> easyFactory(new EasyLevelEnemyFactory);
+    std::shared_ptr<AbstractEnemyFactory> hardFactory(new HardLevelEnemyFactory);
 
     Soldier *s;
 
@@ -81,16 +81,6 @@ public:
     r= !!(typeid(*s)==typeid(SillySoldier)); //SGB !! eliminates bool-to-int performance warning
 
     delete s;
-
-#ifndef __BORLANDC__
-
-    s = hardFactory->Create<Soldier>(); //BCB bug!!! - always creates SillySoldier
-
-    r=r && typeid(*s)==typeid(BadSoldier);
-
-    delete s;
-
-#endif
 
     testAssert("AbstractFactory",r,result);
 

@@ -60,13 +60,13 @@ struct A
     }
 };
 
-typedef Loki::LockingPtr<A,LOKI_DEFAULT_MUTEX,DontPropagateConst> UserLockingPtr;
-typedef Loki::LockingPtr<A,LOKI_DEFAULT_MUTEX,PropagateConst> ConstUserLockingPtr;
+typedef Loki::LockingPtr<A,LOKI_DEFAULT_RECURSIVE_MUTEX,DontPropagateConst> UserLockingPtr;
+typedef Loki::LockingPtr<A,LOKI_DEFAULT_RECURSIVE_MUTEX,PropagateConst> ConstUserLockingPtr;
 
 void* RunLocked(void *id)
 {
     volatile A a;
-    static Loki::Mutex m;
+    static LOKI_DEFAULT_RECURSIVE_MUTEX m;
     for(int i=0; i<loop; i++)
     {
         UserLockingPtr l(a,m);
@@ -78,7 +78,7 @@ void* RunLocked(void *id)
 void* RunConstLocked(void *id)
 {
     const volatile A a;
-    static Loki::Mutex m;
+    static LOKI_DEFAULT_RECURSIVE_MUTEX m;
     for(int i=0; i<loop; i++)
     {
         ConstUserLockingPtr l(a,m);
@@ -142,7 +142,7 @@ int main ()
 
     // test pair ctor
     volatile A a;
-    Loki::Mutex m;
+    LOKI_DEFAULT_RECURSIVE_MUTEX m;
     UserLockingPtr::Pair pair(&a,&m);
     UserLockingPtr l( pair );
 

@@ -73,7 +73,7 @@ class TestResult
 public:
   TestResult() : pos(0),passed(0),failed(0),notSupported(0) {}
 
-  int pos;
+  uintptr_t pos;
   int passed;
   int failed;
   int notSupported;

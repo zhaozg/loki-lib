@@ -26,12 +26,6 @@
 /// It requires either object-level-locking or class-level-locking.
 
 
-#if defined(_WIN32)
-    #include <windows.h>
-    #include <process.h>
-    #define LOKI_WINDOWS_H
-#endif
-
 #include <stddef.h>
 
 #include <loki/Threads.h>
@@ -245,7 +239,7 @@ public:
     }
 
 private:
-    mutable ::Loki::Mutex m_mutex;
+    mutable ::Loki::Mutex<std::mutex> m_mutex;
 };
 
 // ----------------------------------------------------------------------------

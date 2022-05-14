@@ -28,7 +28,6 @@
 
 #include "ThreadPool.hpp"
 
-#include <loki/ThreadLocal.h>
 
 #include <vector>
 #include <sstream>
@@ -52,7 +51,7 @@
 
 typedef ::std::vector< uintptr_t > IntVector;
 
-static LOKI_THREAD_LOCAL uintptr_t StandaloneStaticValue = 0;
+static thread_local uintptr_t StandaloneStaticValue = 0;
 
 static const unsigned int ThreadCount = 4;
 
@@ -119,7 +118,7 @@ bool TestThreadLocalStaticValue( void )
 
 uintptr_t & GetFunctionThreadLocalValue( void )
 {
-    static LOKI_THREAD_LOCAL uintptr_t FunctionStaticValue = 0;
+    static thread_local uintptr_t FunctionStaticValue = 0;
     return FunctionStaticValue;
 }
 
@@ -192,11 +191,11 @@ public:
 
 private:
 
-    static LOKI_THREAD_LOCAL uintptr_t ClassThreadLocal;
+    static thread_local uintptr_t ClassThreadLocal;
 
 };
 
-LOKI_THREAD_LOCAL uintptr_t ThreadAware::ClassThreadLocal = 0;
+thread_local uintptr_t ThreadAware::ClassThreadLocal = 0;
 
 // ----------------------------------------------------------------------------
 

@@ -337,12 +337,12 @@ void DoSingleThreadTest (void)
 {
     const int loop = 1000*1000;
     cout << endl;
-    testSize<  2, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize<  3, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize<  8, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize<  9, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize< 16, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize< 17, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
+    testSize<  2, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize<  3, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize<  8, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize<  9, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize< 16, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize< 17, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
 
 #if defined(__BORLANDC__) || defined(_MSC_VER)
     system("PAUSE");
@@ -357,12 +357,12 @@ void DoClassLockTest (void)
 {
     const int loop = 1000*1000;
     cout << endl;
-    testSize<  2, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize<  3, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize<  8, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize<  9, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize< 16, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
-    testSize< 17, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex >();
+    testSize<  2, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize<  3, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize<  8, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize<  9, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize< 16, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
+    testSize< 17, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
 
 #if defined(__BORLANDC__) || defined(_MSC_VER)
     system("PAUSE");

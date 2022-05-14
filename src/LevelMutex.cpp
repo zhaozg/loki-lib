@@ -33,8 +33,6 @@
 
 #include "../include/loki/LevelMutex.h"
 
-#if defined( LOKI_THREAD_LOCAL )
-
 #if !defined( _MSC_VER )
     #include <unistd.h> // needed for usleep function.
 #endif
@@ -47,7 +45,7 @@
 
 using namespace ::std;
 
-LOKI_THREAD_LOCAL volatile ::Loki::LevelMutexInfo * ::Loki::LevelMutexInfo::s_currentMutex = nullptr;
+volatile thread_local Loki::LevelMutexInfo * ::Loki::LevelMutexInfo::s_currentMutex = nullptr;
 
 unsigned int ::Loki::MutexSleepWaits::sleepTime = 1;
 
@@ -1334,4 +1332,3 @@ bool MultiMutexLocker::Unlock( void )
 
 } // end namespace Loki
 
-#endif // #if defined( LOKI_THREAD_LOCAL )

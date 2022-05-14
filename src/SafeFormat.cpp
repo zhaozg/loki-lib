@@ -36,14 +36,14 @@ namespace Loki
 
     void write(std::FILE* f, const char* from, const char* to) {
         assert(from <= to);
-        ::std::fwrite(from, 1, to - from, f);
+        ::std::fwrite(from, 1, static_cast<size_t>(to - from), f);
     }
 
     // Write to a string
 
     void write(std::string& s, const char* from, const char* to) {
         assert(from <= to);
-        const size_t addCount = to - from;
+        const size_t addCount = static_cast<size_t>(to - from);
         if ( s.capacity() <= s.size() + addCount )
         {
             s.reserve( 2 * s.size() + addCount );
@@ -118,7 +118,7 @@ namespace Loki
     PrintfState<std::ostream&, char> FPrintf(std::ostream& f, const char* format) {
         ::std::string buffer;
         const PrintfState< ::std::string &, char > state1( buffer, format );
-        f.write( buffer.c_str(), buffer.size() );
+        f.write( buffer.c_str(), static_cast<std::streamsize>(buffer.size()) );
         PrintfState< ::std::ostream &, char > printState2 = state1.ChangeDevice< ::std::ostream & >( f );
         return printState2;
     }
@@ -126,7 +126,7 @@ namespace Loki
     PrintfState<std::ostream&, char> FPrintf(std::ostream& f, const std::string& format) {
         ::std::string buffer;
         const PrintfState< ::std::string &, char > state1( buffer, format.c_str() );
-        f.write( buffer.c_str(), buffer.size() );
+        f.write( buffer.c_str(), static_cast<std::streamsize>(buffer.size()) );
         PrintfState< std::ostream &, char > printState2 = state1.ChangeDevice< ::std::ostream & >( f );
         return printState2;
     }

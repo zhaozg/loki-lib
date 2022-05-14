@@ -119,8 +119,6 @@ private:
 #endif
 
 
-// Test: don't compile with incomplete type and auto_ptr
-
 #include <memory>
 
 class Impl4;
@@ -130,6 +128,6 @@ public:
     Incomplete4();
     void foo();
 private:
-    Pimpl<Impl4, std::auto_ptr<Impl4> > d;
+    Pimpl<Impl4, std::shared_ptr<Impl4> > d;
 };
 

@@ -1275,11 +1275,7 @@ namespace Loki
 
         Functor& operator=(const Functor& rhs)
         {
-            Functor copy(rhs);
-            // swap auto_ptrs by hand
-            Impl* p = spImpl_.release();
-            spImpl_.reset(copy.spImpl_.release());
-            copy.spImpl_.reset(p);
+            this->spImpl_.reset(Impl::Clone(rhs.spImpl_.get()));
             return *this;
         }
 
