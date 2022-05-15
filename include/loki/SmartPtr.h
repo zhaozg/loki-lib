@@ -583,33 +583,39 @@ namespace Loki
 
             typedef ThreadingModel< RefCountedMT<P>, MX > base_type;
             typedef typename std::atomic<uintptr_t>       CountType;
+            typedef volatile CountType                *CountPtrType;
+
 
         protected:
             RefCountedMT()
             {
-                Count_ = 1;
+                pCount_ = static_cast<CountPtrType>(
+                    SmallObject<LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL>::operator new(
+                        sizeof(*pCount_)));
+                assert(pCount_);
+                *pCount_ = 1;
             }
 
             RefCountedMT(const RefCountedMT& rhs)
+                :pCount_(rhs.pCount_)
             {
-                Count_.store( rhs.Count_ );
             }
 
             //MWCW lacks template friends, hence the following kludge
             template <typename P1>
             RefCountedMT(const RefCountedMT<P1>& rhs)
-            : Count_(reinterpret_cast<const RefCountedMT<P>&>(rhs).Count_)
+            : pCount_(reinterpret_cast<const RefCountedMT<P>&>(rhs).pCount_)
             {}
 
             P Clone(const P& val)
             {
-                Count_++;
+                *pCount_ += 1;
                 return val;
             }
 
             bool Release(const P&)
             {
-                if ( Count_.fetch_sub(1) )
+                if ( pCount_->fetch_sub(1) == 0 )
                 {
                     return true;
                 }
@@ -617,13 +623,13 @@ namespace Loki
             }
 
             void Swap(RefCountedMT& rhs)
-            { std::swap(Count_, rhs.Count_); }
+            { std::swap(pCount_, rhs.pCount_); }
 
             enum { destructiveCopy = false };
 
         private:
             // Data
-            CountType Count_;
+            CountPtrType pCount_;
         };
     };
 
