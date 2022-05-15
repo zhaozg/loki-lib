@@ -155,10 +155,6 @@ int main()
 
     test_more();
 
-#if defined(__BORLANDC__) || defined(_MSC_VER)
-    system("PAUSE");
-#endif
-
     return 0;
 }
 

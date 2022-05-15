@@ -419,13 +419,9 @@ void * Run( void * id )
 
 void DoLockedPtrTest( void )
 {
-    char ender;
-
     SafeA::GetIt();
     UnsafeA::GetIt();
     cout << "Doing thread-locked pointer tests." << endl;
-    cout << "Press <Enter> key to start test. " << endl;
-    cin.get( ender );
     {
         ThreadPool pool;
         pool.Create( 5, RunLocked );
@@ -434,8 +430,6 @@ void DoLockedPtrTest( void )
     }
 
     cout << "Doing thread-unsafe pointer tests." << endl;
-    cout << "Press <Enter> key to start test. " << endl;
-    cin.get( ender );
     {
         ThreadPool pool;
         pool.Create( 5, Run );
@@ -450,19 +444,14 @@ void DoLockedPtrTest( void )
 
 void DoLockedStorageTest( void )
 {
-    char ender;
     SelfLockedA::GetIt();
     cout << "Doing LockedStorage tests." << endl;
-    cout << "Press <Enter> key to start test. " << endl;
-    cin.get( ender );
     {
         ThreadPool pool;
         pool.Create( 5, RunLockedStorage );
         pool.Start();
         pool.Join();
     }
-    cout << "Press <Enter> key when ready. " << endl;
-    cin.get( ender );
     SelfLockedA::Destroy();
 }
 

@@ -235,15 +235,12 @@ void MultiThreadSimpleTest( void )
 {
     cout << "Starting MultiThreadSimpleTest." << endl;
 
-    char ender;
     Thing::Init( 0 );
     const unsigned int threadCount = 5;
 
     {
         ThreadPool pool( threadCount );
         cout << "Doing thread-locked print test.  This test should pass and not deadlock" << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -255,8 +252,6 @@ void MultiThreadSimpleTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-unsafe print test.  This test may fail, but not deadlock." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -307,7 +302,6 @@ void MultiThreadTryLockTest( void )
 {
     cout << "Starting MultiThreadTryLockTest." << endl;
 
-    char ender;
     static const uintptr_t threadCount = 3;
     Thing::Init( 0 );
     volatile Thing & thing = Thing::GetIt();
@@ -323,8 +317,6 @@ void MultiThreadTryLockTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing multi-threaded TryLock test.  This test should not deadlock." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -353,7 +345,6 @@ void MultiThreadReentrantTest( void )
 {
     cout << "Starting MultiThreadReentrantTest." << endl;
 
-    char ender;
     Thing::Init( 0 );
     const unsigned int threadCount = 8;
     TestResults::Create( threadCount );
@@ -361,8 +352,6 @@ void MultiThreadReentrantTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-safe value test.  This test should pass and not deadlock." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -375,8 +364,6 @@ void MultiThreadReentrantTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-unsafe value test.  This test may fail." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( unsigned int ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -676,7 +663,6 @@ void MultiThreadMultiLockTest( void )
 {
     cout << "Starting MultiThreadMultiLockTest." << endl;
 
-    char ender;
     Thing::MakePool( thingCount );
     const uintptr_t threadCount = 8;
     TestResults::Create( threadCount );
@@ -684,8 +670,6 @@ void MultiThreadMultiLockTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-safe multi-lock test.  This test should pass and not deadlock." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -699,8 +683,6 @@ void MultiThreadMultiLockTest( void )
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-unsafe multi-lock test.  This test may fail." << endl;
         TestResults::GetIt()->Reset( threadCount );
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -850,7 +832,6 @@ void MultiThreadRandomMultiLockTest( void )
 {
     cout << "Starting MultiThreadRandomMultiLockTest." << endl;
 
-    char ender;
     Thing::MakePool( thingCount );
     const uintptr_t threadCount = 8;
     TestResults::Create( threadCount );
@@ -858,8 +839,6 @@ void MultiThreadRandomMultiLockTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-safe random multi-lock test.  This test should pass and not deadlock." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -873,8 +852,6 @@ void MultiThreadRandomMultiLockTest( void )
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-unsafe random multi-lock test.  This test may fail." << endl;
         TestResults::GetIt()->Reset( threadCount );
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -990,7 +967,6 @@ void MultiThreadHierarchySingleLockTest( void )
 {
     cout << "Starting MultiThreadHierarchySingleLockTest." << endl;
 
-    char ender;
     LevelThing::MakePool( thingCount );
     const uintptr_t threadCount = 8;
     TestResults::Create( threadCount );
@@ -998,8 +974,6 @@ void MultiThreadHierarchySingleLockTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-safe hierarchy test.  This test should pass and not deadlock." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -1012,8 +986,6 @@ void MultiThreadHierarchySingleLockTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-unsafe hierarchy test.  This test may fail." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         TestResults::GetIt()->Reset( threadCount );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
@@ -1130,7 +1102,6 @@ void MultiThreadHierarchyMultiLockTest( void )
 {
     cout << "Starting MultiThreadHierarchyMultiLockTest." << endl;
 
-    char ender;
     MultiLevelPool::MakePool( 10, thingCount );
     const uintptr_t threadCount = 8;
     TestResults::Create( threadCount );
@@ -1138,8 +1109,6 @@ void MultiThreadHierarchyMultiLockTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-safe multilock hierarchy test.  This test should pass and not deadlock." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {
             void * p = reinterpret_cast< void * >( ii );
@@ -1152,8 +1121,6 @@ void MultiThreadHierarchyMultiLockTest( void )
     {
         ThreadPool pool( threadCount );
         cout << endl << "Doing thread-unsafe multilock hierarchy test.  This test may fail." << endl;
-        cout << "Press <Enter> key to start test. ";
-        cin.get( ender );
         TestResults::GetIt()->Reset( threadCount );
         for ( uintptr_t ii = 0; ii < threadCount; ++ii )
         {

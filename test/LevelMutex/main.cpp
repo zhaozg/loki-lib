@@ -645,8 +645,6 @@ void SingleThreadExceptionTest( void )
 
 int main( int argc, const char * const argv[] )
 {
-    char ender;
-
     cout << "Starting LevelMutex tests." << endl;
     if ( 1 < argc )
     {
@@ -677,9 +675,6 @@ int main( int argc, const char * const argv[] )
     {
         cout << "Caught unknown exception!" << endl;
     }
-
-    cout << endl << "Done running LevelMutex tests. Press <Enter> key to continue. " << endl;
-    cin.get( ender );
 
     return 0;
 }

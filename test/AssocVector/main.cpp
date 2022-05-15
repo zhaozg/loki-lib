@@ -177,13 +177,9 @@ int main( int argc, const char * const argv[] )
 {
     (void)argc;
     (void)argv;
-    char ender;
 
     TestEmptyAssocVector();
     TestAssocVectorCtor();
-
-    cout << "Press <Enter> key to finish. " << endl;
-    cin.get( ender );
 
     return 0;
 }

@@ -542,9 +542,4 @@ int main()
     DoStandaloneFunctionTests();
     DoMemberFunctionTests( u1 );
 	DoExceptionTests();
-
-#if defined(__BORLANDC__) || defined(_MSC_VER)
-    system("PAUSE");
-#endif
-
 }

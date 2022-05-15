@@ -187,11 +187,6 @@ int main(int argc, char *argv[])
     LogBook::Instance().echo("LogClass singleton instantiated");
     keyboard::Instance().echo("Keyboard singleton instantiated");
 
-#if defined(__BORLANDC__) || defined(_MSC_VER)
-    system("PAUSE");
-#endif
-
-
     return 0;
 }
 

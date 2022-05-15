@@ -295,10 +295,6 @@ int main()
     cout << endl;
     cout << endl;
 
-#if defined(__BORLANDC__) || defined(_MSC_VER)
-    system("PAUSE");
-#endif
-
     return EXIT_SUCCESS;
 }
 

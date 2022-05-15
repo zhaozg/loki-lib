@@ -353,10 +353,6 @@ int main()
     cout << endl << endl;
 #endif
 
-#if defined(__BORLANDC__) || defined(_MSC_VER)
-    system("PAUSE");
-#endif
-
     cout << endl<< endl << "now leaving main" << endl;
     cout << "________________________________" << endl << endl;
 

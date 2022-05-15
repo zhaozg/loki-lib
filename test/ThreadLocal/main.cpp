@@ -72,9 +72,6 @@ int main( int argc, const char * const argv[] )
     else
         cout << "Your compiler does not properly implement thread_local storage for standalone static values." << endl;
 
-    ::std::cout << "Please press enter key to continue." << ::std::endl;
-    ::std::cin.get();
-
     return 0;
 }
 

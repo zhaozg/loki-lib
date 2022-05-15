@@ -434,8 +434,6 @@ void * DoCoutLoop( void * p )
 
 void AtomicTest( void )
 {
-    char ender;
-
     cout << "Starting Loki::Printf AtomicTest" << endl;
     {
         ThreadPool pool;
@@ -446,8 +444,6 @@ void AtomicTest( void )
     cout << "Finished Loki::Printf AtomicTest." << endl;
 	cout << "If the output lines up in neat columns, the test passed." << endl;
 	cout << "If the output is not in columns, then the test failed." << endl;
-    cout << "Press <Enter> key to continue. ";
-    cin.get( ender );
 
     cout << "Starting Loki::FPrintf AtomicTest" << endl;
     {
@@ -459,8 +455,6 @@ void AtomicTest( void )
     cout << "Finished Loki::FPrintf AtomicTest." << endl;
 	cout << "If the output lines up in neat columns, the test passed." << endl;
 	cout << "If the output is not in columns, then the test failed." << endl;
-    cout << "Press <Enter> key to continue. ";
-    cin.get( ender );
 
     cout << "Starting stdout AtomicTest" << endl;
     {
@@ -472,8 +466,6 @@ void AtomicTest( void )
     cout << "Finished stdout AtomicTest." << endl;
 	cout << "If the output lines up in neat columns, your compiler implements printf correctly." << endl;
 	cout << "If the output is not in columns, then your compiler implements printf incorrectly." << endl;
-    cout << "Press <Enter> key to continue. ";
-    cin.get( ender );
 
     cout << "Starting cout AtomicTest" << endl;
     {
@@ -485,8 +477,6 @@ void AtomicTest( void )
     cout << "Finished cout AtomicTest." << endl;
 	cout << "If the output lines up in neat columns, your compiler implements cout correctly." << endl;
 	cout << "If the output is not in columns, then your compiler implements cout incorrectly." << endl;
-    cout << "Press <Enter> key to continue. ";
-    cin.get( ender );
 }
 
 // ----------------------------------------------------------------------------

@@ -301,15 +301,9 @@ int main( int argc, const char * const argv[] )
 {
     (void)argc;
     (void)argv;
-    char ender;
 
     DoObjectLockTest();
-    cout << "Press <Enter> key to continue. ";
-    cin.get( ender );
-
     DoClassLockTest();
-    cout << "Press <Enter> key to finish. ";
-    cin.get( ender );
 
     return 0;
 }

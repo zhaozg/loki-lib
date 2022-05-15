@@ -343,10 +343,6 @@ void DoSingleThreadTest (void)
     testSize<  9, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
     testSize< 16, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
     testSize< 17, loop, ::Loki::SingleThreaded, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
-
-#if defined(__BORLANDC__) || defined(_MSC_VER)
-    system("PAUSE");
-#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -363,10 +359,6 @@ void DoClassLockTest (void)
     testSize<  9, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
     testSize< 16, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
     testSize< 17, loop, ::Loki::ClassLevelLockable, 4096, 128, 4, ::Loki::NoDestroy, ::Loki::Mutex<std::mutex> >();
-
-#if defined(__BORLANDC__) || defined(_MSC_VER)
-    system("PAUSE");
-#endif
 }
 
 #endif

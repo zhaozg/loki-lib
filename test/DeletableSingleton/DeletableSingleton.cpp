@@ -74,10 +74,6 @@ int main()
     LogBook::Instance().print("LogClass reinstantiated.");
     LogBook::Instance().print("Going to terminate program now.");
 
-#if defined(__BORLANDC__) || defined(_MSC_VER)
-    system("PAUSE");
-#endif
-
     return 0;
 }
 
