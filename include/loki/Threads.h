@@ -216,12 +216,10 @@ namespace Loki
     {
         struct Initializer
         {
+            friend ClassLevelLockable;
 
-            /// This function provides a Scott-Meyers type of Singleton as the initializer
-            /// for the shared mutex.
             static Initializer & GetIt( void )
             {
-                static Initializer initializer_;
                 return initializer_;
             }
 
@@ -242,9 +240,11 @@ namespace Loki
                 assert(init_);
             }
 
-            Initializer( const Initializer & );
-            Initializer & operator = ( const Initializer & );
+            Initializer( const Initializer & ) = delete;
+            Initializer & operator = ( const Initializer & ) = delete;
         };
+
+        static Initializer initializer_;
 
     public:
 
@@ -300,6 +300,10 @@ namespace Loki
 
     template <class Host, class MutexPolicy>
     MutexPolicy ClassLevelLockable<Host, MutexPolicy>::atomic_mutex_;
+
+    template <class Host, class MutexPolicy>
+    typename ClassLevelLockable< Host, MutexPolicy >::Initializer
+    ClassLevelLockable< Host, MutexPolicy >::initializer_;
 } // namespace Loki
 
 
