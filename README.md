@@ -4,17 +4,11 @@
 ## Change
 
 - Remove ide support files
-- Change some to run with C++11
-- source code minor change.
-- fail test
-
-  * Register
-  * RegressionTest
+- Necessary change to run with C++11
 
 ## TODO
 
-1. ☐ remove all std::auto_ptr
-2. ☐ fix all warnings
-3. ☐ Mutex
-4. ☐ Deep SmallObj
+1. ☐ fix all warnings
+2. ☐ Mutex optimize
+3. ☐ SmallObj check
 

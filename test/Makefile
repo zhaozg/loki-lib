@@ -4,8 +4,6 @@ SUBTARGETS := $(filter-out $(SUBTARGETS_FILTER_OUT),$(SUBTARGETS_ORIG))
 
 SUBTARGETS_CLEAN := $(addsuffix -clean,$(SUBTARGETS))
 
-TMP := $(filter-out RegressionTest, $(SUBTARGETS))
-SUBTARGETS := $(TMP)
 SUBTARGETS_TEST:= $(addsuffix -test,$(SUBTARGETS))
 
 # skip test not pass

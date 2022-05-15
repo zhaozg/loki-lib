@@ -9,7 +9,7 @@ build-shared:
 	$(MAKE) -C src build-shared
 
 check: build-static build-shared
-	$(MAKE) -C test
+	$(MAKE) -C test test
 
 clean:
 	$(MAKE) -C src clean

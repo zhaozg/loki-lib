@@ -609,13 +609,14 @@ namespace Loki
 
             P Clone(const P& val)
             {
-                *pCount_ += 1;
+                ++*pCount_;
                 return val;
             }
 
             bool Release(const P&)
             {
-                if ( pCount_->fetch_sub(1) == 0 )
+
+                if ( !--*pCount_ )
                 {
                     return true;
                 }
