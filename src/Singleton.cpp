@@ -51,6 +51,7 @@ void LOKI_C_CALLING_CONVENTION_QUALIFIER Loki::Private::AtExitFn()
 
     // Pick the element at the top of the stack
     LifetimeTracker* pTop = pTrackerArray->back();
+    (void)pTop;
 
     // Remove that object off the stack _before_ deleting pTop
     pTrackerArray->pop_back();

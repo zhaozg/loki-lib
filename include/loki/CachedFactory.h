@@ -181,8 +181,8 @@ namespace Loki
 
             void cleanVector()
             {
-            	using namespace std;
-				clock_t currentTime = clock();
+                using namespace std;
+		clock_t currentTime = clock();
                 D( cout << "currentTime = " << currentTime<< endl; )
                 D( cout << "currentTime - lastUpdate = " << currentTime - lastUpdate<< endl; )
                 if(currentTime - lastUpdate > timeValidity)
@@ -195,7 +195,10 @@ namespace Loki
                 {
                     D( cout << "Cleaning time less than " << currentTime - timeValidity << endl; )
                     D( displayVector(); )
-                    Vector::iterator newEnd = remove_if(m_vTimes.begin(), m_vTimes.end(), bind2nd(less<clock_t>(), currentTime - timeValidity));
+                    Vector::iterator newEnd = remove_if(m_vTimes.begin(), m_vTimes.end(),
+                                                        bind(less<clock_t>(),
+                                                            placeholders::_1,
+                                                             currentTime - timeValidity));
                     // this rearrangement might be costly, consider optimization
                     // by calling cleanVector in less used onCreate function
                     // ... although it may not be correct
@@ -516,7 +519,9 @@ namespace Loki
 
     	void onDestroy(const DT& key){
     		using namespace std;
-            m_vKeys.erase(remove_if(m_vKeys.begin(), m_vKeys.end(), bind2nd(equal_to< DT >(), key)), m_vKeys.end());
+            m_vKeys.erase(remove_if(m_vKeys.begin(), m_vKeys.end(),
+                                    bind(equal_to< DT >(), std::placeholders::_1,  key)),
+                          m_vKeys.end());
     	}
 
     	// Implemented in Cache and redirected to the Storage Policy
@@ -804,7 +809,10 @@ namespace Loki
             for(objVectorItr=fromKeyToObjVector.begin();objVectorItr!=fromKeyToObjVector.end();++objVectorItr)
             {
                 ObjVector &v((*objVectorItr).second);
-                objItr = remove_if(v.begin(), v.end(), std::bind2nd(std::equal_to<AbstractProduct*>(), pProduct));
+                objItr = remove_if(v.begin(), v.end(),
+                                   std::bind(std::equal_to<AbstractProduct*>(),
+                                             std::placeholders::_1,
+                                             pProduct));
                 if(objItr != v.end()) // we found the vector containing pProduct and removed it
                 {
                     onDestroy(pProduct); // warning policies we are about to destroy an object
