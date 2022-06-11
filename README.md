@@ -1,5 +1,13 @@
 
-# C++11 loki
+# C++11/17 loki
+
+## build with C++11
+
+`make CXXFLAGS=-std=c++11`
+
+## build with C++17
+
+`make CXXFLAGS=-std=c++17`
 
 ## Change
 
