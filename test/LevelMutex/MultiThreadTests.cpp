@@ -55,6 +55,7 @@ bool WillRedoSingleTests( void )
 // ----------------------------------------------------------------------------
 
 #if defined(_WIN32)
+    #include <Windows.h>
 
     typedef unsigned int ( WINAPI * ThreadFunction_ )( void * );
 

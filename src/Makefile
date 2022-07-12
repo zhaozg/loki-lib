@@ -42,7 +42,7 @@ ifeq ($(OS), HP-UX)
 else
   SHARED_LIB_VERSIONED := libloki.dll
   override LDFLAGS += --shared
-  LDLIBS :=
+  LDLIBS := -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic
 endif
 endif
 endif

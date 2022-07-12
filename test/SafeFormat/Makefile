@@ -16,7 +16,7 @@ $(BIN): $(OBJ)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 test: $(BIN)
-	./$(BIN) -f
-	./$(BIN) -r:100 -s:100
+	$(WINE) ./$(BIN) -f
+	$(WINE) ./$(BIN) -r:100 -s:100
 
 include ../../Makefile.deps

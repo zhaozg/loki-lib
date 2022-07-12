@@ -51,15 +51,9 @@
 #include <functional>
 #include <stdexcept>
 #include <cassert>
+#include <cstdint>
 #include <string>
-
-#if !defined(_MSC_VER)
-#  if defined(__sparc__)
-#    include <inttypes.h>
-#  else
-#    include <stdint.h>
-#  endif
-#endif
+#include <atomic>
 
 #if defined(_MSC_VER) || defined(__GNUC__)
 // GCC>=4.1 must use -ffriend-injection due to a bug in GCC
@@ -582,7 +576,7 @@ namespace Loki
         public:
 
             typedef ThreadingModel< RefCountedMT<P>, MX > base_type;
-            typedef typename std::atomic<uintptr_t>       CountType;
+            typedef typename std::atomic<std::uintptr_t>  CountType;
             typedef volatile CountType                *CountPtrType;
 
 

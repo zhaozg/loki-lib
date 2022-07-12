@@ -9,6 +9,10 @@
 
 `make CXXFLAGS=-std=c++17`
 
+## build for Windows with mingw64
+
+`make OS=Windows`
+
 ## Change
 
 - Remove ide support files

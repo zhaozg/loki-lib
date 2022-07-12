@@ -1,15 +1,19 @@
 include Makefile.common
+MFLAGS=
+ifneq ($(OS),)
+MFLAGS= OS=$(OS)
+endif
 
 .PHONY: all build-static build-shared check clean distclean
 all: build-static build-shared check
 build-static:
-	$(MAKE) -C src build-static
+	$(MAKE) -C src build-static $(MFLAGS)
 
 build-shared:
-	$(MAKE) -C src build-shared
+	$(MAKE) -C src build-shared $(MFLAGS)
 
 check: build-static build-shared
-	$(MAKE) -C test test
+	$(MAKE) -C test test $(MFLAGS)
 
 clean:
 	$(MAKE) -C src clean

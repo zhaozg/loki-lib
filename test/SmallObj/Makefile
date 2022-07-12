@@ -31,8 +31,8 @@ $(BIN3): $(OBJ3)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 test: $(BIN1) $(BIN2) $(BIN3)
-	./$(BIN1)
-	./$(BIN2)
-	./$(BIN3)
+	$(WINE) ./$(BIN1)
+	$(WINE) ./$(BIN2)
+	$(WINE) ./$(BIN3)
 
 include ../../Makefile.deps

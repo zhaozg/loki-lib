@@ -23,7 +23,7 @@ $(BIN2): $(OBJ2)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 test: $(BIN1) $(BIN2)
-	./$(BIN1) 33 44 22 11
-	./$(BIN2)
+	$(WINE) ./$(BIN1) 33 44 22 11
+	$(WINE) ./$(BIN2)
 
 include ../../Makefile.deps

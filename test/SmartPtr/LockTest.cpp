@@ -43,6 +43,8 @@
 
 #if defined(_WIN32)
 
+    #include <windows.h>
+
     typedef unsigned int ( WINAPI * ThreadFunction_ )( void * );
 
     #define LOKI_pthread_t HANDLE

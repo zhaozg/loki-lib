@@ -5,6 +5,7 @@ LDLIBS := ../../lib/libloki.a
 
 ifeq ($(OS),Windows)
 BIN_SUFFIX := .exe
+LDLIBS += -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic
 else
 BIN_SUFFIX :=
 endif

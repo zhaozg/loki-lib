@@ -601,7 +601,7 @@ void SomeThing::SetValue( uintptr_t value ) volatile
 
 // ----------------------------------------------------------------------------
 
-void SomeThing::SetValue( unsigned long value )
+void SomeThing::SetValue( uintptr_t value )
 {
     assert( NULL != this );
     m_value = value;

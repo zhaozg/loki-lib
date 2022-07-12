@@ -6,4 +6,9 @@ endif
 CXXWARNFLAGS := -Wall -Wold-style-cast -Wundef -Wsign-compare -Wconversion -Wpointer-arith -pedantic
 CXXFLAGS += $(CXXWARNFLAGS) -g3 -Og
 
+ifeq ($(OS), Windows)
+WINE ?= wine
+
+endif
+
 prefix := /usr

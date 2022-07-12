@@ -49,6 +49,6 @@ clean: cleandeps
 	$(RM) $(OBJ3)
 
 test: $(BIN1)
-	./$(BIN1)
+	$(WINE) ./$(BIN1)
 
 include ../../Makefile.deps
