@@ -41,18 +41,11 @@
 #include <cassert>
 #include <cstdint>
 #include <locale>
+#include <algorithm>
 #include <iostream>
 
 #include <loki/LokiExport.h>
 #include <loki/TypeTraits.h>
-
-// Windows headers could have min/max defined
-#ifdef max
-#  undef max
-#endif
-#ifdef min
-#  undef min
-#endif
 
 namespace Loki
 {
@@ -129,7 +122,7 @@ namespace Loki
 
         #define LOKI_PRINTF_STATE_FORWARD(type) \
             PrintfState& operator()(type par) {\
-                return (*this)(static_cast< uint64_t >(par)); \
+                return (*this)(static_cast< unsigned long long >(par)); \
             }
 
         LOKI_PRINTF_STATE_FORWARD(bool)
@@ -144,7 +137,7 @@ namespace Loki
         LOKI_PRINTF_STATE_FORWARD(unsigned long)
 
         // Print (or gobble in case of the "*" specifier) an int
-        PrintfState& operator()( uint64_t i) {
+        PrintfState& operator()( unsigned long long i) {
             if ( '\0' == *format_ )
             {
                 ::std::logic_error ex( "invalid number of parameters for Loki::SafeFormat!" );

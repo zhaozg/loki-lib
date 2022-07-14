@@ -57,7 +57,6 @@ Test::tests_type Test::tests;
 #include "AbstractFactoryTest.h"
 #include "FunctorTest.h"
 #include "DataGeneratorsTest.h"
-#include "AssocVectorTest.h"
 
 int main()
 {

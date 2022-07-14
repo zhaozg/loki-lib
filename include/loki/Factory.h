@@ -34,9 +34,10 @@
 
 #include <loki/LokiTypeInfo.h>
 #include <loki/Functor.h>
-#include <loki/AssocVector.h>
 #include <loki/SmallObj.h>
 #include <loki/Sequence.h>
+
+#include <map>
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -789,7 +790,7 @@ template <typename AP, typename Id, typename P1 >
         typedef Functor<AbstractProduct*, CreatorParmTList> ProductCreator;
 
     private:
-        typedef AssocVector<IdentifierType, ProductCreator> IdToProductMap;
+        typedef std::map<IdentifierType, ProductCreator> IdToProductMap;
 
         IdToProductMap associations_;
 
@@ -1035,7 +1036,7 @@ template <typename AP, typename Id, typename P1 >
         }
 
     private:
-        typedef AssocVector<IdentifierType, ProductCreator> IdToProductMap;
+        typedef std::map<IdentifierType, ProductCreator> IdToProductMap;
         IdToProductMap associations_;
     };
 
@@ -1092,7 +1093,7 @@ template <typename AP, typename Id, typename P1 >
         }
 
     private:
-        typedef AssocVector<TypeInfo, ProductCreator> IdToProductMap;
+        typedef std::map<TypeInfo, ProductCreator> IdToProductMap;
         IdToProductMap associations_;
     };
 

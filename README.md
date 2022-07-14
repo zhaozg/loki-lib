@@ -17,6 +17,8 @@
 
 - Remove ide support files
 - Necessary change to run with C++11
+- Remove AssocVector
+- Remove LevelMutex
 
 ## TODO
 
