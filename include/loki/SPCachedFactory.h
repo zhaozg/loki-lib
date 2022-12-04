@@ -45,12 +45,11 @@
  * SmartPointer a new CachedFactory encapsulation policy.
  */
 
+#include <loki/CachedFactory.h>
 #include <loki/Functor.h>
 #include <loki/SmartPtr.h>
-#include <loki/CachedFactory.h>
 
-namespace Loki
-{
+namespace Loki {
 
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class FunctionStorage
@@ -68,146 +67,139 @@ namespace Loki
 ///  the FunctionStorage template to know the full definition of the SmartPtr.
 ////////////////////////////////////////////////////////////////////////////////
 
-    template <class T>
-    class FunctionStorage
-    {
-    public:
-    	/// the type of the pointee_ object
-        typedef T* StoredType;
-        /// type used to declare OwnershipPolicy type.
-        typedef T* InitPointerType;
-        /// type returned by operator->
-        typedef T* PointerType;
-        /// type returned by operator*
-        typedef T& ReferenceType;
-        /// type of the Functor to set
-        typedef Functor< void , Seq< void* > > FunctorType;
+template <class T> class FunctionStorage {
+public:
+  /// the type of the pointee_ object
+  typedef T *StoredType;
+  /// type used to declare OwnershipPolicy type.
+  typedef T *InitPointerType;
+  /// type returned by operator->
+  typedef T *PointerType;
+  /// type returned by operator*
+  typedef T &ReferenceType;
+  /// type of the Functor to set
+  typedef Functor<void, Seq<void *>> FunctorType;
 
-        FunctionStorage() : pointee_(Default()), functor_()
-        {}
+  FunctionStorage() : pointee_(Default()), functor_() {}
 
-        // The storage policy doesn't initialize the stored pointer
-        //     which will be initialized by the OwnershipPolicy's Clone fn
-        FunctionStorage(const FunctionStorage& rsh) : pointee_(0), functor_(rsh.functor_)
-        {}
+  // The storage policy doesn't initialize the stored pointer
+  //     which will be initialized by the OwnershipPolicy's Clone fn
+  FunctionStorage(const FunctionStorage &rsh)
+      : pointee_(0), functor_(rsh.functor_) {}
 
-        template <class U>
-        FunctionStorage(const FunctionStorage<U>& rsh) : pointee_(0), functor_(rsh.functor_)
-        {}
+  template <class U>
+  FunctionStorage(const FunctionStorage<U> &rsh)
+      : pointee_(0), functor_(rsh.functor_) {}
 
-        FunctionStorage(const StoredType& p) : pointee_(p), functor_() {}
+  FunctionStorage(const StoredType &p) : pointee_(p), functor_() {}
 
-        PointerType operator->() const { return pointee_; }
+  PointerType operator->() const { return pointee_; }
 
-        ReferenceType operator*() const { return *pointee_; }
+  ReferenceType operator*() const { return *pointee_; }
 
-        void Swap(FunctionStorage& rhs)
-        {
-        	std::swap(pointee_, rhs.pointee_);
-        	std::swap(functor_, rhs.functor_);
-        }
+  void Swap(FunctionStorage &rhs) {
+    std::swap(pointee_, rhs.pointee_);
+    std::swap(functor_, rhs.functor_);
+  }
 
-        /// Sets the callback function to call. You have to specify it or
-        /// the smartPtr will throw a bad_function_call exception.
-        void SetCallBackFunction(const FunctorType &functor)
-        {
-        	functor_ = functor;
-        }
+  /// Sets the callback function to call. You have to specify it or
+  /// the smartPtr will throw a bad_function_call exception.
+  void SetCallBackFunction(const FunctorType &functor) { functor_ = functor; }
 
-        // Accessors
-        template <class F>
-        friend typename FunctionStorage<F>::PointerType GetImpl(const FunctionStorage<F>& sp);
+  // Accessors
+  template <class F>
+  friend typename FunctionStorage<F>::PointerType
+  GetImpl(const FunctionStorage<F> &sp);
 
-        template <class F>
-        friend const typename FunctionStorage<F>::StoredType& GetImplRef(const FunctionStorage<F>& sp);
+  template <class F>
+  friend const typename FunctionStorage<F>::StoredType &
+  GetImplRef(const FunctionStorage<F> &sp);
 
-        template <class F>
-        friend typename FunctionStorage<F>::StoredType& GetImplRef(FunctionStorage<F>& sp);
+  template <class F>
+  friend typename FunctionStorage<F>::StoredType &
+  GetImplRef(FunctionStorage<F> &sp);
 
-    protected:
-        // Destroys the data stored
-        // (Destruction might be taken over by the OwnershipPolicy)
-        void Destroy()
-        {
-            functor_(this);
-        }
+protected:
+  // Destroys the data stored
+  // (Destruction might be taken over by the OwnershipPolicy)
+  void Destroy() { functor_(this); }
 
-        // Default value to initialize the pointer
-        static StoredType Default()
-        { return 0; }
+  // Default value to initialize the pointer
+  static StoredType Default() { return 0; }
 
-    private:
-        // Data
-        StoredType pointee_;
-        FunctorType functor_;
-    };
+private:
+  // Data
+  StoredType pointee_;
+  FunctorType functor_;
+};
 
-    template <class T>
-    inline typename FunctionStorage<T>::PointerType GetImpl(const FunctionStorage<T>& sp)
-    { return sp.pointee_; }
+template <class T>
+inline typename FunctionStorage<T>::PointerType
+GetImpl(const FunctionStorage<T> &sp) {
+  return sp.pointee_;
+}
 
-    template <class T>
-    inline const typename FunctionStorage<T>::StoredType& GetImplRef(const FunctionStorage<T>& sp)
-    { return sp.pointee_; }
+template <class T>
+inline const typename FunctionStorage<T>::StoredType &
+GetImplRef(const FunctionStorage<T> &sp) {
+  return sp.pointee_;
+}
 
-    template <class T>
-    inline typename FunctionStorage<T>::StoredType& GetImplRef(FunctionStorage<T>& sp)
-    { return sp.pointee_; }
+template <class T>
+inline typename FunctionStorage<T>::StoredType &
+GetImplRef(FunctionStorage<T> &sp) {
+  return sp.pointee_;
+}
 
-    /**
-	 * \class	SmartPointer
-	 * \ingroup	EncapsulationPolicyCachedFactoryGroup
-	 * \brief	Encapsulate the object in a SmartPtr with FunctionStorage policy.
-	 *
-	 * The object will come back to the Cache as soon as no more SmartPtr are
-	 * referencing this object. You can customize the SmartPointer with the standard
-	 * SmartPtr policies (OwnershipPolicy, ConversionPolicy, CheckingPolicy,
-	 * ConstnessPolicy) but StoragePolicy is forced to FunctionStorage.
-	 */
-     template
-     <
-     	class AbstractProduct,
-     	template <class> class OwnershipPolicy = RefCounted,
-        class ConversionPolicy = DisallowConversion,
-        template <class> class CheckingPolicy = AssertCheck,
-        template<class> class ConstnessPolicy = LOKI_DEFAULT_CONSTNESS
-     >
-     class SmartPointer
-     {
-     private:
-     	   typedef SmartPtr< AbstractProduct,OwnershipPolicy,
-     	   	ConversionPolicy, CheckingPolicy,
-     	   	FunctionStorage, ConstnessPolicy > CallBackSP;
-     protected:
-           typedef CallBackSP ProductReturn;
-           SmartPointer() : fun(this, &SmartPointer::smartPointerCallbackFunction) {}
-           virtual ~SmartPointer(){}
+/**
+ * \class	SmartPointer
+ * \ingroup	EncapsulationPolicyCachedFactoryGroup
+ * \brief	Encapsulate the object in a SmartPtr with FunctionStorage
+ * policy.
+ *
+ * The object will come back to the Cache as soon as no more SmartPtr are
+ * referencing this object. You can customize the SmartPointer with the standard
+ * SmartPtr policies (OwnershipPolicy, ConversionPolicy, CheckingPolicy,
+ * ConstnessPolicy) but StoragePolicy is forced to FunctionStorage.
+ */
+template <class AbstractProduct,
+          template <class> class OwnershipPolicy = RefCounted,
+          class ConversionPolicy = DisallowConversion,
+          template <class> class CheckingPolicy = AssertCheck,
+          template <class> class ConstnessPolicy = LOKI_DEFAULT_CONSTNESS>
+class SmartPointer {
+private:
+  typedef SmartPtr<AbstractProduct, OwnershipPolicy, ConversionPolicy,
+                   CheckingPolicy, FunctionStorage, ConstnessPolicy>
+      CallBackSP;
 
-           ProductReturn encapsulate(AbstractProduct* pProduct)
-           {
-           		CallBackSP SP(pProduct);
-           		SP.SetCallBackFunction(fun);
-                return SP;
-           }
+protected:
+  typedef CallBackSP ProductReturn;
+  SmartPointer() : fun(this, &SmartPointer::smartPointerCallbackFunction) {}
+  virtual ~SmartPointer() {}
 
-           AbstractProduct* release(ProductReturn &pProduct)
-           {
-                return GetImpl(pProduct);
-           }
+  ProductReturn encapsulate(AbstractProduct *pProduct) {
+    CallBackSP SP(pProduct);
+    SP.SetCallBackFunction(fun);
+    return SP;
+  }
 
-           const char* name(){return "smart pointer";}
+  AbstractProduct *release(ProductReturn &pProduct) {
+    return GetImpl(pProduct);
+  }
 
-     private:
-           SmartPointer& operator=(const SmartPointer&);
-           SmartPointer(const SmartPointer&);
-     	   void smartPointerCallbackFunction(void* pSP)
-     	   {
-     	   		CallBackSP &SP(*reinterpret_cast<CallBackSP*>(pSP));
-     	   		ReleaseObject(SP);
-     	   }
-           virtual void ReleaseObject(ProductReturn &object)=0;
-           const typename CallBackSP::FunctorType fun;
-     };
+  const char *name() { return "smart pointer"; }
+
+private:
+  SmartPointer &operator=(const SmartPointer &);
+  SmartPointer(const SmartPointer &);
+  void smartPointerCallbackFunction(void *pSP) {
+    CallBackSP &SP(*reinterpret_cast<CallBackSP *>(pSP));
+    ReleaseObject(SP);
+  }
+  virtual void ReleaseObject(ProductReturn &object) = 0;
+  const typename CallBackSP::FunctorType fun;
+};
 
 } // namespace Loki
 

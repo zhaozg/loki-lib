@@ -28,90 +28,71 @@
 
 #include "ThreadPool.hpp"
 
-#include <sstream>
 #include <iostream>
+#include <sstream>
 
 // ----------------------------------------------------------------------------
 
-Thread::Thread( CallFunction func, void * parm )
-	: pthread_()
-	, func_( func )
-	, parm_( parm )
-{
+Thread::Thread(CallFunction func, void *parm)
+    : pthread_(), func_(func), parm_(parm) {}
+
+// ----------------------------------------------------------------------------
+
+void Thread::AssignTask(CallFunction func, void *parm) {
+  func_ = func;
+  parm_ = parm;
 }
 
 // ----------------------------------------------------------------------------
 
-void Thread::AssignTask( CallFunction func, void * parm )
-{
-	func_ = func;
-	parm_ = parm;
+int Thread::Start(void) {
+  return LOKI_pthread_create(&pthread_, NULL, func_, parm_);
 }
 
 // ----------------------------------------------------------------------------
 
-int Thread::Start( void )
-{
-	return LOKI_pthread_create( &pthread_, NULL, func_, parm_ );
+int Thread::WaitForThread(void) const { return LOKI_pthread_join(pthread_); }
+
+// ----------------------------------------------------------------------------
+
+ThreadPool::ThreadPool(void) : m_threads() {}
+
+// ----------------------------------------------------------------------------
+
+ThreadPool::~ThreadPool(void) {
+  for (size_t ii = 0; ii < m_threads.size(); ++ii) {
+    delete m_threads.at(ii);
+  }
 }
 
 // ----------------------------------------------------------------------------
 
-int Thread::WaitForThread( void ) const
-{
-	return LOKI_pthread_join( pthread_ );
+void ThreadPool::Create(size_t threadCount, Thread::CallFunction function) {
+  for (size_t ii = 0; ii < threadCount; ii++) {
+    ::std::stringstream buffer;
+    buffer << "Creating thread " << ii << ::std::endl;
+    ::std::cout << buffer.rdbuf();
+    Thread *thread = new Thread(function, reinterpret_cast<void *>(ii + 1));
+    m_threads.push_back(thread);
+  }
 }
 
 // ----------------------------------------------------------------------------
 
-ThreadPool::ThreadPool( void ) : m_threads()
-{
+void ThreadPool::Start(void) {
+  for (size_t ii = 0; ii < m_threads.size(); ii++) {
+    ::std::stringstream buffer;
+    buffer << "Starting thread " << ii << ::std::endl;
+    ::std::cout << buffer.rdbuf();
+    m_threads.at(ii)->Start();
+  }
 }
 
 // ----------------------------------------------------------------------------
 
-ThreadPool::~ThreadPool( void )
-{
-	for ( size_t ii = 0; ii < m_threads.size(); ++ii )
-	{
-		delete m_threads.at(ii);
-	}
-}
-
-// ----------------------------------------------------------------------------
-
-void ThreadPool::Create( size_t threadCount, Thread::CallFunction function )
-{
-	for( size_t ii = 0; ii < threadCount; ii++ )
-	{
-		::std::stringstream buffer;
-		buffer << "Creating thread " << ii << ::std::endl;
-		::std::cout << buffer.rdbuf();
-		Thread * thread = new Thread( function,
-			reinterpret_cast< void * >( ii + 1 ) );
-		m_threads.push_back( thread );
-	}
-}
-
-// ----------------------------------------------------------------------------
-
-void ThreadPool::Start( void )
-{
-	for ( size_t ii = 0; ii < m_threads.size(); ii++ )
-	{
-		::std::stringstream buffer;
-		buffer << "Starting thread " << ii << ::std::endl;
-		::std::cout << buffer.rdbuf();
-		m_threads.at( ii )->Start();
-	}
-}
-
-// ----------------------------------------------------------------------------
-
-void ThreadPool::Join( void ) const
-{
-	for ( size_t ii = 0; ii < m_threads.size(); ii++ )
-		m_threads.at( ii )->WaitForThread();
+void ThreadPool::Join(void) const {
+  for (size_t ii = 0; ii < m_threads.size(); ii++)
+    m_threads.at(ii)->WaitForThread();
 }
 
 // ----------------------------------------------------------------------------

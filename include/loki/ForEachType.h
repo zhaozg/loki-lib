@@ -29,92 +29,76 @@
 #include <loki/NullType.h>
 #include <loki/Typelist.h>
 
-namespace Loki
-{
+namespace Loki {
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // class template ForEachType
-    // Calls a templated callable for every element of a Typelist
-    // Supplies an int template parameter for the position in the TypeList.
-    // Invocation (TList is a typelist):
-    // ForEachType<TList> dummy();
-    // Calls the supplied method during construction of the object dummy.
-    ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// class template ForEachType
+// Calls a templated callable for every element of a Typelist
+// Supplies an int template parameter for the position in the TypeList.
+// Invocation (TList is a typelist):
+// ForEachType<TList> dummy();
+// Calls the supplied method during construction of the object dummy.
+////////////////////////////////////////////////////////////////////////////////
 
-    namespace Private
-    {
-        // type of recursive function
-        template <class TList, class Callable>
-        struct ForEachTypeImpl;
+namespace Private {
+// type of recursive function
+template <class TList, class Callable> struct ForEachTypeImpl;
 
-        // Recursion rule
-        template <class Head, class Tail, class Callable>
-        struct ForEachTypeImpl<Typelist<Head, Tail>, Callable>
-            :  public ForEachTypeImpl<Tail, Callable>
-        {
-            enum { value = 1 + ForEachTypeImpl<Tail, Callable>::value };
+// Recursion rule
+template <class Head, class Tail, class Callable>
+struct ForEachTypeImpl<Typelist<Head, Tail>, Callable>
+    : public ForEachTypeImpl<Tail, Callable> {
+  enum { value = 1 + ForEachTypeImpl<Tail, Callable>::value };
 
-            ForEachTypeImpl( Callable& callable ) : ForEachTypeImpl<Tail, Callable>(callable)
-            {
+  ForEachTypeImpl(Callable &callable)
+      : ForEachTypeImpl<Tail, Callable>(callable) {
 #ifdef _MSC_VER
-                callable.operator()<value, Head>();
+    callable.operator()<value, Head>();
 #else
-                callable.template operator()<value, Head>();
+    callable.template operator()<value, Head>();
 #endif
-            }
+  }
+};
 
-        };
+// Recursion end
+template <class Head, class Callable>
+struct ForEachTypeImpl<Typelist<Head, NullType>, Callable> {
+public:
+  enum { value = 0 };
 
-        // Recursion end
-        template <class Head, class Callable>
-        struct ForEachTypeImpl<Typelist<Head, NullType>, Callable>
-        {
-        public:
-
-            enum { value = 0 };
-
-            ForEachTypeImpl( Callable& callable )
-            {
+  ForEachTypeImpl(Callable &callable) {
 #ifdef _MSC_VER
-                callable.operator()<value, Head>();
+    callable.operator()<value, Head>();
 #else
-                callable.template operator()<value, Head>();
+    callable.template operator()<value, Head>();
 #endif
-            }
-        };
+  }
+};
 
+} // namespace Private
 
-    }
+struct OrderPolicyForward;
+struct OrderPolicyBackward;
 
+template <class TList, class Callable, class OrderPolicy = OrderPolicyForward>
+struct ForEachType;
 
-    struct OrderPolicyForward;
-    struct OrderPolicyBackward;
+template <class TList, class Callable>
+struct ForEachType<TList, Callable, OrderPolicyForward>
+    : public Private::ForEachTypeImpl<typename TL::Reverse<TList>::Result,
+                                      Callable> {
+  ForEachType(Callable &callable)
+      : Private::ForEachTypeImpl<typename TL::Reverse<TList>::Result, Callable>(
+            callable) {}
+};
 
-    template <class TList, class Callable, class OrderPolicy = OrderPolicyForward>
-    struct ForEachType;
+template <class TList, class Callable>
+struct ForEachType<TList, Callable, OrderPolicyBackward>
+    : public Private::ForEachTypeImpl<TList, Callable> {
+  ForEachType(Callable &callable)
+      : Private::ForEachTypeImpl<TList, Callable>(callable) {}
+};
 
-    template <class TList, class Callable >
-    struct ForEachType<TList, Callable, OrderPolicyForward>
-      : public Private::ForEachTypeImpl<typename TL::Reverse<TList>::Result, Callable >
-    {
-        ForEachType( Callable& callable )
-        : Private::ForEachTypeImpl<typename TL::Reverse<TList>::Result, Callable >( callable )
-        {
-        }
-    };
-
-    template <class TList, class Callable >
-    struct ForEachType<TList, Callable, OrderPolicyBackward>
-    : public Private::ForEachTypeImpl< TList, Callable >
-    {
-        ForEachType( Callable& callable )
-        : Private::ForEachTypeImpl< TList, Callable >( callable )
-        {
-        }
-    };
-
-
-}
+} // namespace Loki
 
 #endif
-

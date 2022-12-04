@@ -28,14 +28,11 @@
 
 // $Id$
 
-
 #include <assert.h>
-#include <stdio.h>
 #include <stdexcept>
+#include <stdio.h>
 
-
-namespace Loki
-{
+namespace Loki {
 
 // ----------------------------------------------------------------------------
 
@@ -61,111 +58,91 @@ namespace Loki
 ///  - OnError is a policy class indicating how to handle the situation when a
 ///  caller does not check or copy the returned value.  Loki provides some
 ///  policy classs and you may also write your own.  For example, you can write
-///  a policy to create a message box when the function ignores the return value.
-///  That would quickly tell you places where code ignores the function call.
-///  If your write your own, you only need a templated class or struct with a
-///  public function named "run" that accepts a reference to a const value.
+///  a policy to create a message box when the function ignores the return
+///  value. That would quickly tell you places where code ignores the function
+///  call. If your write your own, you only need a templated class or struct
+///  with a public function named "run" that accepts a reference to a const
+///  value.
 ///
 /// @par Provided Policy Classes
-///  - IgnoreReturnValue Deliberately ignores when the caller ignores the return value.
-///  - TriggerAssert Asserts in debug builds if the caller ignores the return value.
-///  - FprintfStderr Prints out an error message if the caller ignores the return value.
+///  - IgnoreReturnValue Deliberately ignores when the caller ignores the return
+///  value.
+///  - TriggerAssert Asserts in debug builds if the caller ignores the return
+///  value.
+///  - FprintfStderr Prints out an error message if the caller ignores the
+///  return value.
 ///  - ThrowTheValue Throws the ignored value as an exception.
-///  - ThrowLogicError Throws a logic_error exception to indicate a programming error.
+///  - ThrowLogicError Throws a logic_error exception to indicate a programming
+///  error.
 ////////////////////////////////////////////////////////////////////////////////
 
-
-template<class T>
-struct IgnoreReturnValue
-{
-	static void run(const T&)
-	{
-		/// Do nothing at all.
-	}
+template <class T> struct IgnoreReturnValue {
+  static void run(const T &) {
+    /// Do nothing at all.
+  }
 };
 
-template<class T>
-struct ThrowTheValue
-{
-	static void run(const T & value )
-	{
-		throw value;
-	}
+template <class T> struct ThrowTheValue {
+  static void run(const T &value) { throw value; }
 };
 
-template<class T>
-struct ThrowLogicError
-{
-	static void run( const T & )
-	{
-		throw ::std::logic_error( "CheckReturn: return value was not checked.\n" );
-	}
+template <class T> struct ThrowLogicError {
+  static void run(const T &) {
+    throw ::std::logic_error("CheckReturn: return value was not checked.\n");
+  }
 };
 
-template<class T>
-struct TriggerAssert
-{
-	static void run(const T&)
-	{
-		assert( 0 );
-	}
+template <class T> struct TriggerAssert {
+  static void run(const T &) { assert(0); }
 };
 
-template<class T>
-struct FprintfStderr
-{
-	static void run(const T&)
-	{
-		fprintf(stderr, "CheckReturn: return value was not checked.\n");
-	}
+template <class T> struct FprintfStderr {
+  static void run(const T &) {
+    fprintf(stderr, "CheckReturn: return value was not checked.\n");
+  }
 };
 
-
-
-template < class ValueType , template<class> class OnError = TriggerAssert >
-class CheckReturn
-{
+template <class ValueType, template <class> class OnError = TriggerAssert>
+class CheckReturn {
 public:
+  /// Conversion constructor changes Value type to CheckReturn type.
+  inline CheckReturn(const ValueType &value)
+      : m_value(value), m_checked(false) {}
 
-	/// Conversion constructor changes Value type to CheckReturn type.
-	inline CheckReturn( const ValueType & value ) :
-		m_value( value ), m_checked( false ) {}
+  /// Copy-constructor allows functions to call another function within the
+  /// return statement.  The other CheckReturn's m_checked flag is set since
+  /// its duty has been passed to the m_checked flag in this one.
+  inline CheckReturn(const CheckReturn &that)
+      : m_value(that.m_value), m_checked(false) {
+    that.m_checked = true;
+  }
 
-	/// Copy-constructor allows functions to call another function within the
-	/// return statement.  The other CheckReturn's m_checked flag is set since
-	/// its duty has been passed to the m_checked flag in this one.
-	inline CheckReturn( const CheckReturn & that ) :
-		m_value( that.m_value ), m_checked( false )
-	{ that.m_checked = true; }
+  /// Destructor checks if return value was used.
+  inline ~CheckReturn(void) {
+    // If m_checked is false, then a function failed to check the
+    // return value from a function call.
+    if (!m_checked)
+      OnError<ValueType>::run(m_value);
+  }
 
-	/// Destructor checks if return value was used.
-	inline ~CheckReturn( void )
-	{
-		// If m_checked is false, then a function failed to check the
-		// return value from a function call.
-		if (!m_checked)
-			OnError< ValueType >::run(m_value);
-	}
-
-	/// Conversion operator changes CheckReturn back to Value type.
-	inline operator ValueType ( void )
-	{
-		m_checked = true;
-		return m_value;
-	}
+  /// Conversion operator changes CheckReturn back to Value type.
+  inline operator ValueType(void) {
+    m_checked = true;
+    return m_value;
+  }
 
 private:
-	/// Default constructor not implemented.
-	CheckReturn( void );
+  /// Default constructor not implemented.
+  CheckReturn(void);
 
-	/// Copy-assignment operator not implemented.
-	CheckReturn & operator = ( const CheckReturn & that );
+  /// Copy-assignment operator not implemented.
+  CheckReturn &operator=(const CheckReturn &that);
 
-	/// Copy of returned value.
-	ValueType m_value;
+  /// Copy of returned value.
+  ValueType m_value;
 
-	/// Flag for whether calling function checked return value yet.
-	mutable bool m_checked;
+  /// Flag for whether calling function checked return value yet.
+  mutable bool m_checked;
 };
 
 // ----------------------------------------------------------------------------
@@ -175,4 +152,3 @@ private:
 #endif // end file guardian
 
 // $Log$
-

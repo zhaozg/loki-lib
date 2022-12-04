@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
-// Copyright (c) 2006 Peter Kümmel
+// Copyright (c) 2006 Peter Ké»°mel
 // Permission to use, copy, modify, distribute and sell this software for any
 //     purpose is hereby granted without fee, provided that the above copyright
 //     notice appear in all copies and that both that copyright notice and this
@@ -12,15 +12,9 @@
 
 // $Id$
 
-
 #include "foo.h"
 #include <iostream>
 
-Foo::Foo()
-{
-}
+Foo::Foo() {}
 
-void Foo::foo()
-{
-    std::cout << "\nFoo:foo() called,  this: " << this << "\n";
-}
+void Foo::foo() { std::cout << "\nFoo:foo() called,  this: " << this << "\n"; }

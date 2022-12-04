@@ -31,8 +31,7 @@
  concatenate names or numbers together into a single name or number.
  */
 
-#define LOKI_CONCATENATE_DIRECT(s1, s2)  s1##s2
-#define LOKI_CONCATENATE(s1, s2)         LOKI_CONCATENATE_DIRECT(s1, s2)
-
+#define LOKI_CONCATENATE_DIRECT(s1, s2) s1##s2
+#define LOKI_CONCATENATE(s1, s2) LOKI_CONCATENATE_DIRECT(s1, s2)
 
 #endif

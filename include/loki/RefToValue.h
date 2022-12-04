@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
 // Copyright (c) 2006 Richard Sposato
-// Copyright (c) 2006 Peter Kümmel
+// Copyright (c) 2006 Peter Ké»°mel
 // Code covered by the MIT License
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,56 +27,39 @@
 
 // $Id$
 
+namespace Loki {
 
-namespace Loki
-{
+////////////////////////////////////////////////////////////////////////////////
+///  \class RefToValue
+///
+///  \ingroup SmartPointerGroup
+///  Transports a reference as a value
+///  Serves to implement the Colvin/Gibbons trick for SmartPtr/ScopeGuard
+////////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////////
-    ///  \class RefToValue
-    ///
-    ///  \ingroup SmartPointerGroup
-    ///  Transports a reference as a value
-    ///  Serves to implement the Colvin/Gibbons trick for SmartPtr/ScopeGuard
-    ////////////////////////////////////////////////////////////////////////////////
+template <class T> class RefToValue {
+public:
+  RefToValue(T &ref) : ref_(ref) {}
 
-    template <class T>
-    class RefToValue
-    {
-    public:
+  RefToValue(const RefToValue &rhs) : ref_(rhs.ref_) {}
 
-        RefToValue(T& ref) : ref_(ref)
-        {}
+  operator T &() const { return ref_; }
 
-        RefToValue(const RefToValue& rhs) : ref_(rhs.ref_)
-        {}
+private:
+  // Disable - not implemented
+  RefToValue();
+  RefToValue &operator=(const RefToValue &);
 
-        operator T& () const
-        {
-            return ref_;
-        }
+  T &ref_;
+};
 
-    private:
-        // Disable - not implemented
-        RefToValue();
-        RefToValue& operator=(const RefToValue&);
+////////////////////////////////////////////////////////////////////////////////
+///  \ingroup ExceptionGroup
+///  RefToValue creator.
+////////////////////////////////////////////////////////////////////////////////
 
-        T& ref_;
-    };
+template <class T> inline RefToValue<T> ByRef(T &t) { return RefToValue<T>(t); }
 
-
-    ////////////////////////////////////////////////////////////////////////////////
-    ///  \ingroup ExceptionGroup
-    ///  RefToValue creator.
-    ////////////////////////////////////////////////////////////////////////////////
-
-    template <class T>
-    inline RefToValue<T> ByRef(T& t)
-    {
-        return RefToValue<T>(t);
-    }
-
-}
-
+} // namespace Loki
 
 #endif // end file guardian
-

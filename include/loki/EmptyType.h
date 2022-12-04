@@ -30,33 +30,20 @@
 
 // $Id$
 
-
-namespace Loki
-{
+namespace Loki {
 ////////////////////////////////////////////////////////////////////////////////
 // class EmptyType
 // Used as a class type that doesn't hold anything
 // Useful as a strawman class
 ////////////////////////////////////////////////////////////////////////////////
 
-    class EmptyType {};
+class EmptyType {};
 
+inline bool operator==(const EmptyType &, const EmptyType &) { return true; }
 
-    inline bool operator==(const EmptyType&, const EmptyType&)
-    {
-        return true;
-    }
+inline bool operator<(const EmptyType &, const EmptyType &) { return false; }
 
-    inline bool operator<(const EmptyType&, const EmptyType&)
-    {
-        return false;
-    }
-
-    inline bool operator>(const EmptyType&, const EmptyType&)
-    {
-        return false;
-    }
-}
+inline bool operator>(const EmptyType &, const EmptyType &) { return false; }
+} // namespace Loki
 
 #endif // end file guardian
-

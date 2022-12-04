@@ -30,18 +30,15 @@
 
 /// @file Checker.h This file provides Loki's Checker facility.
 
-
 // ----------------------------------------------------------------------------
 
 #ifndef LOKI_CHECKER_H_INCLUDED
 #define LOKI_CHECKER_H_INCLUDED
 
-#include <exception>  // needed for calls to uncaught_exception.
 #include <assert.h>
+#include <exception> // needed for calls to uncaught_exception.
 
-
-namespace Loki
-{
+namespace Loki {
 
 /** @par ContractChecker and StaticChecker Overview
  ContractChecker and StaticChecker classes provide a mechanism to enforce
@@ -113,9 +110,12 @@ namespace Loki
 
  @par Guidelines for Writing Your Own Policies for ContractChecker
  Please follow these guidelines when writing your own policies:
- - Each policy class must provide three public functions, a constructor, a destructor, and a Check function.
- - The destructor could be implied.  (Not actually written, and provided by the compiler.)
- - The constructor and Check functions accept a pointer to const instance of the host class.
+ - Each policy class must provide three public functions, a constructor, a
+ destructor, and a Check function.
+ - The destructor could be implied.  (Not actually written, and provided by the
+ compiler.)
+ - The constructor and Check functions accept a pointer to const instance of the
+ host class.
  - Your policy class will become a base class of ContractChecker.
  - Check should return true if all is okay, and false for any failures.
  - Check should never throw any exceptions since it is called by a destructor.
@@ -129,11 +129,16 @@ namespace Loki
  will use the memento to determine if the host object changed.  A Host class can
  declare a Memento class as an internal class.  These guidelines will help you
  design a memento class:
- - Your exception policy's constructor should not copy the host object but use a memento to store info about the host.
- - The memento should provide a constructor, an equality operator, and a destructor.
- - The memento's destructor could be implied.  (Not actually written, and provided by the compiler.)
- - The memento's constructor and equality operator must accept a reference to a const Host object.
- - The memento's equality operator should return false if the memento differs from the host.
+ - Your exception policy's constructor should not copy the host object but use a
+ memento to store info about the host.
+ - The memento should provide a constructor, an equality operator, and a
+ destructor.
+ - The memento's destructor could be implied.  (Not actually written, and
+ provided by the compiler.)
+ - The memento's constructor and equality operator must accept a reference to a
+ const Host object.
+ - The memento's equality operator should return false if the memento differs
+ from the host.
 
  This code snippet shows the template parameters for an exception policy that
  uses a Memento and the signatures for the three required functions for a
@@ -192,7 +197,8 @@ namespace Loki
  Loki provides two exception policies for StaticChecker - one that asserts if
  an exception occurred, and one that does not care about exceptions.  Please
  follow these guidelines when writing policies:
- - Each policy needs a default constructor, a destructor, and a function named Check.
+ - Each policy needs a default constructor, a destructor, and a function named
+ Check.
  - The constructor and destructor may be implied.
  - Make sure your Check function never throws any exceptions.
  - Any additional functions or features of the policy are up to you.
@@ -208,7 +214,6 @@ namespace Loki
  }
  @endcode
  */
-
 
 // ----------------------------------------------------------------------------
 
@@ -226,24 +231,20 @@ namespace Loki
  template parameter.
  */
 
-template < class Host, class Memento >
-class CheckForNoThrow
-{
+template <class Host, class Memento> class CheckForNoThrow {
 public:
+  inline explicit CheckForNoThrow(const Host *) {}
 
-    inline explicit CheckForNoThrow( const Host * ) {}
-
-    inline bool Check( const Host * ) const
-    {
-        const bool okay = ( !::std::uncaught_exception() );
-        assert( okay );
-        return okay;
-    }
+  inline bool Check(const Host *) const {
+    const bool okay = (!::std::uncaught_exception());
+    assert(okay);
+    return okay;
+  }
 };
 
 // ----------------------------------------------------------------------------
 
-template < class Host, class Memento > class CheckForNoChangeOnThrow;
+template <class Host, class Memento> class CheckForNoChangeOnThrow;
 
 /** @class CheckForNoChangeOnThrow
 
@@ -259,49 +260,39 @@ template < class Host, class Memento > class CheckForNoChangeOnThrow;
  equality operator, and is intended for classes with value semantics.
  */
 
-template < class Host >
-class CheckForNoChangeOnThrow< Host, void >
-{
+template <class Host> class CheckForNoChangeOnThrow<Host, void> {
 public:
+  inline explicit CheckForNoChangeOnThrow(const Host *host)
+      : m_compare(*host) {}
 
-    inline explicit CheckForNoChangeOnThrow( const Host * host ) :
-        m_compare( *host ) {}
-
-    inline bool Check( const Host * host ) const
-    {
-        const bool okay = ( !::std::uncaught_exception() )
-            || ( m_compare == *host );
-        assert( okay );
-        return okay;
-    }
+  inline bool Check(const Host *host) const {
+    const bool okay = (!::std::uncaught_exception()) || (m_compare == *host);
+    assert(okay);
+    return okay;
+  }
 
 private:
-    Host m_compare;
+  Host m_compare;
 };
 
-template < class Host, class Memento >
-class CheckForNoChangeOnThrow
-{
+template <class Host, class Memento> class CheckForNoChangeOnThrow {
 public:
+  inline explicit CheckForNoChangeOnThrow(const Host *host)
+      : m_compare(*host) {}
 
-    inline explicit CheckForNoChangeOnThrow( const Host * host ) :
-        m_compare( *host ) {}
-
-    inline bool Check( const Host * host ) const
-    {
-        const bool okay = ( !::std::uncaught_exception() )
-            || ( m_compare == *host );
-        assert( okay );
-        return okay;
-    }
+  inline bool Check(const Host *host) const {
+    const bool okay = (!::std::uncaught_exception()) || (m_compare == *host);
+    assert(okay);
+    return okay;
+  }
 
 private:
-    Memento m_compare;
+  Memento m_compare;
 };
 
 // ----------------------------------------------------------------------------
 
-template < class Host, class Memento > class CheckForNoThrowOrChange;
+template <class Host, class Memento> class CheckForNoThrowOrChange;
 
 /** @class CheckForNoThrowOrChange
  This policy comes in two forms - one uses a memento, and one does not.  The
@@ -320,59 +311,52 @@ template < class Host, class Memento > class CheckForNoThrowOrChange;
  equality operator, and is intended for classes with value semantics.
  */
 
-template < class Host, class Memento >
-class CheckForNoThrowOrChange
-{
+template <class Host, class Memento> class CheckForNoThrowOrChange {
 public:
+  inline explicit CheckForNoThrowOrChange(const Host *host)
+      : m_compare(*host) {}
 
-    inline explicit CheckForNoThrowOrChange( const Host * host ) :
-        m_compare( *host ) {}
-
-    inline bool Check( const Host * host ) const
-    {
-        bool okay = ( !::std::uncaught_exception() );
-        assert( okay );
-        okay = ( m_compare == *host );
-        assert( okay );
-        return okay;
-    }
+  inline bool Check(const Host *host) const {
+    bool okay = (!::std::uncaught_exception());
+    assert(okay);
+    okay = (m_compare == *host);
+    assert(okay);
+    return okay;
+  }
 
 private:
-    Memento m_compare;
+  Memento m_compare;
 };
 
-template < class Host >
-class CheckForNoThrowOrChange< Host, void >
-{
+template <class Host> class CheckForNoThrowOrChange<Host, void> {
 public:
+  inline explicit CheckForNoThrowOrChange(const Host *host)
+      : m_compare(*host) {}
 
-    inline explicit CheckForNoThrowOrChange( const Host * host ) :
-        m_compare( *host ) {}
-
-    inline bool Check( const Host * host ) const
-    {
-        bool okay = ( !::std::uncaught_exception() );
-        assert( okay );
-        okay = ( m_compare == *host );
-        assert( okay );
-        return okay;
-    }
+  inline bool Check(const Host *host) const {
+    bool okay = (!::std::uncaught_exception());
+    assert(okay);
+    okay = (m_compare == *host);
+    assert(okay);
+    return okay;
+  }
 
 private:
-    Host m_compare;
+  Host m_compare;
 };
 
 // ----------------------------------------------------------------------------
 
-template < class Host, class Memento > class CheckForNoChange;
+template <class Host, class Memento> class CheckForNoChange;
 
 /** @class CheckForNoChange
 
  @par Exception Safety Level:
  This exception-checking policy class for ContractChecker asserts if a copy of
- the host differs from the host object regardless of whether an exception occurs.
- Host classes can use this policy to show which member functions never change
- data members, and thereby provide the strong exception safety level by default.
+ the host differs from the host object regardless of whether an exception
+ occurs. Host classes can use this policy to show which member functions never
+ change data members, and thereby provide the strong exception safety level by
+ default.
 
  @par Requirements For Host Class:
  This policy requires hosts to provide both the copy-constructor and the
@@ -383,42 +367,32 @@ template < class Host, class Memento > class CheckForNoChange;
  that accept a reference to a const host.
  */
 
-template < class Host, class Memento >
-class CheckForNoChange
-{
+template <class Host, class Memento> class CheckForNoChange {
 public:
+  inline explicit CheckForNoChange(const Host *host) : m_compare(*host) {}
 
-    inline explicit CheckForNoChange( const Host * host ) :
-        m_compare( *host ) {}
-
-    inline bool Check( const Host * host ) const
-    {
-        const bool okay = ( m_compare == *host );
-        assert( okay );
-        return okay;
-    }
+  inline bool Check(const Host *host) const {
+    const bool okay = (m_compare == *host);
+    assert(okay);
+    return okay;
+  }
 
 private:
-    Memento m_compare;
+  Memento m_compare;
 };
 
-template < class Host >
-class CheckForNoChange< Host, void >
-{
+template <class Host> class CheckForNoChange<Host, void> {
 public:
+  inline explicit CheckForNoChange(const Host *host) : m_compare(*host) {}
 
-    inline explicit CheckForNoChange( const Host * host ) :
-        m_compare( *host ) {}
-
-    inline bool Check( const Host * host ) const
-    {
-        const bool okay = ( m_compare == *host );
-        assert( okay );
-        return okay;
-    }
+  inline bool Check(const Host *host) const {
+    const bool okay = (m_compare == *host);
+    assert(okay);
+    return okay;
+  }
 
 private:
-    Host m_compare;
+  Host m_compare;
 };
 
 // ----------------------------------------------------------------------------
@@ -437,12 +411,10 @@ private:
  template parameter.
  */
 
-template < class Host, class Memento >
-class CheckForNothing
-{
+template <class Host, class Memento> class CheckForNothing {
 public:
-    inline explicit CheckForNothing( const Host * ) {}
-    inline bool Check( const Host * ) const { return true; }
+  inline explicit CheckForNothing(const Host *) {}
+  inline bool Check(const Host *) const { return true; }
 };
 
 // ----------------------------------------------------------------------------
@@ -467,8 +439,8 @@ public:
  -# Optionally implement similar functions to check for pre-conditions and post-
     conditions.  Functions which verify pre-conditions and post-conditions do
     not need to check all class invariants, just conditions specific to certain
-    public functions in the host class.  The post-condition function should never
-    throw exceptions.
+    public functions in the host class.  The post-condition function should
+ never throw exceptions.
  -# Add this line in the class declaration:
     - typedef ::Loki::CheckFor< Host > CheckFor;
  -# Add one of these lines at the top of various class member functions to
@@ -491,100 +463,84 @@ public:
     tests, and look for which assertions failed.
  */
 
-template
-<
-    class Host,
-    template < class, class > class ExceptionPolicy,
-    class Memento = void
->
-class ContractChecker : public ExceptionPolicy< Host, Memento >
-{
-    /// Shorthand for the ExceptionPolicy class.
-    typedef ExceptionPolicy< Host, Memento > Ep;
+template <class Host, template <class, class> class ExceptionPolicy,
+          class Memento = void>
+class ContractChecker : public ExceptionPolicy<Host, Memento> {
+  /// Shorthand for the ExceptionPolicy class.
+  typedef ExceptionPolicy<Host, Memento> Ep;
 
 public:
+  /// Signature for the validation function.
+  typedef bool (Host::*Validator)(void) const;
 
-    /// Signature for the validation function.
-    typedef bool ( Host:: * Validator )( void ) const;
-
-    /** The constructor makes sure the host is valid at the time the checker
-     was created, thus insuring the host object was not corrupt from the start.
-     @par host Pointer to host object.
-     @par validator Pointer to function that checks class invariants.
-     @par pre Optional pointer to function that checks pre-conditions.
-     @par post Optional pointer to function that checks post-conditions.
-     */
-    inline ContractChecker( const Host * host, Validator validator,
-        Validator pre = 0, Validator post = 0 ) :
-        Ep( host ),
-        m_host( host ),
-        m_validator( validator ),
-        m_pre( pre ),
-        m_post( post )
-    {
-        assert( Check() );
-        if ( 0 != m_pre )
-        {
-            assert( ( m_host->*( m_pre ) )() );
-        }
+  /** The constructor makes sure the host is valid at the time the checker
+   was created, thus insuring the host object was not corrupt from the start.
+   @par host Pointer to host object.
+   @par validator Pointer to function that checks class invariants.
+   @par pre Optional pointer to function that checks pre-conditions.
+   @par post Optional pointer to function that checks post-conditions.
+   */
+  inline ContractChecker(const Host *host, Validator validator,
+                         Validator pre = 0, Validator post = 0)
+      : Ep(host), m_host(host), m_validator(validator), m_pre(pre),
+        m_post(post) {
+    assert(Check());
+    if (0 != m_pre) {
+      assert((m_host->*(m_pre))());
     }
+  }
 
-    /** The destructor checks if any Host invariants failed, and then calls the
-     ExceptionPolicy's Check function to determine what to do in case of an
-     exception.
-     */
-    inline ~ContractChecker( void )
-    {
-        assert( Check() );
-        if ( 0 != m_post )
-        {
-            assert( ( m_host->*( m_post ) )() );
-        }
-        assert( Ep::Check( m_host ) );
+  /** The destructor checks if any Host invariants failed, and then calls the
+   ExceptionPolicy's Check function to determine what to do in case of an
+   exception.
+   */
+  inline ~ContractChecker(void) {
+    assert(Check());
+    if (0 != m_post) {
+      assert((m_host->*(m_post))());
     }
+    assert(Ep::Check(m_host));
+  }
 
-    /** This first checks the invariants for ContractChecker, and then calls the
-     validator function for the host to make sure no class invariants were
-     broken by the host within the Host's member function body.  The host
-     member function can call Check directly to verify the object remains valid
-     at any time.  This does not care if the pre- and post-condition validator
-     pointers are null since a host class may pass in NULL pointers for either
-     to indicate the pre-conditions or post-conditions are the same as the
-     overall class invariants.
-     */
-    inline bool Check( void ) const
-    {
-        assert( 0 != this );
-        assert( 0 != m_host );
-        assert( 0 != m_validator );
-        // Now that this confirms the pointers to the host and validation
-        // functions are not null, go ahead and validate the host object.
-        const bool okay = ( m_host->*( m_validator ) )();
-        assert( okay );
-        return okay;
-    }
+  /** This first checks the invariants for ContractChecker, and then calls the
+   validator function for the host to make sure no class invariants were
+   broken by the host within the Host's member function body.  The host
+   member function can call Check directly to verify the object remains valid
+   at any time.  This does not care if the pre- and post-condition validator
+   pointers are null since a host class may pass in NULL pointers for either
+   to indicate the pre-conditions or post-conditions are the same as the
+   overall class invariants.
+   */
+  inline bool Check(void) const {
+    assert(0 != this);
+    assert(0 != m_host);
+    assert(0 != m_validator);
+    // Now that this confirms the pointers to the host and validation
+    // functions are not null, go ahead and validate the host object.
+    const bool okay = (m_host->*(m_validator))();
+    assert(okay);
+    return okay;
+  }
 
 private:
+  /// Default constructor is not implemented.
+  ContractChecker(void);
+  /// Copy constructor is not implemented.
+  ContractChecker(const ContractChecker &);
+  /// Copy-assignment operator is not implemented.
+  ContractChecker &operator=(const ContractChecker &);
 
-    /// Default constructor is not implemented.
-    ContractChecker( void );
-    /// Copy constructor is not implemented.
-    ContractChecker( const ContractChecker & );
-    /// Copy-assignment operator is not implemented.
-    ContractChecker & operator = ( const ContractChecker & );
+  /// Pointer to the host object.
+  const Host *m_host;
 
-    /// Pointer to the host object.
-    const Host * m_host;
+  /// Pointer to member function that checks Host object's invariants.
+  Validator m_validator;
 
-    /// Pointer to member function that checks Host object's invariants.
-    Validator m_validator;
+  /// Pointer to member function that checks Host function's pre-conditions.
+  Validator m_pre;
 
-    /// Pointer to member function that checks Host function's pre-conditions.
-    Validator m_pre;
-
-    /// Pointer to member function that checks Host function's post-conditions.
-    Validator m_post;
-
+  /// Pointer to member function that checks Host function's post-conditions.
+  Validator m_post;
 };
 
 // ----------------------------------------------------------------------------
@@ -596,17 +552,17 @@ private:
  exception policies for ContractChecker, you might want to also write a struct
  similiar to CheckFor to conveniently declare all your policies.
  */
-template < class Host, class Memento = void >
-struct CheckFor
-{
-    // These lines declare checkers for non-static functions in a host class.
-    typedef ContractChecker< Host, CheckForNoThrowOrChange, Memento > NoThrowOrChange;
-    typedef ContractChecker< Host, CheckForNoChangeOnThrow, Memento > NoChangeOnThrow;
-    typedef ContractChecker< Host, CheckForNoThrow,         Memento > NoThrow;
-    typedef ContractChecker< Host, CheckForNoChange,        Memento > NoChange;
-    typedef ContractChecker< Host, CheckForNothing,         Memento > Invariants;
+template <class Host, class Memento = void> struct CheckFor {
+  // These lines declare checkers for non-static functions in a host class.
+  typedef ContractChecker<Host, CheckForNoThrowOrChange, Memento>
+      NoThrowOrChange;
+  typedef ContractChecker<Host, CheckForNoChangeOnThrow, Memento>
+      NoChangeOnThrow;
+  typedef ContractChecker<Host, CheckForNoThrow, Memento> NoThrow;
+  typedef ContractChecker<Host, CheckForNoChange, Memento> NoChange;
+  typedef ContractChecker<Host, CheckForNothing, Memento> Invariants;
 
-    typedef bool ( Host:: * Validator )( void ) const;
+  typedef bool (Host::*Validator)(void) const;
 };
 
 // ----------------------------------------------------------------------------
@@ -618,15 +574,13 @@ struct CheckFor
  exists.  Functions can use this to show they provide the no-throw exception
  safety guarantee.
  */
-class CheckStaticForNoThrow
-{
+class CheckStaticForNoThrow {
 public:
-    inline bool Check( void )
-    {
-        const bool okay = !::std::uncaught_exception();
-        assert( okay );
-        return okay;
-    }
+  inline bool Check(void) {
+    const bool okay = !::std::uncaught_exception();
+    assert(okay);
+    return okay;
+  }
 };
 
 // ----------------------------------------------------------------------------
@@ -634,14 +588,14 @@ public:
 /** @class CheckStaticForNothing
 
  @par Exception Safety Level:
- This exception-checking policy class for StaticChecker does nothing when called.
- Functions can use this to show they might provide the weak exception guarantee.
- The best guarantee such functions can provide is that nothing gets leaked.
+ This exception-checking policy class for StaticChecker does nothing when
+ called. Functions can use this to show they might provide the weak exception
+ guarantee. The best guarantee such functions can provide is that nothing gets
+ leaked.
  */
-class CheckStaticForNothing
-{
+class CheckStaticForNothing {
 public:
-    inline bool Check( void ) { return true; }
+  inline bool Check(void) { return true; }
 };
 
 // ----------------------------------------------------------------------------
@@ -682,87 +636,73 @@ public:
     fails.
  */
 
-template
-<
-    class ExceptionPolicy
->
-class StaticChecker : public ExceptionPolicy
-{
-    /// Shorthand for the ExceptionPolicy class.
-    typedef ExceptionPolicy Ep;
+template <class ExceptionPolicy> class StaticChecker : public ExceptionPolicy {
+  /// Shorthand for the ExceptionPolicy class.
+  typedef ExceptionPolicy Ep;
 
 public:
+  /// Signature for the validation function.
+  typedef bool (*Validator)(void);
 
-    /// Signature for the validation function.
-    typedef bool ( * Validator )( void );
+  /** The constructor makes sure the host is valid at the time the checker
+   was created, thus insuring the host object was not corrupt from the start.
+   @par validator Pointer to function that checks class invariants.
+   @par pre Optional pointer to function that checks pre-conditions.
+   @par post Optional pointer to function that checks post-conditions.
+   */
+  inline explicit StaticChecker(Validator validator, Validator pre = 0,
+                                Validator post = 0)
+      : Ep(), m_validator(validator), m_pre(pre), m_post(post) {
+    assert(Check());
+    if (0 != m_pre)
+      assert(m_pre());
+  }
 
-    /** The constructor makes sure the host is valid at the time the checker
-     was created, thus insuring the host object was not corrupt from the start.
-     @par validator Pointer to function that checks class invariants.
-     @par pre Optional pointer to function that checks pre-conditions.
-     @par post Optional pointer to function that checks post-conditions.
-     */
-    inline explicit StaticChecker( Validator validator,
-        Validator pre = 0, Validator post = 0 ) :
-        Ep(),
-        m_validator( validator ),
-        m_pre( pre ),
-        m_post( post )
-    {
-        assert( Check() );
-        if ( 0 != m_pre )
-            assert( m_pre() );
-    }
+  /** The destructor checks if any Host invariants failed, and then calls the
+   ExceptionPolicy's Check function to determine what to do in case of an
+   exception.
+   */
+  inline ~StaticChecker(void) {
+    assert(Check());
+    if (0 != m_post)
+      assert(m_post());
+    assert(Ep::Check());
+  }
 
-    /** The destructor checks if any Host invariants failed, and then calls the
-     ExceptionPolicy's Check function to determine what to do in case of an
-     exception.
-     */
-    inline ~StaticChecker( void )
-    {
-        assert( Check() );
-        if ( 0 != m_post )
-            assert( m_post() );
-        assert( Ep::Check() );
-    }
-
-    /** This first checks its own invariants, and then calls the validator
-     function to make sure no invariants were broken by the function which
-     created this checker.  That function can call Check directly to verify the
-     data remains valid at any time.  This does not care if the pre- and post-
-     condition validator pointers are null since a host class may pass in NULL
-     pointers for either to indicate the pre-conditions or post-conditions are
-     the same as the overall class invariants.
-     */
-    inline bool Check( void ) const
-    {
-        assert( 0 != this );
-        assert( 0 != m_validator );
-        // Now that this confirms the pointers to the host and validation
-        // functions are not null, go ahead and validate the host object.
-        const bool okay = m_validator();
-        assert( okay );
-        return okay;
-    }
+  /** This first checks its own invariants, and then calls the validator
+   function to make sure no invariants were broken by the function which
+   created this checker.  That function can call Check directly to verify the
+   data remains valid at any time.  This does not care if the pre- and post-
+   condition validator pointers are null since a host class may pass in NULL
+   pointers for either to indicate the pre-conditions or post-conditions are
+   the same as the overall class invariants.
+   */
+  inline bool Check(void) const {
+    assert(0 != this);
+    assert(0 != m_validator);
+    // Now that this confirms the pointers to the host and validation
+    // functions are not null, go ahead and validate the host object.
+    const bool okay = m_validator();
+    assert(okay);
+    return okay;
+  }
 
 private:
+  /// Default constructor is not implemented.
+  StaticChecker(void);
+  /// Copy constructor is not implemented.
+  StaticChecker(const StaticChecker &);
+  /// Copy-assignment operator is not implemented.
+  StaticChecker &operator=(const StaticChecker &);
 
-    /// Default constructor is not implemented.
-    StaticChecker( void );
-    /// Copy constructor is not implemented.
-    StaticChecker( const StaticChecker & );
-    /// Copy-assignment operator is not implemented.
-    StaticChecker & operator = ( const StaticChecker & );
+  /// Pointer to member function that checks Host object's invariants.
+  Validator m_validator;
 
-    /// Pointer to member function that checks Host object's invariants.
-    Validator m_validator;
+  /// Pointer to member function that checks Host function's pre-conditions.
+  Validator m_pre;
 
-    /// Pointer to member function that checks Host function's pre-conditions.
-    Validator m_pre;
-
-    /// Pointer to member function that checks Host function's post-conditions.
-    Validator m_post;
-
+  /// Pointer to member function that checks Host function's post-conditions.
+  Validator m_post;
 };
 
 // ----------------------------------------------------------------------------
@@ -774,14 +714,13 @@ private:
  exception policies for StaticChecker, you might want to also write a struct
  similiar to CheckStaticFor to conveniently declare all your policies.
  */
-struct CheckStaticFor
-{
-    // These lines declare checkers for static functions of a host class
-    // or for standalone functions outside any class or struct.
-    typedef StaticChecker< CheckStaticForNoThrow > NoThrow;
-    typedef StaticChecker< CheckStaticForNothing > Invariants;
+struct CheckStaticFor {
+  // These lines declare checkers for static functions of a host class
+  // or for standalone functions outside any class or struct.
+  typedef StaticChecker<CheckStaticForNoThrow> NoThrow;
+  typedef StaticChecker<CheckStaticForNothing> Invariants;
 
-    typedef bool ( * Validator )( void );
+  typedef bool (*Validator)(void);
 };
 
 // ----------------------------------------------------------------------------

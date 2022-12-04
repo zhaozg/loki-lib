@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
-// Copyright (c) 2006 Peter Kümmel
+// Copyright (c) 2006 Peter Ké»°mel
 // Permission to use, copy, modify, distribute and sell this software for any
 //     purpose is hereby granted without fee, provided that the above copyright
 //     notice appear in all copies and that both that copyright notice and this
@@ -12,94 +12,82 @@
 
 // $Id$
 
-
 #include <loki/Pimpl.h>
 
 /////////////////////////////////////////
 // class A2 declaration
 /////////////////////////////////////////
 
-template< class T>
-class Impl;
+template <class T> class Impl;
 
-class A2
-{
+class A2 {
 public:
-    A2();
-    ~A2();
-    void foo();
+  A2();
+  ~A2();
+  void foo();
 
 private:
-    PimplOf<A2>::Type d;
+  PimplOf<A2>::Type d;
 };
-
 
 /////////////////////////////////////////
 // class B2 declaration
 /////////////////////////////////////////
 
-class B2 : private PimplOf<B2>::Owner
-{
+class B2 : private PimplOf<B2>::Owner {
 public:
-    B2();
-    ~B2();
-    void foo();
+  B2();
+  ~B2();
+  void foo();
 };
-
-
 
 /////////////////////////////////////////
 // class C2 declaration
 /////////////////////////////////////////
 
-class C2
-{
+class C2 {
 public:
-    C2();
-    ~C2();
-    void foo();
+  C2();
+  ~C2();
+  void foo();
 
 private:
-    PimplOf<C2>::Type rint;
-    RimplOf<C2>::Type d;
+  PimplOf<C2>::Type rint;
+  RimplOf<C2>::Type d;
 };
-
 
 /////////////////////////////////////////
 // class D2 declaration
 /////////////////////////////////////////
 
-class D2 : private RimplOf<D2>::Owner
-{
+class D2 : private RimplOf<D2>::Owner {
 public:
-    D2();
-    ~D2();
-    void foo();
+  D2();
+  ~D2();
+  void foo();
 };
-
 
 /////////////////////////////////////////
 // incomplete type test
 /////////////////////////////////////////
-class Incomplete1
-{
+class Incomplete1 {
 public:
-    Incomplete1();
-    void foo();
+  Incomplete1();
+  void foo();
+
 private:
-    PimplOf<Incomplete1>::Type d;
+  PimplOf<Incomplete1>::Type d;
 };
 
-class Incomplete2
-{
+class Incomplete2 {
 public:
-    Incomplete2();
-    ~Incomplete2();
-    void foo();
-private:
-    PimplOf<Incomplete2>::Type d;
-};
+  Incomplete2();
+  ~Incomplete2();
+  void foo();
 
+private:
+  PimplOf<Incomplete2>::Type d;
+};
 
 // Test: don't compile with inline destructor
 #if 0
@@ -118,16 +106,14 @@ private:
 };
 #endif
 
-
 #include <memory>
 
 class Impl4;
-class Incomplete4
-{
+class Incomplete4 {
 public:
-    Incomplete4();
-    void foo();
-private:
-    Pimpl<Impl4, std::shared_ptr<Impl4> > d;
-};
+  Incomplete4();
+  void foo();
 
+private:
+  Pimpl<Impl4, std::shared_ptr<Impl4>> d;
+};

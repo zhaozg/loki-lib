@@ -29,29 +29,29 @@
 #define LOKI_OBJECT_LEVEL_THREADING
 #include <loki/Threads.h>
 
-#include <vector>
 #include <iostream>
+#include <vector>
 
-#include <loki/SafeFormat.h>
 #include "ThreadPool.hpp"
-
+#include <loki/SafeFormat.h>
 
 #if !defined(_MSC_VER)
-    #if defined(__sparc__)
-        #include <inttypes.h>
-    #else
-        #include <stdint.h>
-    #endif
+#if defined(__sparc__)
+#include <inttypes.h>
 #else
-    typedef unsigned int uintptr_t;
+#include <stdint.h>
 #endif
-
+#else
+typedef unsigned int uintptr_t;
+#endif
 
 using namespace std;
 
 static unsigned int g = 0;
 
-#define  DO for(int i=0; i<10000000; i++) g++;
+#define DO                                                                     \
+  for (int i = 0; i < 10000000; i++)                                           \
+    g++;
 
 static const unsigned int ThreadCount = 10;
 
@@ -59,253 +59,236 @@ static const unsigned int ObjectCount = 50;
 
 static const unsigned int ClassCount = 5;
 
-static unsigned int FailCounts[ ThreadCount ];
+static unsigned int FailCounts[ThreadCount];
 
 // ----------------------------------------------------------------------------
 
-class LockableObject : public ::Loki::ObjectLevelLockable< LockableObject >
-{
+class LockableObject : public ::Loki::ObjectLevelLockable<LockableObject> {
 public:
+  typedef ::Loki::ObjectLevelLockable<LockableObject> BaseClass;
 
-    typedef ::Loki::ObjectLevelLockable< LockableObject > BaseClass;
+  explicit LockableObject(uintptr_t index)
+      : BaseClass(), m_index(index), m_value(ObjectCount) {}
 
-    explicit LockableObject( uintptr_t index ) :
-        BaseClass(), m_index( index ), m_value( ObjectCount ) {}
+  ~LockableObject(void) {}
 
-    ~LockableObject( void ) {}
+  uintptr_t GetIndex(void) const { return m_index; }
 
-    uintptr_t GetIndex( void ) const { return m_index; }
+  uintptr_t GetValue(void) const { return m_value; }
 
-    uintptr_t GetValue( void ) const { return m_value; }
+  void SetValue(uintptr_t value) { m_value = value; }
 
-    void SetValue( uintptr_t value ) { m_value = value; }
+  void DoSomething(void);
 
-    void DoSomething( void );
-
-    void Print( uintptr_t threadIndex );
+  void Print(uintptr_t threadIndex);
 
 private:
-
-    const uintptr_t m_index;
-    uintptr_t m_value;
-
+  const uintptr_t m_index;
+  uintptr_t m_value;
 };
 
 // ----------------------------------------------------------------------------
 
-void LockableObject::DoSomething( void)
-{
-    assert( NULL != this );
-    DO;
+void LockableObject::DoSomething(void) {
+  assert(NULL != this);
+  DO;
 }
 
 // ----------------------------------------------------------------------------
 
-void LockableObject::Print( uintptr_t threadIndex )
-{
-    assert( NULL != this );
-    const char * result = ( threadIndex != m_value ) ? "Mismatch!" : "";
-    ::std::string message;
-    ::Loki::SPrintf( message, "Object: [%u]  Thread: [%u]  Value: [%u]  %s\n" )
-        ( m_index )( threadIndex )( m_value )( result );
-    cout << message;
+void LockableObject::Print(uintptr_t threadIndex) {
+  assert(NULL != this);
+  const char *result = (threadIndex != m_value) ? "Mismatch!" : "";
+  ::std::string message;
+  ::Loki::SPrintf(message, "Object: [%u]  Thread: [%u]  Value: [%u]  %s\n")(
+      m_index)(threadIndex)(m_value)(result);
+  cout << message;
 }
 
 // ----------------------------------------------------------------------------
 
-typedef ::std::vector< LockableObject * > LockableObjects;
+typedef ::std::vector<LockableObject *> LockableObjects;
 
-LockableObjects & GetLockableObjects( void )
-{
-    static LockableObjects objects;
-    return objects;
+LockableObjects &GetLockableObjects(void) {
+  static LockableObjects objects;
+  return objects;
 }
 
 // ----------------------------------------------------------------------------
 
-LockableObject * GetLockableObject( unsigned int index )
-{
-    LockableObjects & objects = GetLockableObjects();
-    if ( objects.size() <= index )
-        return NULL;
-
-    LockableObject * object = objects[ index ];
-    return object;
-}
-
-// ----------------------------------------------------------------------------
-
-void * RunObjectTest( void * p )
-{
-    const uintptr_t threadIndex = reinterpret_cast< uintptr_t >( p );
-    assert( threadIndex < ThreadCount );
-
-    unsigned int failCount = 0;
-    for ( unsigned int ii = 0; ii < ObjectCount; ++ii )
-    {
-        LockableObject * object = GetLockableObject( ii );
-        assert( NULL != object );
-        LockableObject::Lock lock( *object );
-        (void)lock;
-        object->SetValue( threadIndex );
-        object->DoSomething();
-        object->Print( threadIndex );
-        object->DoSomething();
-        const uintptr_t value = object->GetValue();
-        if ( value != threadIndex )
-            ++failCount;
-    }
-
-    FailCounts[ threadIndex ] = failCount;
-
+LockableObject *GetLockableObject(unsigned int index) {
+  LockableObjects &objects = GetLockableObjects();
+  if (objects.size() <= index)
     return NULL;
+
+  LockableObject *object = objects[index];
+  return object;
 }
 
 // ----------------------------------------------------------------------------
 
-void DoObjectLockTest( void )
-{
-    cout << "Starting DoObjectLockTest" << endl;
+void *RunObjectTest(void *p) {
+  const uintptr_t threadIndex = reinterpret_cast<uintptr_t>(p);
+  assert(threadIndex < ThreadCount);
 
-    LockableObjects & objects = GetLockableObjects();
-    objects.reserve( ObjectCount );
-    for ( unsigned int ii = 0; ii < ObjectCount; ++ii )
-    {
-        LockableObject * object = new LockableObject( ii );
-        objects.push_back( object );
-    }
+  unsigned int failCount = 0;
+  for (unsigned int ii = 0; ii < ObjectCount; ++ii) {
+    LockableObject *object = GetLockableObject(ii);
+    assert(NULL != object);
+    LockableObject::Lock lock(*object);
+    (void)lock;
+    object->SetValue(threadIndex);
+    object->DoSomething();
+    object->Print(threadIndex);
+    object->DoSomething();
+    const uintptr_t value = object->GetValue();
+    if (value != threadIndex)
+      ++failCount;
+  }
 
-    {
-        ThreadPool pool;
-        pool.Create( ThreadCount, &RunObjectTest );
-        pool.Start();
-        pool.Join();
-    }
+  FailCounts[threadIndex] = failCount;
 
-    unsigned int totalFails = 0;
-    for ( unsigned int ii = 0; ii < ThreadCount; ++ii )
-    {
-        const unsigned int failCount = FailCounts[ ii ];
-        ::Loki::Printf( "Thread: [%u]  Failures: [%u]\n" )( ii )( failCount );
-        totalFails += failCount;
-    }
-    const char * result = ( 0 == totalFails ) ? "Passed" : "FAILED";
-
-    cout << "Finished DoObjectLockTest.  Total Fails: " << totalFails << "  Result: "
-        << result << endl;
+  return NULL;
 }
 
 // ----------------------------------------------------------------------------
 
-class LockableClass : public ::Loki::ClassLevelLockable< LockableClass >
-{
+void DoObjectLockTest(void) {
+  cout << "Starting DoObjectLockTest" << endl;
+
+  LockableObjects &objects = GetLockableObjects();
+  objects.reserve(ObjectCount);
+  for (unsigned int ii = 0; ii < ObjectCount; ++ii) {
+    LockableObject *object = new LockableObject(ii);
+    objects.push_back(object);
+  }
+
+  {
+    ThreadPool pool;
+    pool.Create(ThreadCount, &RunObjectTest);
+    pool.Start();
+    pool.Join();
+  }
+
+  unsigned int totalFails = 0;
+  for (unsigned int ii = 0; ii < ThreadCount; ++ii) {
+    const unsigned int failCount = FailCounts[ii];
+    ::Loki::Printf("Thread: [%u]  Failures: [%u]\n")(ii)(failCount);
+    totalFails += failCount;
+  }
+  const char *result = (0 == totalFails) ? "Passed" : "FAILED";
+
+  cout << "Finished DoObjectLockTest.  Total Fails: " << totalFails
+       << "  Result: " << result << endl;
+}
+
+// ----------------------------------------------------------------------------
+
+class LockableClass : public ::Loki::ClassLevelLockable<LockableClass> {
 public:
+  typedef ::Loki::ClassLevelLockable<LockableClass> BaseClass;
 
-    typedef ::Loki::ClassLevelLockable< LockableClass > BaseClass;
+  explicit LockableClass(uintptr_t index) : BaseClass(), m_index(index) {}
 
-    explicit LockableClass( uintptr_t index ) : BaseClass(), m_index( index ) {}
+  ~LockableClass(void) {}
 
-    ~LockableClass( void ) {}
+  uintptr_t GetIndex(void) const { return m_index; }
 
-    uintptr_t GetIndex( void ) const { return m_index; }
-
-    void Print( uintptr_t threadIndex );
+  void Print(uintptr_t threadIndex);
 
 private:
-    /// Assignment operator is not implemented.
-    LockableClass & operator = ( const LockableClass & );
-    const uintptr_t m_index;
+  /// Assignment operator is not implemented.
+  LockableClass &operator=(const LockableClass &);
+  const uintptr_t m_index;
 };
 
 // ----------------------------------------------------------------------------
 
-void LockableClass::Print( uintptr_t threadIndex )
-{
-    assert( NULL != this );
-    DO; ::Loki::Printf( "%u: %u: -----\n" )( m_index )( threadIndex );
-    DO; ::Loki::Printf( "%u: %u: ----\n" )( m_index )( threadIndex );
-    DO; ::Loki::Printf( "%u: %u: ---\n" )( m_index )( threadIndex );
-    DO; ::Loki::Printf( "%u: %u: --\n" )( m_index )( threadIndex );
-    DO; ::Loki::Printf( "%u: %u: -\n" )( m_index )( threadIndex );
-    DO; ::Loki::Printf( "%u: %u:\n" )( m_index )( threadIndex );
+void LockableClass::Print(uintptr_t threadIndex) {
+  assert(NULL != this);
+  DO;
+  ::Loki::Printf("%u: %u: -----\n")(m_index)(threadIndex);
+  DO;
+  ::Loki::Printf("%u: %u: ----\n")(m_index)(threadIndex);
+  DO;
+  ::Loki::Printf("%u: %u: ---\n")(m_index)(threadIndex);
+  DO;
+  ::Loki::Printf("%u: %u: --\n")(m_index)(threadIndex);
+  DO;
+  ::Loki::Printf("%u: %u: -\n")(m_index)(threadIndex);
+  DO;
+  ::Loki::Printf("%u: %u:\n")(m_index)(threadIndex);
 }
 
 // ----------------------------------------------------------------------------
 
-typedef ::std::vector< LockableClass * > LockableClasses;
+typedef ::std::vector<LockableClass *> LockableClasses;
 
-LockableClasses & GetLockableClasses( void )
-{
-    static LockableClasses objects;
-    return objects;
+LockableClasses &GetLockableClasses(void) {
+  static LockableClasses objects;
+  return objects;
 }
 
 // ----------------------------------------------------------------------------
 
-LockableClass * GetLockableClass( unsigned int index )
-{
-    LockableClasses & objects = GetLockableClasses();
-    if ( objects.size() <= index )
-        return NULL;
-
-    LockableClass * object = objects[ index ];
-    return object;
-}
-
-// ----------------------------------------------------------------------------
-
-void * RunClassTest( void * p )
-{
-    const uintptr_t threadIndex = reinterpret_cast< uintptr_t >( p );
-    assert( threadIndex < ThreadCount );
-
-    for ( unsigned int ii = 0; ii < ClassCount; ++ii )
-    {
-        LockableClass * object = GetLockableClass( ii );
-        assert( NULL != object );
-        LockableClass::Lock lock( *object );
-        (void)lock;
-        object->Print( threadIndex );
-    }
-
+LockableClass *GetLockableClass(unsigned int index) {
+  LockableClasses &objects = GetLockableClasses();
+  if (objects.size() <= index)
     return NULL;
+
+  LockableClass *object = objects[index];
+  return object;
 }
 
 // ----------------------------------------------------------------------------
 
-void DoClassLockTest( void )
-{
-    cout << "Starting DoClassLockTest" << endl;
+void *RunClassTest(void *p) {
+  const uintptr_t threadIndex = reinterpret_cast<uintptr_t>(p);
+  assert(threadIndex < ThreadCount);
 
-    LockableClasses & objects = GetLockableClasses();
-    objects.reserve( ClassCount );
-    for ( unsigned int ii = 0; ii < ClassCount; ++ii )
-    {
-        LockableClass * object = new LockableClass( ii );
-        objects.push_back( object );
-    }
+  for (unsigned int ii = 0; ii < ClassCount; ++ii) {
+    LockableClass *object = GetLockableClass(ii);
+    assert(NULL != object);
+    LockableClass::Lock lock(*object);
+    (void)lock;
+    object->Print(threadIndex);
+  }
 
-    {
-        ThreadPool pool;
-        pool.Create( ThreadCount, &RunClassTest );
-        pool.Start();
-        pool.Join();
-    }
-
-    cout << "Finished DoClassLockTest" << endl;
+  return NULL;
 }
 
 // ----------------------------------------------------------------------------
 
-int main( int argc, const char * const argv[] )
-{
-    (void)argc;
-    (void)argv;
+void DoClassLockTest(void) {
+  cout << "Starting DoClassLockTest" << endl;
 
-    DoObjectLockTest();
-    DoClassLockTest();
+  LockableClasses &objects = GetLockableClasses();
+  objects.reserve(ClassCount);
+  for (unsigned int ii = 0; ii < ClassCount; ++ii) {
+    LockableClass *object = new LockableClass(ii);
+    objects.push_back(object);
+  }
 
-    return 0;
+  {
+    ThreadPool pool;
+    pool.Create(ThreadCount, &RunClassTest);
+    pool.Start();
+    pool.Join();
+  }
+
+  cout << "Finished DoClassLockTest" << endl;
+}
+
+// ----------------------------------------------------------------------------
+
+int main(int argc, const char *const argv[]) {
+  (void)argc;
+  (void)argv;
+
+  DoObjectLockTest();
+  DoClassLockTest();
+
+  return 0;
 }
 
 // ----------------------------------------------------------------------------

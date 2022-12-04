@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
-// Copyright (c) 2005 Peter Kümmel
+// Copyright (c) 2005 Peter Ké»°mel
 // Permission to use, copy, modify, distribute and sell this software for any
 //     purpose is hereby granted without fee, provided that the above copyright
 //     notice appear in all copies and that both that copyright notice and this
@@ -14,62 +14,43 @@
 
 // $Id$
 
-
+#include <cmath>
 #include <ctime>
 #include <iostream>
 #include <stdlib.h>
-#include <cmath>
 
-class Timer
-{
+class Timer {
 public:
+  Timer() { t100 = 0; }
 
-    Timer()
-    {
-        t100 = 0;
-    }
+  void start() { t0 = clock(); }
 
-    void start()
-    {
-        t0 = clock();
-    }
+  void stop() { t1 = clock(); }
 
-    void stop()
-    {
-        t1 = clock();
-    }
+  clock_t t() { return t1 - t0; }
 
-    clock_t t()
-    {
-        return t1-t0;
-    }
+  double sec(int t) { return floor(100.0 * double(t) / 1000.0) / 100.0; }
 
-    double sec(int t)
-    {
-        return floor(100.0*double(t)/1000.0 )/100.0;
-    }
+  int rel(int t) {
+    return (t100 == 0 ? 100 : static_cast<int>(floor(100.0 * t / t100 + 0.5)));
+  }
 
-    int rel(int t)
-    {
-        return ( t100==0 ? 100 : static_cast<int>(floor(100.0*t/t100+0.5)) );
-    }
+  double speedup(int t) {
+    double tup = t;
+    return (tup != 0 ? floor(100.0 * (t100 != 0 ? t100 : tup) / tup + 0.5) / 100
+                     : 1);
+  }
 
-    double speedup(int t)
-    {
-        double tup=t;
-        return (tup!=0 ? floor(100.0*(t100!=0?t100:tup)/tup+0.5)/100 : 1);
-    }
+  double t100;
 
-    double  t100;
+  void print(int t, const char *s) {
+    std::cout << s << "\tseconds: " << sec(t) << "\trelative time: " << rel(t)
+              << "%\tspeed-up factor: " << speedup(t) << "" << std::endl;
+  }
 
-    void print(int t, const char* s)
-    {
-        std::cout << s << "\tseconds: " << sec(t) << "\trelative time: " << rel(t) << "%\tspeed-up factor: " << speedup(t) << "" << std::endl;
-    }
 private:
-    clock_t t0;
-    clock_t t1;
+  clock_t t0;
+  clock_t t1;
 };
 
 #endif
-

@@ -12,9 +12,7 @@
 
 // $Id$
 
-
 // ----------------------------------------------------------------------------
-
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -22,97 +20,78 @@
 
 #include <loki/SmartPtr.h>
 
-#include <memory>
-#include <iostream>
 #include <cstdlib>
-
+#include <iostream>
+#include <memory>
 
 using namespace Loki;
 using namespace std;
 
-
 // ----------------------------------------------------------------------------
 
-class Base
-{
+class Base {
 public:
-    virtual ~Base() {}
+  virtual ~Base() {}
 
-    virtual void Hello() { cout << "Base Hello, world!" << endl; }
+  virtual void Hello() { cout << "Base Hello, world!" << endl; }
 };
 
 // ----------------------------------------------------------------------------
 
-class Derived: public Base
-{
+class Derived : public Base {
 public:
-    virtual void Hello() { cout << "Derived Hello, world!" << endl; }
+  virtual void Hello() { cout << "Derived Hello, world!" << endl; }
 };
 
+// ----------------------------------------------------------------------------
+
+typedef shared_ptr<Base> AutoPtrBase;
+typedef shared_ptr<Derived> AutoPtrDerived;
+
+typedef SmartPtr<Base, DestructiveCopy> SmartAutoPtrBase;
+typedef SmartPtr<Derived, DestructiveCopy> SmartAutoPtrDerived;
 
 // ----------------------------------------------------------------------------
 
-typedef shared_ptr< Base > AutoPtrBase;
-typedef shared_ptr< Derived > AutoPtrDerived;
-
-typedef SmartPtr< Base, DestructiveCopy > SmartAutoPtrBase;
-typedef SmartPtr< Derived, DestructiveCopy > SmartAutoPtrDerived;
-
+template <class TPtrBase> TPtrBase CreateBase() { return TPtrBase(new Base); }
 
 // ----------------------------------------------------------------------------
 
-template <class TPtrBase>
-TPtrBase CreateBase()
-{
-    return TPtrBase( new Base );
+template <class TPtrDerived> TPtrDerived CreateDerived() {
+  return TPtrDerived(new Derived);
 }
 
 // ----------------------------------------------------------------------------
 
-template <class TPtrDerived>
-TPtrDerived CreateDerived()
-{
-    return TPtrDerived( new Derived );
+template <class TPtrBase> void UseBase(TPtrBase ptr) { ptr->Hello(); }
+
+// ----------------------------------------------------------------------------
+
+template <class TPtrBase, class TPtrDerived> void DoTest() {
+  TPtrBase spb0 = CreateBase<TPtrBase>();
+  TPtrBase spb1(spb0);
+
+  UseBase<TPtrBase>(CreateBase<TPtrBase>());
+
+  TPtrDerived spd1 = CreateDerived<TPtrDerived>();
+  TPtrBase spb2(spd1);
+
+  // it should work (Copy-initialization, base-from-derived)
+  // according to
+  // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/1997/N1128.pdf It does
+  // compile with Visual C++ 8 (need to test with 9)
+  // UseBase<TPtrBase>(CreateDerived<TPtrDerived>());
+
+  // Quick fix
+  UseBase<TPtrBase>(TPtrBase(CreateDerived<TPtrDerived>()));
 }
 
 // ----------------------------------------------------------------------------
 
-template < class TPtrBase >
-void UseBase( TPtrBase ptr )
-{
-    ptr->Hello();
+void TryColvinGibbonsTrick(void) {
+  DoTest<AutoPtrBase, AutoPtrDerived>();           // OK
+  DoTest<SmartAutoPtrBase, SmartAutoPtrDerived>(); // FIXME: eror:
+  // assignment of read-only reference 'val'
 }
 
 // ----------------------------------------------------------------------------
-
-template < class TPtrBase, class TPtrDerived >
-void DoTest()
-{
-    TPtrBase spb0 = CreateBase< TPtrBase >();
-    TPtrBase spb1( spb0 );
-
-    UseBase< TPtrBase >( CreateBase< TPtrBase >() );
-
-    TPtrDerived spd1 = CreateDerived< TPtrDerived >();
-    TPtrBase spb2( spd1 );
-
-    // it should work (Copy-initialization, base-from-derived)
-    // according to http://www.open-std.org/jtc1/sc22/wg21/docs/papers/1997/N1128.pdf
-    // It does compile with Visual C++ 8 (need to test with 9)
-    // UseBase<TPtrBase>(CreateDerived<TPtrDerived>());
-
-    // Quick fix
-    UseBase< TPtrBase >( TPtrBase( CreateDerived< TPtrDerived >() ) );
-}
-
-// ----------------------------------------------------------------------------
-
-void TryColvinGibbonsTrick( void )
-{
-    DoTest<AutoPtrBase, AutoPtrDerived>(); // OK
-    DoTest<SmartAutoPtrBase, SmartAutoPtrDerived>(); // FIXME: eror:
-    // assignment of read-only reference 'val'
-}
-
-// ----------------------------------------------------------------------------
-

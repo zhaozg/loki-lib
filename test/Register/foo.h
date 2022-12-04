@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
-// Copyright (c) 2006 Peter Kümmel
+// Copyright (c) 2006 Peter Ké»°mel
 // Permission to use, copy, modify, distribute and sell this software for any
 //     purpose is hereby granted without fee, provided that the above copyright
 //     notice appear in all copies and that both that copyright notice and this
@@ -14,24 +14,18 @@
 
 // $Id$
 
-
 #include "classlist.h"
 
-
-struct Foo : Base
-{
-    Foo();
-    virtual ~Foo();
-    void foo();
+struct Foo : Base {
+  Foo();
+  virtual ~Foo();
+  void foo();
 };
 
-struct Boo : Base
-{
-    Boo();
-    virtual ~Boo();
-    void foo();
+struct Boo : Base {
+  Boo();
+  virtual ~Boo();
+  void foo();
 };
-
-
 
 #endif

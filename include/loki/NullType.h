@@ -29,18 +29,15 @@
 
 // $Id$
 
-
-namespace Loki
-{
+namespace Loki {
 ////////////////////////////////////////////////////////////////////////////////
 // class NullType
 // Used as a placeholder for "no type here"
 // Useful as an end marker in typelists
 ////////////////////////////////////////////////////////////////////////////////
 
-    class NullType {};
+class NullType {};
 
-}   // namespace Loki
-
+} // namespace Loki
 
 #endif // end file guardian

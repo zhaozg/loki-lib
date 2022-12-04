@@ -28,28 +28,25 @@
 
 #include "ThreadPool.hpp"
 
-
-#include <vector>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <vector>
 
 #include <cassert>
 
-
 #if !defined(_MSC_VER)
-    #if defined(__sparc__)
-        #include <inttypes.h>
-    #else
-        #include <stdint.h>
-    #endif
+#if defined(__sparc__)
+#include <inttypes.h>
 #else
-    typedef unsigned int uintptr_t;
+#include <stdint.h>
 #endif
-
+#else
+typedef unsigned int uintptr_t;
+#endif
 
 // ----------------------------------------------------------------------------
 
-typedef ::std::vector< uintptr_t > IntVector;
+typedef ::std::vector<uintptr_t> IntVector;
 
 static thread_local uintptr_t StandaloneStaticValue = 0;
 
@@ -57,200 +54,177 @@ static const unsigned int ThreadCount = 4;
 
 // ----------------------------------------------------------------------------
 
-IntVector & GetIntVector( void )
-{
-    uintptr_t v = 0;
-    static IntVector addresses( ThreadCount, v );
-    return addresses;
+IntVector &GetIntVector(void) {
+  uintptr_t v = 0;
+  static IntVector addresses(ThreadCount, v);
+  return addresses;
 }
 
 // ----------------------------------------------------------------------------
 
-void * AddToIntVector( void * p )
-{
-    assert( 0 == StandaloneStaticValue );
-    const uintptr_t ii = reinterpret_cast< uintptr_t >( p );
-    assert( 0 < ii );
-    assert( ii < ThreadCount + 1 );
-    StandaloneStaticValue = ii;
-    IntVector & v = GetIntVector();
-    v[ ii - 1 ] = StandaloneStaticValue;
-    assert( ii == StandaloneStaticValue );
-    assert( v[ ii - 1 ] == StandaloneStaticValue );
-    return nullptr;
+void *AddToIntVector(void *p) {
+  assert(0 == StandaloneStaticValue);
+  const uintptr_t ii = reinterpret_cast<uintptr_t>(p);
+  assert(0 < ii);
+  assert(ii < ThreadCount + 1);
+  StandaloneStaticValue = ii;
+  IntVector &v = GetIntVector();
+  v[ii - 1] = StandaloneStaticValue;
+  assert(ii == StandaloneStaticValue);
+  assert(v[ii - 1] == StandaloneStaticValue);
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------------
 
-bool TestThreadLocalStaticValue( void )
-{
-    assert( StandaloneStaticValue == 0 );
-    {
-        ThreadPool pool;
-        pool.Create( ThreadCount, &AddToIntVector );
-        pool.Start();
-        pool.Join();
+bool TestThreadLocalStaticValue(void) {
+  assert(StandaloneStaticValue == 0);
+  {
+    ThreadPool pool;
+    pool.Create(ThreadCount, &AddToIntVector);
+    pool.Start();
+    pool.Join();
+  }
+
+  bool allDifferent = true;
+  IntVector &v = GetIntVector();
+  for (unsigned int i1 = 0; i1 < ThreadCount - 1; ++i1) {
+    const uintptr_t v1 = v[i1];
+    for (unsigned int i2 = i1 + 1; i2 < ThreadCount; ++i2) {
+      const uintptr_t v2 = v[i2];
+      if (v1 == v2) {
+        allDifferent = false;
+        break;
+      }
     }
+    if (!allDifferent)
+      break;
+  }
+  assert(StandaloneStaticValue == 0);
 
-    bool allDifferent = true;
-    IntVector & v = GetIntVector();
-    for ( unsigned int i1 = 0; i1 < ThreadCount - 1; ++i1 )
-    {
-        const uintptr_t v1 = v[ i1 ];
-        for ( unsigned int i2 = i1 + 1; i2 < ThreadCount; ++i2 )
-        {
-            const uintptr_t v2 = v[ i2 ];
-            if ( v1 == v2 )
-            {
-                allDifferent = false;
-                break;
-            }
-        }
-        if ( !allDifferent )
-            break;
-    }
-    assert( StandaloneStaticValue == 0 );
-
-    return allDifferent;
+  return allDifferent;
 }
 
 // ----------------------------------------------------------------------------
 
-uintptr_t & GetFunctionThreadLocalValue( void )
-{
-    static thread_local uintptr_t FunctionStaticValue = 0;
-    return FunctionStaticValue;
+uintptr_t &GetFunctionThreadLocalValue(void) {
+  static thread_local uintptr_t FunctionStaticValue = 0;
+  return FunctionStaticValue;
 }
 
 // ----------------------------------------------------------------------------
 
-void * ChangeFunctionStaticValue( void * p )
-{
-    uintptr_t & thatValue = GetFunctionThreadLocalValue();
-    assert( 0 == thatValue );
-    const uintptr_t ii = reinterpret_cast< uintptr_t >( p );
-    assert( 0 < ii );
-    assert( ii < ThreadCount + 1 );
-    thatValue = ii + ThreadCount;
-    IntVector & v = GetIntVector();
-    v[ ii - 1 ] = thatValue + ThreadCount;
-    assert( ii + ThreadCount == thatValue );
-    assert( v[ ii - 1 ] == thatValue + ThreadCount );
-    return nullptr;
+void *ChangeFunctionStaticValue(void *p) {
+  uintptr_t &thatValue = GetFunctionThreadLocalValue();
+  assert(0 == thatValue);
+  const uintptr_t ii = reinterpret_cast<uintptr_t>(p);
+  assert(0 < ii);
+  assert(ii < ThreadCount + 1);
+  thatValue = ii + ThreadCount;
+  IntVector &v = GetIntVector();
+  v[ii - 1] = thatValue + ThreadCount;
+  assert(ii + ThreadCount == thatValue);
+  assert(v[ii - 1] == thatValue + ThreadCount);
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------------
 
-bool TestThreadLocalFunctionStaticValue( void )
-{
-    assert( GetFunctionThreadLocalValue() == 0 );
+bool TestThreadLocalFunctionStaticValue(void) {
+  assert(GetFunctionThreadLocalValue() == 0);
 
-    IntVector & v = GetIntVector();
-    for ( unsigned int i0 = 0; i0 < v.size(); ++i0 )
-    {
-        v[ i0 ] = 0;
+  IntVector &v = GetIntVector();
+  for (unsigned int i0 = 0; i0 < v.size(); ++i0) {
+    v[i0] = 0;
+  }
+
+  {
+    ThreadPool pool;
+    pool.Create(ThreadCount, &ChangeFunctionStaticValue);
+    pool.Start();
+    pool.Join();
+  }
+
+  bool allDifferent = true;
+  for (unsigned int i1 = 0; i1 < ThreadCount - 1; ++i1) {
+    const uintptr_t v1 = v[i1];
+    for (unsigned int i2 = i1 + 1; i2 < ThreadCount; ++i2) {
+      const uintptr_t v2 = v[i2];
+      if (v1 == v2) {
+        allDifferent = false;
+        break;
+      }
     }
+    if (!allDifferent)
+      break;
+  }
+  assert(GetFunctionThreadLocalValue() == 0);
 
-    {
-        ThreadPool pool;
-        pool.Create( ThreadCount, &ChangeFunctionStaticValue );
-        pool.Start();
-        pool.Join();
-    }
-
-    bool allDifferent = true;
-    for ( unsigned int i1 = 0; i1 < ThreadCount - 1; ++i1 )
-    {
-        const uintptr_t v1 = v[ i1 ];
-        for ( unsigned int i2 = i1 + 1; i2 < ThreadCount; ++i2 )
-        {
-            const uintptr_t v2 = v[ i2 ];
-            if ( v1 == v2 )
-            {
-                allDifferent = false;
-                break;
-            }
-        }
-        if ( !allDifferent )
-            break;
-    }
-    assert( GetFunctionThreadLocalValue() == 0 );
-
-    return allDifferent;
+  return allDifferent;
 }
 
 // ----------------------------------------------------------------------------
 
-class ThreadAware
-{
+class ThreadAware {
 public:
+  static inline void SetValue(uintptr_t value) { ClassThreadLocal = value; }
 
-    static inline void SetValue( uintptr_t value ) { ClassThreadLocal = value; }
-
-    static inline uintptr_t GetValue( void ) { return ClassThreadLocal; }
+  static inline uintptr_t GetValue(void) { return ClassThreadLocal; }
 
 private:
-
-    static thread_local uintptr_t ClassThreadLocal;
-
+  static thread_local uintptr_t ClassThreadLocal;
 };
 
 thread_local uintptr_t ThreadAware::ClassThreadLocal = 0;
 
 // ----------------------------------------------------------------------------
 
-void * ChangeClassStaticValue( void * p )
-{
-    assert( ThreadAware::GetValue() == 0 );
-    const uintptr_t ii = reinterpret_cast< uintptr_t >( p );
-    assert( 0 < ii );
-    assert( ii < ThreadCount + 1 );
-    ThreadAware::SetValue( ii + 2 * ThreadCount );
-    IntVector & v = GetIntVector();
-    v[ ii - 1 ] = ThreadAware::GetValue();
-    assert( v[ ii - 1 ] == ThreadAware::GetValue() );
-    assert( ThreadAware::GetValue() == ii + 2 * ThreadCount );
-    return nullptr;
+void *ChangeClassStaticValue(void *p) {
+  assert(ThreadAware::GetValue() == 0);
+  const uintptr_t ii = reinterpret_cast<uintptr_t>(p);
+  assert(0 < ii);
+  assert(ii < ThreadCount + 1);
+  ThreadAware::SetValue(ii + 2 * ThreadCount);
+  IntVector &v = GetIntVector();
+  v[ii - 1] = ThreadAware::GetValue();
+  assert(v[ii - 1] == ThreadAware::GetValue());
+  assert(ThreadAware::GetValue() == ii + 2 * ThreadCount);
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------------
 
-bool TestThreadLocalClassStaticValue( void )
-{
-    assert( ThreadAware::GetValue() == 0 );
+bool TestThreadLocalClassStaticValue(void) {
+  assert(ThreadAware::GetValue() == 0);
 
-    IntVector & v = GetIntVector();
-    for ( unsigned int i0 = 0; i0 < v.size(); ++i0 )
-    {
-        v[ i0 ] = 0;
+  IntVector &v = GetIntVector();
+  for (unsigned int i0 = 0; i0 < v.size(); ++i0) {
+    v[i0] = 0;
+  }
+
+  {
+    ThreadPool pool;
+    pool.Create(ThreadCount, &ChangeClassStaticValue);
+    pool.Start();
+    pool.Join();
+  }
+
+  bool allDifferent = true;
+  for (unsigned int i1 = 0; i1 < ThreadCount - 1; ++i1) {
+    const uintptr_t v1 = v[i1];
+    for (unsigned int i2 = i1 + 1; i2 < ThreadCount; ++i2) {
+      const uintptr_t v2 = v[i2];
+      if (v1 == v2) {
+        allDifferent = false;
+        break;
+      }
     }
+    if (!allDifferent)
+      break;
+  }
+  assert(ThreadAware::GetValue() == 0);
 
-    {
-        ThreadPool pool;
-        pool.Create( ThreadCount, &ChangeClassStaticValue );
-        pool.Start();
-        pool.Join();
-    }
-
-    bool allDifferent = true;
-    for ( unsigned int i1 = 0; i1 < ThreadCount - 1; ++i1 )
-    {
-        const uintptr_t v1 = v[ i1 ];
-        for ( unsigned int i2 = i1 + 1; i2 < ThreadCount; ++i2 )
-        {
-            const uintptr_t v2 = v[ i2 ];
-            if ( v1 == v2 )
-            {
-                allDifferent = false;
-                break;
-            }
-        }
-        if ( !allDifferent )
-            break;
-    }
-    assert( ThreadAware::GetValue() == 0 );
-
-    return allDifferent;
+  return allDifferent;
 }
 
 // ----------------------------------------------------------------------------

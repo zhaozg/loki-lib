@@ -21,27 +21,24 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #ifndef LOKI_SMART_ASSERT_HPP_INCLUDED
 #define LOKI_SMART_ASSERT_HPP_INCLUDED
 
-
 #include <loki/Concatenate.h>
 
-#if defined ( DEBUG ) || defined( DEBUG_ ) || defined( _DEBUG )
-    #define LOKI_SMART_ASSERT_DEBUG
+#if defined(DEBUG) || defined(DEBUG_) || defined(_DEBUG)
+#define LOKI_SMART_ASSERT_DEBUG
 #endif
 
-#if defined( _MSC_VER )
-    #pragma warning( push )
-    #pragma warning( disable : 4514 )
-    #pragma warning( disable : 4711 )
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4514)
+#pragma warning(disable : 4711)
 #endif
 
 #define LOKI_DEFINED_NULLPTR
 
-namespace Loki
-{
+namespace Loki {
 
 // ---------------------------------------------------------------------
 
@@ -73,7 +70,8 @@ namespace Loki
   then only the right-most message is sent to output. To add a simple message
   to your assertions, use the .Msg() function.
  @code
-  LOKI_SMART_ASSERT( cond ).Msg( "Something is rotten in the state of Denmark." );
+  LOKI_SMART_ASSERT( cond ).Msg( "Something is rotten in the state of Denmark."
+ );
  @endcode
 
  @par Adding Variables to Your Assertions.
@@ -101,9 +99,9 @@ namespace Loki
 
  @par Setting the Severity Level
   Typical assertions treat all error conditions as an excuse to commit suicide.
-  That one-size-fits-all solution seems overly drastic for minor errors. At least
-  SmartAssert gives the developer more detailed output to help understand why
-  the program died.
+  That one-size-fits-all solution seems overly drastic for minor errors. At
+ least SmartAssert gives the developer more detailed output to help understand
+ why the program died.
 
   SmartAssert provides multiple severity levels so developers have more options
   besides seeing their programs die. The basic options are to start a debugger,
@@ -151,17 +149,17 @@ namespace Loki
   SmartAssert follows that tradition. SmartAssert has a default policy that
   mimics the behaviors of assert. You can implement your own policies to handle
   assertions by making a class with the function signatures shown below. If you
-  write your own policy class, you should also use the LOKI_SMART_ASSERT_POLICIED
-  macro, and not the LOKI_SMART_ASSERT macro.
+  write your own policy class, you should also use the
+ LOKI_SMART_ASSERT_POLICIED macro, and not the LOKI_SMART_ASSERT macro.
 
  @code
   class MyPolicy
   {
     static bool FixedProblem( const SmartAssertBase * asserter );
-	static void Output( const SmartAssertBase * asserter );
-	static void Debugger( const SmartAssertBase * asserter );
-	static SmartAssertBase::UserResponse AskUser( const SmartAssertBase * asserter );
-	static void AbortNow( const SmartAssertBase * asserter );
+        static void Output( const SmartAssertBase * asserter );
+        static void Debugger( const SmartAssertBase * asserter );
+        static SmartAssertBase::UserResponse AskUser( const SmartAssertBase *
+ asserter ); static void AbortNow( const SmartAssertBase * asserter );
   };
   LOKI_SMART_ASSERT_POLICIED( cond, MyPolicy );
  @endcode
@@ -208,121 +206,126 @@ namespace Loki
  This class has one constructor for each primitive data type so developers
  can pass any primitive variable into the assert.
  */
-class AssertInfo
-{
+class AssertInfo {
 public:
+  /** @enum DataTypeTag One tag for each primitive data type, plus a
+   few for pointers to char data types.
+   */
+  enum DataTypeTag {
+    Unknown = 0,
+    Boolean,
+    JustChar,
+    SignedChar,
+    UnsignedChar,
+    SignedShort,
+    UnsignedShort,
+    JustInt,
+    SignedInt,
+    UnsignedInt,
+    Long,
+    UnsignedLong,
+    LongInt,
+    UnsignedLongInt,
+    CharPtr,
+    SignedCharPtr,
+    UnsignedCharPtr,
+    VoidPtr,
+    Float,
+    Double,
+    LongDouble
+  };
 
-	/** @enum DataTypeTag One tag for each primitive data type, plus a
-	 few for pointers to char data types.
-	 */
-	enum DataTypeTag
-	{
-		Unknown = 0,
-		Boolean,
-		JustChar,
-		SignedChar,
-		UnsignedChar,
-		SignedShort,
-		UnsignedShort,
-		JustInt,
-		SignedInt,
-		UnsignedInt,
-		Long,
-		UnsignedLong,
-		LongInt,
-		UnsignedLongInt,
-		CharPtr,
-		SignedCharPtr,
-		UnsignedCharPtr,
-		VoidPtr,
-		Float,
-		Double,
-		LongDouble
-	};
+  /// Provides human readable name of data type.
+  static const char *GetName(DataTypeTag tag);
 
-    /// Provides human readable name of data type.
-	static const char * GetName( DataTypeTag tag );
+  /// @union DataValue Can be configured as any primitive data type.
+  union DataValue {
+    bool m_bool;
+    char m_char;
+    signed char m_s_char;
+    unsigned char m_u_char;
+    signed short int m_s_short;
+    unsigned short int m_u_short;
+    int m_int;
+    unsigned int m_u_int;
+    long m_long;
+    unsigned long m_u_long;
+    signed long long int m_s_long_int;
+    unsigned long long int m_u_long_int;
+    const char *m_p_char;
+    const signed char *m_p_s_char;
+    const unsigned char *m_p_u_char;
+    const void *m_p_v;
+    float m_float;
+    double m_double;
+    long double m_l_double;
 
-	/// @union DataValue Can be configured as any primitive data type.
-	union DataValue
-	{
-		bool                   m_bool;
-		char                   m_char;
-		signed char            m_s_char;
-		unsigned char          m_u_char;
-		signed short int       m_s_short;
-		unsigned short int     m_u_short;
-		int                    m_int;
-		unsigned int           m_u_int;
-		long                   m_long;
-		unsigned long          m_u_long;
-		signed long long int   m_s_long_int;
-		unsigned long long int m_u_long_int;
-		const char *           m_p_char;
-		const signed char *    m_p_s_char;
-		const unsigned char *  m_p_u_char;
-        const void *           m_p_v;
-		float                  m_float;
-		double                 m_double;
-		long double            m_l_double;
+    DataValue() : m_bool(true) {}
+    DataValue(const bool v) : m_bool(v) {}
+    DataValue(const char v) : m_char(v) {}
+    DataValue(const signed char v) : m_s_char(v) {}
+    DataValue(const unsigned char v) : m_u_char(v) {}
+    DataValue(const signed short int v) : m_s_short(v) {}
+    DataValue(const unsigned short int v) : m_u_short(v) {}
+    DataValue(const int v) : m_int(v) {}
+    DataValue(const unsigned int v) : m_u_int(v) {}
+    DataValue(const long v) : m_long(v) {}
+    DataValue(const unsigned long v) : m_u_long(v) {}
+    DataValue(const long long int v) : m_s_long_int(v) {}
+    DataValue(const unsigned long long int v) : m_u_long_int(v) {}
+    DataValue(const char *v) : m_p_char(v) {}
+    DataValue(const signed char *v) : m_p_s_char(v) {}
+    DataValue(const unsigned char *v) : m_p_u_char(v) {}
+    DataValue(const void *v) : m_p_v(v) {}
+    DataValue(const float v) : m_float(v) {}
+    DataValue(const double v) : m_double(v) {}
+    DataValue(const long double v) : m_l_double(v) {}
 
-		DataValue()                                 : m_bool(    true ) {}
-		DataValue( const bool                   v ) : m_bool(       v ) {}
-		DataValue( const char                   v ) : m_char(       v ) {}
-		DataValue( const signed char            v ) : m_s_char(     v ) {}
-		DataValue( const unsigned char          v ) : m_u_char(     v ) {}
-		DataValue( const signed short int       v ) : m_s_short(    v ) {}
-		DataValue( const unsigned short int     v ) : m_u_short(    v ) {}
-		DataValue( const int                    v ) : m_int(        v ) {}
-		DataValue( const unsigned int           v ) : m_u_int(      v ) {}
-		DataValue( const long                   v ) : m_long(       v ) {}
-		DataValue( const unsigned long          v ) : m_u_long(     v ) {}
-		DataValue( const long long int          v ) : m_s_long_int( v ) {}
-		DataValue( const unsigned long long int v ) : m_u_long_int( v ) {}
-		DataValue( const char *                 v ) : m_p_char(     v ) {}
-		DataValue( const signed char *          v ) : m_p_s_char(   v ) {}
-		DataValue( const unsigned char *        v ) : m_p_u_char(   v ) {}
-		DataValue( const void *                 v ) : m_p_v(        v ) {}
-		DataValue( const float                  v ) : m_float(      v ) {}
-		DataValue( const double                 v ) : m_double(     v ) {}
-		DataValue( const long double            v ) : m_l_double(   v ) {}
-
-        /** Sends output of datatype and value to cerr or cout.
-         @param type What type of data is in the union.
-         @param use_cerr True to send output to standard error instead of standard out.
-         */
-		void Output( DataTypeTag type, bool use_cerr ) const;
-	};
-
-	AssertInfo()                           : m_type( Unknown ),         m_value(),    m_next( nullptr ) {}
-	AssertInfo( bool v )                   : m_type( Boolean ),         m_value( v ), m_next( nullptr ) {}
-    AssertInfo( char v )                   : m_type( JustChar ),        m_value( v ), m_next( nullptr ) {}
-	AssertInfo( signed char v )            : m_type( SignedChar ),      m_value( v ), m_next( nullptr ) {}
-	AssertInfo( unsigned char v )          : m_type( UnsignedChar ),    m_value( v ), m_next( nullptr ) {}
-	AssertInfo( signed short v )           : m_type( SignedShort ),     m_value( v ), m_next( nullptr ) {}
-	AssertInfo( unsigned short v )         : m_type( UnsignedShort ),   m_value( v ), m_next( nullptr ) {}
-	AssertInfo( signed int v )             : m_type( SignedInt ),       m_value( v ), m_next( nullptr ) {}
-	AssertInfo( unsigned int v )           : m_type( UnsignedInt ),     m_value( v ), m_next( nullptr ) {}
-	AssertInfo( long v )                   : m_type( Long ),            m_value( v ), m_next( nullptr ) {}
-	AssertInfo( unsigned long v )          : m_type( UnsignedLong ),    m_value( v ), m_next( nullptr ) {}
-	AssertInfo( long long int v )          : m_type( LongInt ),         m_value( v ), m_next( nullptr ) {}
-	AssertInfo( unsigned long long int v ) : m_type( UnsignedLongInt ), m_value( v ), m_next( nullptr ) {}
-	AssertInfo( const char * v )           : m_type( CharPtr ),         m_value( v ), m_next( nullptr ) {}
-	AssertInfo( const signed char * v )    : m_type( SignedCharPtr ),   m_value( v ), m_next( nullptr ) {}
-	AssertInfo( const unsigned char * v )  : m_type( UnsignedCharPtr ), m_value( v ), m_next( nullptr ) {}
-	AssertInfo( const void * v )           : m_type( VoidPtr ),         m_value( v ), m_next( nullptr ) {}
-	AssertInfo( float v )                  : m_type( Float ),           m_value( v ), m_next( nullptr ) {}
-	AssertInfo( double v )                 : m_type( Double ),          m_value( v ), m_next( nullptr ) {}
-	AssertInfo( long double v )            : m_type( LongDouble ),      m_value( v ), m_next( nullptr ) {}
-
-	/** Provides default output action.
-     @param use_cerr True to send output to standard error instead of standard out.
+    /** Sends output of datatype and value to cerr or cout.
+     @param type What type of data is in the union.
+     @param use_cerr True to send output to standard error instead of standard
+     out.
      */
-	void Output( bool use_cerr ) const;
+    void Output(DataTypeTag type, bool use_cerr) const;
+  };
 
-	DataTypeTag  m_type;               ///< What type of data this stores.
-	DataValue    m_value;              ///< Value of that data.
-	mutable const AssertInfo * m_next; ///< Pointer to next piece of info, if any.
+  AssertInfo() : m_type(Unknown), m_value(), m_next(nullptr) {}
+  AssertInfo(bool v) : m_type(Boolean), m_value(v), m_next(nullptr) {}
+  AssertInfo(char v) : m_type(JustChar), m_value(v), m_next(nullptr) {}
+  AssertInfo(signed char v) : m_type(SignedChar), m_value(v), m_next(nullptr) {}
+  AssertInfo(unsigned char v)
+      : m_type(UnsignedChar), m_value(v), m_next(nullptr) {}
+  AssertInfo(signed short v)
+      : m_type(SignedShort), m_value(v), m_next(nullptr) {}
+  AssertInfo(unsigned short v)
+      : m_type(UnsignedShort), m_value(v), m_next(nullptr) {}
+  AssertInfo(signed int v) : m_type(SignedInt), m_value(v), m_next(nullptr) {}
+  AssertInfo(unsigned int v)
+      : m_type(UnsignedInt), m_value(v), m_next(nullptr) {}
+  AssertInfo(long v) : m_type(Long), m_value(v), m_next(nullptr) {}
+  AssertInfo(unsigned long v)
+      : m_type(UnsignedLong), m_value(v), m_next(nullptr) {}
+  AssertInfo(long long int v) : m_type(LongInt), m_value(v), m_next(nullptr) {}
+  AssertInfo(unsigned long long int v)
+      : m_type(UnsignedLongInt), m_value(v), m_next(nullptr) {}
+  AssertInfo(const char *v) : m_type(CharPtr), m_value(v), m_next(nullptr) {}
+  AssertInfo(const signed char *v)
+      : m_type(SignedCharPtr), m_value(v), m_next(nullptr) {}
+  AssertInfo(const unsigned char *v)
+      : m_type(UnsignedCharPtr), m_value(v), m_next(nullptr) {}
+  AssertInfo(const void *v) : m_type(VoidPtr), m_value(v), m_next(nullptr) {}
+  AssertInfo(float v) : m_type(Float), m_value(v), m_next(nullptr) {}
+  AssertInfo(double v) : m_type(Double), m_value(v), m_next(nullptr) {}
+  AssertInfo(long double v) : m_type(LongDouble), m_value(v), m_next(nullptr) {}
+
+  /** Provides default output action.
+@param use_cerr True to send output to standard error instead of standard out.
+*/
+  void Output(bool use_cerr) const;
+
+  DataTypeTag m_type;               ///< What type of data this stores.
+  DataValue m_value;                ///< Value of that data.
+  mutable const AssertInfo *m_next; ///< Pointer to next piece of info, if any.
 };
 
 // ---------------------------------------------------------------------
@@ -334,114 +337,117 @@ public:
  location, not for storing general values. Use AssertInfo for storing
  values of arbitary primitive types.
  */
-class AssertContext
-{
+class AssertContext {
 public:
+  /// Constructs context for source code line within file.
+  AssertContext(const char *description, unsigned int line);
 
-	/// Constructs context for source code line within file.
-	AssertContext( const char * description, unsigned int line );
+  /// Constructs context for source code filename or function name.
+  AssertContext(const char *description, const char *value);
 
-	/// Constructs context for source code filename or function name.
-	AssertContext( const char * description, const char * value );
+  /// Function provides default output action.
+  void Output(bool use_cerr) const;
 
-	/// Function provides default output action.
-	void Output( bool use_cerr ) const;
-
-	unsigned int m_line;         ///< Line number within file.
-	const char * m_value;        ///< Pointer to either filename or function name.
-	const char * m_description;  ///< C-style string for describing piece of context.
-	mutable const AssertContext * m_next;  ///< Pointer to next piece of context, if any.
+  unsigned int m_line; ///< Line number within file.
+  const char *m_value; ///< Pointer to either filename or function name.
+  const char
+      *m_description; ///< C-style string for describing piece of context.
+  mutable const AssertContext
+      *m_next; ///< Pointer to next piece of context, if any.
 };
 
 // ---------------------------------------------------------------------
 
-class SmartAssertBase
-{
+class SmartAssertBase {
 public:
+  enum SeverityLevel {
+    Info_,  ///< Just warn user and do nothing else. (same as Warning and
+            ///< Ignore-Each-Time)
+    Warn_,  ///< Give user options: (Ignore Once, Ignore Always, Debug)
+    Error_, ///< Give user options: (Ignore Once, Ignore Always, Debug, Abort)
+    Fatal_  ///< Always abort on failure. User gets no option to choose
+            ///< otherwise.
+  };
 
-	enum SeverityLevel
-	{
-		Info_,   ///< Just warn user and do nothing else. (same as Warning and Ignore-Each-Time)
-		Warn_,   ///< Give user options: (Ignore Once, Ignore Always, Debug)
-		Error_,  ///< Give user options: (Ignore Once, Ignore Always, Debug, Abort)
-		Fatal_   ///< Always abort on failure. User gets no option to choose otherwise.
-	};
+  /// @enum Possible replies by the user when asked what to do about assertion.
+  enum UserResponse {
+    /// Program continues as if assertion never happened, and asks
+    /// user what to do when assertion occurs again.
+    IgnoreThisTime = 'I',
+    /// Program continues executing, and never checks assertion for
+    /// the rest of the program's execution. If the program ends and
+    /// restarts, SmartAssert will check it again.
+    IgnoreEachTime = 'E',
+    /// Start the debugger at the place where the assertion failed.
+    DebugNow = 'D',
+    /// End the program now.
+    AbortProgram = 'A'
+  };
 
-	/// @enum Possible replies by the user when asked what to do about assertion.
-    enum UserResponse
-    {
-		/// Program continues as if assertion never happened, and asks
-		/// user what to do when assertion occurs again.
-		IgnoreThisTime = 'I',
-		/// Program continues executing, and never checks assertion for
-		/// the rest of the program's execution. If the program ends and
-		/// restarts, SmartAssert will check it again.
-		IgnoreEachTime = 'E',
-		/// Start the debugger at the place where the assertion failed.
-		DebugNow       = 'D',
-		/// End the program now.
-		AbortProgram   = 'A'
-	};
+  /// Gets one word description of severity level.
+  static const char *GetName(SeverityLevel level);
 
-	/// Gets one word description of severity level.
-	static const char * GetName( SeverityLevel level );
+  /// These three C-style strings contain descriptions used for assertion
+  /// contexts.
+  static const char *const FileDesc;
+  static const char *const LineDesc;
+  static const char *const FunctionDesc;
 
-	/// These three C-style strings contain descriptions used for assertion contexts.
-	static const char * const FileDesc;
-	static const char * const LineDesc;
-	static const char * const FunctionDesc;
+  /// @note All the variables are public so developers can access them through
+  /// policy classes.
 
-    /// @note All the variables are public so developers can access them through policy classes.
-
-	mutable const AssertContext * m_context; ///< Linked-list of contexts of where assertion occurred.
-	mutable const AssertInfo * m_info;       ///< Linked-list of values provided for output purposes.
-	SeverityLevel m_level;                   ///< How bad is this assertion?
-	bool *        m_ignore;                  ///< Pointer to ignore-always flag.
-	const char *  m_expression;              ///< Pointer to C-style string of failed assertion expression.
-	const char *  m_message;                 ///< Simple message made by developer.
-	bool          m_handled;                 ///< True if this assertion was handled before destructor.
+  mutable const AssertContext
+      *m_context; ///< Linked-list of contexts of where assertion occurred.
+  mutable const AssertInfo
+      *m_info; ///< Linked-list of values provided for output purposes.
+  SeverityLevel m_level;    ///< How bad is this assertion?
+  bool *m_ignore;           ///< Pointer to ignore-always flag.
+  const char *m_expression; ///< Pointer to C-style string of failed assertion
+                            ///< expression.
+  const char *m_message;    ///< Simple message made by developer.
+  bool m_handled; ///< True if this assertion was handled before destructor.
 
 protected:
+  /// Default constructor is used for release builds. It ignores assertions.
+  SmartAssertBase();
 
-	/// Default constructor is used for release builds. It ignores assertions.
-	SmartAssertBase();
+  /** This constructor gets used in debug builds.
+   @param ignore Pointer to boolean flag to ignore this assertion each time.
+   @param expression C-style string showing failed assertion.
+   */
+  SmartAssertBase(bool *ignore, const char *expression);
 
-	/** This constructor gets used in debug builds.
-	 @param ignore Pointer to boolean flag to ignore this assertion each time.
-	 @param expression C-style string showing failed assertion.
-	 */
-	SmartAssertBase( bool * ignore, const char * expression );
+  /// Destructor handles assertion only when if not handled earlier.
+  virtual ~SmartAssertBase();
 
-	/// Destructor handles assertion only when if not handled earlier.
-	virtual ~SmartAssertBase();
+  /// Called by derived class to add context information.
+  SmartAssertBase &AddContext(const AssertContext &info);
 
-	/// Called by derived class to add context information.
-	SmartAssertBase & AddContext( const AssertContext & info );
+  /// Called by derived class to add values used to display info about
+  /// assertion.
+  SmartAssertBase &AddInfo(const AssertInfo &info);
 
-	/// Called by derived class to add values used to display info about assertion.
-	SmartAssertBase & AddInfo( const AssertInfo & info );
-
-	/// Called to handle assertion failure.
-	void HandleFailure();
+  /// Called to handle assertion failure.
+  void HandleFailure();
 
 private:
+  /// @note Virtual functions are private to prevent policy classes from using
+  /// them.
 
-    /// @note Virtual functions are private to prevent policy classes from using them.
+  /// Calls policy class to find out if host program fixed problem.
+  virtual bool FixedProblem() const = 0;
 
-    /// Calls policy class to find out if host program fixed problem.
-    virtual bool FixedProblem() const = 0;
+  /// Calls policy class to output information about assertion.
+  virtual void CallOutput() const;
 
-	/// Calls policy class to output information about assertion.
-	virtual void CallOutput() const;
+  /// Calls policy class to invoke debugger.
+  virtual void CallDebugger() const = 0;
 
-	/// Calls policy class to invoke debugger.
-	virtual void CallDebugger() const = 0;
+  /// Calls policy class to ask user what to do.
+  virtual UserResponse AskUser() const = 0;
 
-	/// Calls policy class to ask user what to do.
-	virtual UserResponse AskUser() const = 0;
-
-	/// Calls policy class to abort program.
-	virtual void AbortNow() const;
+  /// Calls policy class to abort program.
+  virtual void AbortNow() const;
 };
 
 // ---------------------------------------------------------------------
@@ -449,25 +455,22 @@ private:
 /** @class CoutAssertPolicy This is a policy for command line programs. It
  sends assertion messages to the standard output stream, std::cout.
 */
-class CoutAssertPolicy
-{
+class CoutAssertPolicy {
 public:
+  /// SmartAssert will ignore error if this returns true.
+  static bool FixedProblem(const SmartAssertBase *asserter);
 
-	/// SmartAssert will ignore error if this returns true.
-	static bool FixedProblem( const SmartAssertBase * asserter );
+  /// Displays information about assertion to the user.
+  static void Output(const SmartAssertBase *asserter);
 
-	/// Displays information about assertion to the user.
-	static void Output( const SmartAssertBase * asserter );
+  /// Asks user how to handle assertion.
+  static SmartAssertBase::UserResponse AskUser(const SmartAssertBase *asserter);
 
-	/// Asks user how to handle assertion.
-	static SmartAssertBase::UserResponse AskUser( const SmartAssertBase * asserter );
+  /// Calls debugger.
+  static void Debugger(const SmartAssertBase *asserter);
 
-	/// Calls debugger.
-	static void Debugger( const SmartAssertBase * asserter );
-
-	/// This call should end the program.
-	static void AbortNow( const SmartAssertBase * asserter );
-
+  /// This call should end the program.
+  static void AbortNow(const SmartAssertBase *asserter);
 };
 
 // ---------------------------------------------------------------------
@@ -476,110 +479,112 @@ public:
  sends assertion messages to the standard error stream, std::cerr. This is
  the default policy for SmartAssert.
 */
-class CerrAssertPolicy : public CoutAssertPolicy
-{
+class CerrAssertPolicy : public CoutAssertPolicy {
 public:
+  /// Displays information about assertion to the user.
+  static void Output(const SmartAssertBase *asserter);
 
-	/// Displays information about assertion to the user.
-	static void Output( const SmartAssertBase * asserter );
-
-	/// Asks user how to handle assertion.
-	static SmartAssertBase::UserResponse AskUser( const SmartAssertBase * asserter );
-
+  /// Asks user how to handle assertion.
+  static SmartAssertBase::UserResponse AskUser(const SmartAssertBase *asserter);
 };
 
 // ---------------------------------------------------------------------
 
 /** @class class SmartAssert
  */
-template< class AssertPolicy >
-class SmartAssert : public SmartAssertBase
-{
+template <class AssertPolicy> class SmartAssert : public SmartAssertBase {
 public:
+  /// Default constructor used for when assertion passes. Should get optimized
+  /// away.
+  SmartAssert() : SmartAssertBase() {}
 
-	/// Default constructor used for when assertion passes. Should get optimized away.
-	SmartAssert() : SmartAssertBase() {}
+  /// Constructor used when assertion fails.
+  SmartAssert(bool *ignore, const char *expression)
+      : SmartAssertBase(ignore, expression) {}
 
-	/// Constructor used when assertion fails.
-	SmartAssert( bool * ignore, const char * expression )
-		: SmartAssertBase( ignore, expression ) {}
+  /// Destructor is trivial.
+  virtual ~SmartAssert() {}
 
-	/// Destructor is trivial.
-	virtual ~SmartAssert() {}
+  /// Provides simple hard-coded C-style string message for output.
+  SmartAssert &Msg(const char *message) {
+    m_message = message;
+    return *this;
+  }
 
-	/// Provides simple hard-coded C-style string message for output.
-	SmartAssert & Msg( const char * message ) { m_message = message; return *this; }
+  SmartAssert &Info() {
+    m_level = SmartAssertBase::Info_;
+    return *this;
+  }
+  SmartAssert &Warn() {
+    m_level = SmartAssertBase::Warn_;
+    return *this;
+  }
+  SmartAssert &Error() {
+    m_level = SmartAssertBase::Error_;
+    return *this;
+  }
+  SmartAssert &Fatal() {
+    m_level = SmartAssertBase::Fatal_;
+    return *this;
+  }
 
-	SmartAssert & Info()  { m_level = SmartAssertBase::Info_;  return *this; }
-	SmartAssert & Warn()  { m_level = SmartAssertBase::Warn_;  return *this; }
-	SmartAssert & Error() { m_level = SmartAssertBase::Error_; return *this; }
-	SmartAssert & Fatal() { m_level = SmartAssertBase::Fatal_; return *this; }
+  /// Called to do non-default actions when assertion fails.
+  void operator()() { HandleFailure(); }
 
-	/// Called to do non-default actions when assertion fails.
-	void operator ()() { HandleFailure(); }
+  /** Adds one piece of information to assertion, generally a variable or result
+of function call. This function relies on conversion constructors in AssertInfo
+to create an AssertInfo from a single variable.
+*/
+  SmartAssert &operator()(const AssertInfo &info) {
+    return static_cast<SmartAssert &>(AddInfo(info));
+  }
 
-	/** Adds one piece of information to assertion, generally a variable or result of function call.
-     This function relies on conversion constructors in AssertInfo to create an AssertInfo from a
-     single variable.
-     */
-	SmartAssert & operator ()( const AssertInfo & info )
-	{
-		return static_cast< SmartAssert & >( AddInfo( info ) );
-	}
-
-	/// Called to add one piece of context to assertion, such as filename, line, or function name.
-	SmartAssert & Add( const AssertContext & info )
-	{
-		return static_cast< SmartAssert & >( AddContext( info ) );
-	}
+  /// Called to add one piece of context to assertion, such as filename, line,
+  /// or function name.
+  SmartAssert &Add(const AssertContext &info) {
+    return static_cast<SmartAssert &>(AddContext(info));
+  }
 
 private:
+  /// @note Virtual functions are private to prevent policy classes from using
+  /// them.
 
-    /// @note Virtual functions are private to prevent policy classes from using them.
+  /// Calls policy class to find out if host program fixed problem.
+  virtual bool FixedProblem() const {
+    return AssertPolicy::FixedProblem(
+        dynamic_cast<const SmartAssertBase *>(this));
+  }
 
-    /// Calls policy class to find out if host program fixed problem.
-    virtual bool FixedProblem() const
-	{
-		return AssertPolicy::FixedProblem( dynamic_cast< const SmartAssertBase * >( this ) );
-	}
+  /// Calls policy class to output information about assertion.
+  virtual void CallOutput() const {
+    AssertPolicy::Output(dynamic_cast<const SmartAssertBase *>(this));
+  }
 
-    /// Calls policy class to output information about assertion.
-	virtual void CallOutput() const
-	{
-		AssertPolicy::Output( dynamic_cast< const SmartAssertBase * >( this ) );
-	}
+  /// Calls policy class to invoke debugger.
+  virtual void CallDebugger() const {
+    AssertPolicy::Debugger(dynamic_cast<const SmartAssertBase *>(this));
+  }
 
-	/// Calls policy class to invoke debugger.
-	virtual void CallDebugger() const
-	{
-		AssertPolicy::Debugger( dynamic_cast< const SmartAssertBase * >( this ) );
-	}
+  /// Calls policy class to ask user what to do.
+  virtual SmartAssertBase::UserResponse AskUser() const {
+    return AssertPolicy::AskUser(dynamic_cast<const SmartAssertBase *>(this));
+  }
 
-	/// Calls policy class to ask user what to do.
-	virtual SmartAssertBase::UserResponse AskUser() const
-	{
-		return AssertPolicy::AskUser( dynamic_cast< const SmartAssertBase * >( this ) );
-	}
-
-	/// Calls policy class to abort program.
-	virtual void AbortNow() const
-	{
-		AssertPolicy::AbortNow( dynamic_cast< const SmartAssertBase * >( this ) );
-	}
-
+  /// Calls policy class to abort program.
+  virtual void AbortNow() const {
+    AssertPolicy::AbortNow(dynamic_cast<const SmartAssertBase *>(this));
+  }
 };
 
 // ---------------------------------------------------------------------
 
 } // namespace Loki
 
-
 /// These lines let Loki put filename and line into AssertContext.
 // note: using 'const char LOKI_SMART_ASSERT_FILE[] = __FILE__'
 // does not work, since __FILE__ = "SmartAssert.hpp"
 #define LOKI_SMART_ASSERT_FILE __FILE__
 #define LOKI_USE_NUMBER_FOR_UNIQUE_NAME __LINE__
-
 
 /** These lines determine if Loki can get the function name into AssertContext.
  They also declare the macro used for creating unique names for SmartAssert
@@ -588,39 +593,41 @@ private:
 #define LOKI_SMART_ASSERT_FUNCTION_EXISTS
 
 #if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000))
-	# define LOKI_SMART_ASSERT_FUNCTION __PRETTY_FUNCTION__
-	# undef LOKI_USE_NUMBER_FOR_UNIQUE_NAME
-	# define LOKI_USE_NUMBER_FOR_UNIQUE_NAME __COUNTER__
+#define LOKI_SMART_ASSERT_FUNCTION __PRETTY_FUNCTION__
+#undef LOKI_USE_NUMBER_FOR_UNIQUE_NAME
+#define LOKI_USE_NUMBER_FOR_UNIQUE_NAME __COUNTER__
 
 #elif defined(__FUNCSIG__)
-	# define LOKI_SMART_ASSERT_FUNCTION __FUNCSIG__
+#define LOKI_SMART_ASSERT_FUNCTION __FUNCSIG__
 
 #elif defined(__BORLANDC__) && (__BORLANDC__ >= 0x550)
-	# define LOKI_SMART_ASSERT_FUNCTION __FUNC__
+#define LOKI_SMART_ASSERT_FUNCTION __FUNC__
 
 #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
-	# define LOKI_SMART_ASSERT_FUNCTION __func__
+#define LOKI_SMART_ASSERT_FUNCTION __func__
 
 #elif (defined __MSC_VER) && (__MSC_VER >= 1300)
-	# define LOKI_SMART_ASSERT_FUNCTION __FUNCDNAME__
-	# undef LOKI_USE_NUMBER_FOR_UNIQUE_NAME
-	# define LOKI_USE_NUMBER_FOR_UNIQUE_NAME __COUNTER__
+#define LOKI_SMART_ASSERT_FUNCTION __FUNCDNAME__
+#undef LOKI_USE_NUMBER_FOR_UNIQUE_NAME
+#define LOKI_USE_NUMBER_FOR_UNIQUE_NAME __COUNTER__
 
-#elif  defined(__IBMCPP__) && (__IBMCPP__ <= 500)
-	# define LOKI_SMART_ASSERT_FUNCTION __FUNCTION__
+#elif defined(__IBMCPP__) && (__IBMCPP__ <= 500)
+#define LOKI_SMART_ASSERT_FUNCTION __FUNCTION__
 
 #elif (defined __HP_aCC) && (__HP_aCC <= 33300)
-	# define LOKI_SMART_ASSERT_FUNCTION __FUNCTION__
+#define LOKI_SMART_ASSERT_FUNCTION __FUNCTION__
 
 #else
-	# undef LOKI_SMART_ASSERT_FUNCTION_EXISTS
+#undef LOKI_SMART_ASSERT_FUNCTION_EXISTS
 #endif
 
-#define LOKI_MAKE_UNIQUE_NAME( str )    LOKI_CONCATENATE( str, LOKI_USE_NUMBER_FOR_UNIQUE_NAME )
-#define LOKI_SMART_ASSERT_IGNORE_NAME   LOKI_MAKE_UNIQUE_NAME( smartAssert_ignore_ )
-#define LOKI_SMART_ASSERT_CLASS_NAME    LOKI_MAKE_UNIQUE_NAME( SmartAssert_ )
-#define LOKI_SMART_ASSERT_HIDDEN_CLASS  LOKI_SMART_ASSERT_CLASS( LOKI_SMART_ASSERT_CLASS_NAME, LOKI_SMART_ASSERT_IGNORE_NAME )
-
+#define LOKI_MAKE_UNIQUE_NAME(str)                                             \
+  LOKI_CONCATENATE(str, LOKI_USE_NUMBER_FOR_UNIQUE_NAME)
+#define LOKI_SMART_ASSERT_IGNORE_NAME LOKI_MAKE_UNIQUE_NAME(smartAssert_ignore_)
+#define LOKI_SMART_ASSERT_CLASS_NAME LOKI_MAKE_UNIQUE_NAME(SmartAssert_)
+#define LOKI_SMART_ASSERT_HIDDEN_CLASS                                         \
+  LOKI_SMART_ASSERT_CLASS(LOKI_SMART_ASSERT_CLASS_NAME,                        \
+                          LOKI_SMART_ASSERT_IGNORE_NAME)
 
 // ---------------------------------------------------------------------
 
@@ -632,82 +639,93 @@ private:
 // order, but shown in file-line-function order.)
 #ifndef LOKI_SMART_ASSERT_CONTEXT
 
-    #ifdef LOKI_SMART_ASSERT_FUNCTION_EXISTS
-        #define LOKI_SMART_ASSERT_CONTEXT \
-			Add( ::Loki::AssertContext( ::Loki::SmartAssertBase::FunctionDesc, LOKI_SMART_ASSERT_FUNCTION ) ). \
-			Add( ::Loki::AssertContext( ::Loki::SmartAssertBase::LineDesc, __LINE__ ) ). \
-			Add( ::Loki::AssertContext( ::Loki::SmartAssertBase::FileDesc, LOKI_SMART_ASSERT_FILE ) )
-    #else
-        #define LOKI_SMART_ASSERT_CONTEXT \
-			Add( ::Loki::AssertContext( ::Loki::SmartAssertBase::LineDesc, __LINE__ ) ). \
-			Add( ::Loki::AssertContext( ::Loki::SmartAssertBase::FileDesc, LOKI_SMART_ASSERT_FILE ) )
-    #endif
+#ifdef LOKI_SMART_ASSERT_FUNCTION_EXISTS
+#define LOKI_SMART_ASSERT_CONTEXT                                              \
+  Add(::Loki::AssertContext(::Loki::SmartAssertBase::FunctionDesc,             \
+                            LOKI_SMART_ASSERT_FUNCTION))                       \
+      .Add(::Loki::AssertContext(::Loki::SmartAssertBase::LineDesc, __LINE__)) \
+      .Add(::Loki::AssertContext(::Loki::SmartAssertBase::FileDesc,            \
+                                 LOKI_SMART_ASSERT_FILE))
+#else
+#define LOKI_SMART_ASSERT_CONTEXT                                              \
+  Add(::Loki::AssertContext(::Loki::SmartAssertBase::LineDesc, __LINE__))      \
+      .Add(::Loki::AssertContext(::Loki::SmartAssertBase::FileDesc,            \
+                                 LOKI_SMART_ASSERT_FILE))
+#endif
 
 #endif // LOKI_SMART_ASSERT_CONTEXT
 
-
 // ---------------------------------------------------------------------
 
-#define LOKI_MAKE_SMART_ASSERT( class_name, ignore_var_name, expr ) \
-	static bool ignore_var_name = false; \
-	class class_name : public ::Loki::SmartAssert< ::Loki::CerrAssertPolicy > \
-	{ public: \
-		typedef ::Loki::SmartAssert< ::Loki::CerrAssertPolicy > BaseClass; \
-		class_name( bool * ignore, const char * expression ) \
-			: BaseClass( ignore, expression ) {} \
-		virtual ~class_name() {} \
-	}; \
-	if ( ignore_var_name || ( expr ) ) ; else \
-	class_name( &ignore_var_name, #expr ).LOKI_SMART_ASSERT_CONTEXT
-
+#define LOKI_MAKE_SMART_ASSERT(class_name, ignore_var_name, expr)              \
+  static bool ignore_var_name = false;                                         \
+  class class_name : public ::Loki::SmartAssert<::Loki::CerrAssertPolicy> {    \
+  public:                                                                      \
+    typedef ::Loki::SmartAssert<::Loki::CerrAssertPolicy> BaseClass;           \
+    class_name(bool *ignore, const char *expression)                           \
+        : BaseClass(ignore, expression) {}                                     \
+    virtual ~class_name() {}                                                   \
+  };                                                                           \
+  if (ignore_var_name || (expr))                                               \
+    ;                                                                          \
+  else                                                                         \
+    class_name(&ignore_var_name, #expr).LOKI_SMART_ASSERT_CONTEXT
 
 #ifdef LOKI_SMART_ASSERT_DEBUG
-	#define LOKI_SMART_ASSERT( expr ) \
-		LOKI_MAKE_SMART_ASSERT( LOKI_SMART_ASSERT_CLASS_NAME, LOKI_SMART_ASSERT_IGNORE_NAME, (expr) )
+#define LOKI_SMART_ASSERT(expr)                                                \
+  LOKI_MAKE_SMART_ASSERT(LOKI_SMART_ASSERT_CLASS_NAME,                         \
+                         LOKI_SMART_ASSERT_IGNORE_NAME, (expr))
 
 #else
-	#define LOKI_SMART_ASSERT( expr ) \
-		if ( true ) ; else \
-			::Loki::SmartAssert< ::Loki::CerrAssertPolicy >()
-			// Do nothing. Compiler should optimize away the else branch.
+#define LOKI_SMART_ASSERT(expr)                                                \
+  if (true)                                                                    \
+    ;                                                                          \
+  else                                                                         \
+    ::Loki::SmartAssert<::Loki::CerrAssertPolicy>()
+  // Do nothing. Compiler should optimize away the else branch.
 #endif
-
 
 // ---------------------------------------------------------------------
 
-#define LOKI_MAKE_SMART_ASSERT_POLICIED( class_name, ignore_var_name, expr, policy ) \
-	static bool ignore_var_name = false; \
-	class class_name : public ::Loki::SmartAssert< policy > \
-	{ public: \
-		typedef ::Loki::SmartAssert< policy > BaseClass; \
-		class_name( bool * ignore, const char * expression ) \
-			: BaseClass( ignore, expression ) {} \
-		virtual ~class_name() {} \
-	}; \
-	if ( ignore_var_name || ( expr ) ) ; else \
-	class_name( &ignore_var_name, #expr ).LOKI_SMART_ASSERT_CONTEXT
-
+#define LOKI_MAKE_SMART_ASSERT_POLICIED(class_name, ignore_var_name, expr,     \
+                                        policy)                                \
+  static bool ignore_var_name = false;                                         \
+  class class_name : public ::Loki::SmartAssert<policy> {                      \
+  public:                                                                      \
+    typedef ::Loki::SmartAssert<policy> BaseClass;                             \
+    class_name(bool *ignore, const char *expression)                           \
+        : BaseClass(ignore, expression) {}                                     \
+    virtual ~class_name() {}                                                   \
+  };                                                                           \
+  if (ignore_var_name || (expr))                                               \
+    ;                                                                          \
+  else                                                                         \
+    class_name(&ignore_var_name, #expr).LOKI_SMART_ASSERT_CONTEXT
 
 #ifdef LOKI_SMART_ASSERT_DEBUG
-	#define LOKI_SMART_ASSERT_POLICIED( expr, policy ) \
-		LOKI_MAKE_SMART_ASSERT_POLICIED( LOKI_SMART_ASSERT_CLASS_NAME, LOKI_SMART_ASSERT_IGNORE_NAME, (expr), policy )
+#define LOKI_SMART_ASSERT_POLICIED(expr, policy)                               \
+  LOKI_MAKE_SMART_ASSERT_POLICIED(LOKI_SMART_ASSERT_CLASS_NAME,                \
+                                  LOKI_SMART_ASSERT_IGNORE_NAME, (expr),       \
+                                  policy)
 
 #else
-	#define LOKI_SMART_ASSERT_POLICIED( expr, policy ) \
-		if ( true ) ; else \
-			::Loki::SmartAssert< policy >()
-			// Do nothing. Compiler should optimize away the else branch.
+#define LOKI_SMART_ASSERT_POLICIED(expr, policy)                               \
+  if (true)                                                                    \
+    ;                                                                          \
+  else                                                                         \
+    ::Loki::SmartAssert<policy>()
+  // Do nothing. Compiler should optimize away the else branch.
 #endif
 
 // ---------------------------------------------------------------------
 
-#if defined( LOKI_DEFINED_NULLPTR )
-    #undef LOKI_DEFINED_NULLPTR
-    #undef nullptr
+#if defined(LOKI_DEFINED_NULLPTR)
+#undef LOKI_DEFINED_NULLPTR
+#undef nullptr
 #endif
 
-#if defined( _MSC_VER )
-    #pragma warning( pop )
+#if defined(_MSC_VER)
+#pragma warning(pop)
 #endif
 
 #endif // LOKI_SMART_ASSERT_HPP_INCLUDED

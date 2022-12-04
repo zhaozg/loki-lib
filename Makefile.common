@@ -1,8 +1,6 @@
 VERSION := 0.1.7
 OS ?= $(shell uname -s)
-ifeq ($(CXXFLAGS),)
-CXXFLAGS = -std=c++11
-endif
+CXXFLAGS += -std=c++11
 CXXWARNFLAGS := -Wall -Wold-style-cast -Wundef -Wsign-compare -Wconversion -Wpointer-arith -pedantic
 CXXFLAGS += $(CXXWARNFLAGS) -g3 -Og
 

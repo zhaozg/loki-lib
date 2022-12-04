@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
-// Copyright (c) 2006 Peter Kümmel
+// Copyright (c) 2006 Peter Ké»°mel
 // Permission to use, copy, modify, distribute and sell this software for any
 //     purpose is hereby granted without fee, provided that the above copyright
 //     notice appear in all copies and that both that copyright notice and this
@@ -14,11 +14,10 @@
 
 // $Id$
 
-
 #include <loki/LokiExport.h>
 
-#if (defined(FOO_MAKE_DLL) && defined(FOO_DLL)) || \
-    (defined(FOO_MAKE_DLL) && defined(FOO_STATIC)) || \
+#if (defined(FOO_MAKE_DLL) && defined(FOO_DLL)) ||                             \
+    (defined(FOO_MAKE_DLL) && defined(FOO_STATIC)) ||                          \
     (defined(FOO_DLL) && defined(FOO_STATIC))
 #error export macro error: you could not build AND use the library
 #endif
@@ -42,6 +41,5 @@
 #ifndef FOO_EXPORT
 #error export macro error: FOO_EXPORT was not defined, disable EXPLICIT_EXPORT or define a export specification
 #endif
-
 
 #endif

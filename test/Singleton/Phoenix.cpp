@@ -10,7 +10,6 @@
 
 // $Id$
 
-
 // A singleton LogClass object that resurrects itself after
 // it has been automatically destroyed during program
 // termination.  When a dead-reference to the LogClass
@@ -32,62 +31,42 @@
 //
 
 #include <iostream>
-#include <loki/Singleton.h>   // for Loki::SingletonHolder
+#include <loki/Singleton.h> // for Loki::SingletonHolder
 
-using namespace std;   // okay for small programs
-using namespace Loki;  // okay for small programs
+using namespace std;  // okay for small programs
+using namespace Loki; // okay for small programs
 
-class LogClass
-{
+class LogClass {
 public:
-    LogClass()
-    {
-        echo("LogClass c'tor");
-    }
-    ~LogClass()
-    {
-        echo("LogClass d'tor");
-    }
-    void echo(const char *s)
-    {
-        cout << s << endl;
-    }
+  LogClass() { echo("LogClass c'tor"); }
+  ~LogClass() { echo("LogClass d'tor"); }
+  void echo(const char *s) { cout << s << endl; }
 };
 
 typedef SingletonHolder<LogClass, CreateUsingNew, PhoenixSingleton> LogBook;
 
-
 // A generic example class that stores and echoes a const char.
 //
-class Example
-{
+class Example {
 public:
-    Example()
-    {
-        echo("Example c'tor");
-    }
-    ~Example()
-    {
-        echo("Example d'tor starting");
-        LogBook::Instance().echo("LogClass: inside Example d'tor");
-        echo("Example d'tor finished");
-    }
-    void echo(const char *s)
-    {
-        cout << s << endl;
-    }
+  Example() { echo("Example c'tor"); }
+  ~Example() {
+    echo("Example d'tor starting");
+    LogBook::Instance().echo("LogClass: inside Example d'tor");
+    echo("Example d'tor finished");
+  }
+  void echo(const char *s) { cout << s << endl; }
 };
 
+int main(int argc, char *argv[]) {
+  (void)argc;
+  (void)argv;
 
-int main(int argc, char* argv[])
-{
-	(void)argc;
-	(void)argv;
+  Example *example = new Example();
+  SetLongevity<Example, void (*)(Example *)>(
+      example, 1, &Loki::Private::Deleter<Example>::Delete);
+  LogBook::Instance().echo("LogClass now instantiated.");
+  delete example;
 
-    Example *example = new Example();
-     SetLongevity<Example, void (*)(Example*)>(example, 1, &Loki::Private::Deleter<Example>::Delete);
-    LogBook::Instance().echo("LogClass now instantiated.");
-
-    return 0;
+  return 0;
 }
-

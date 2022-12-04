@@ -29,16 +29,14 @@
 
 // $Id$
 
-
-namespace Loki
-{
+namespace Loki {
 ////////////////////////////////////////////////////////////////////////////////
 // Helper structure for the STATIC_CHECK macro
 ////////////////////////////////////////////////////////////////////////////////
 
-    template<int> struct CompileTimeError;
-    template<> struct CompileTimeError<true> {};
-}
+template <int> struct CompileTimeError;
+template <> struct CompileTimeError<true> {};
+} // namespace Loki
 
 ////////////////////////////////////////////////////////////////////////////////
 // macro LOKI_STATIC_CHECK
@@ -49,11 +47,13 @@ namespace Loki
 // If expr is zero, id will appear in a compile-time error message.
 ////////////////////////////////////////////////////////////////////////////////
 
-#define LOKI_CONCAT( X, Y ) LOKI_CONCAT_SUB( X, Y )
-#define LOKI_CONCAT_SUB( X, Y ) X##Y
+#define LOKI_CONCAT(X, Y) LOKI_CONCAT_SUB(X, Y)
+#define LOKI_CONCAT_SUB(X, Y) X##Y
 
-#define LOKI_STATIC_CHECK(expr, msg) enum { LOKI_CONCAT(ERROR_##msg, __LINE__) = sizeof(Loki::CompileTimeError<expr != 0 >) }
-
+#define LOKI_STATIC_CHECK(expr, msg)                                           \
+  enum {                                                                       \
+    LOKI_CONCAT(ERROR_##msg, __LINE__) =                                       \
+        sizeof(Loki::CompileTimeError<expr != 0>)                              \
+  }
 
 #endif // end file guardian
-

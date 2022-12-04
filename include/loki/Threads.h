@@ -29,7 +29,6 @@
 
 // $Id$
 
-
 ///  @defgroup  ThreadingGroup Threading
 ///  Policies to for the threading model:
 ///
@@ -61,251 +60,205 @@
 ///    To avoid this redesign your synchronization. See also:
 ///    http://sourceforge.net/tracker/index.php?func=detail&aid=1516182&group_id=29557&atid=396647
 
-
 #include <cassert>
 #include <mutex>
-
 
 #define LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL ::Loki::ClassLevelLockable
 
 #if defined(LOKI_CLASS_LEVEL_THREADING) && !defined(LOKI_OBJECT_LEVEL_THREADING)
-    #define LOKI_DEFAULT_THREADING ::Loki::ClassLevelLockable
+#define LOKI_DEFAULT_THREADING ::Loki::ClassLevelLockable
 #else
-    #define LOKI_DEFAULT_THREADING ::Loki::ObjectLevelLockable
+#define LOKI_DEFAULT_THREADING ::Loki::ObjectLevelLockable
 #endif
 
-
-#if !defined( LOKI_DEFAULT_MUTEX )
-    #define LOKI_DEFAULT_MUTEX Loki::Mutex<std::mutex>
+#if !defined(LOKI_DEFAULT_MUTEX)
+#define LOKI_DEFAULT_MUTEX Loki::Mutex<std::mutex>
 #endif
-#if !defined( LOKI_DEFAULT_RECURSIVE_MUTEX )
-    #define LOKI_DEFAULT_RECURSIVE_MUTEX Loki::Mutex<std::recursive_mutex>
+#if !defined(LOKI_DEFAULT_RECURSIVE_MUTEX)
+#define LOKI_DEFAULT_RECURSIVE_MUTEX Loki::Mutex<std::recursive_mutex>
 #endif
 
-namespace Loki
-{
-    ////////////////////////////////////////////////////////////////////////////////
-    ///  \class Mutex
-    //
-    ///  \ingroup ThreadingGroup
-    ///  A simple and portable Mutex.  A default policy class for locking objects.
-    ////////////////////////////////////////////////////////////////////////////////
+namespace Loki {
+////////////////////////////////////////////////////////////////////////////////
+///  \class Mutex
+//
+///  \ingroup ThreadingGroup
+///  A simple and portable Mutex.  A default policy class for locking objects.
+////////////////////////////////////////////////////////////////////////////////
 
-    template<class T = std::mutex>
-    class Mutex
-    {
-    public:
-        Mutex()
-        {
-        }
-        ~Mutex()
-        {
-        }
-        void Lock()
-        {
-            mtx_.lock();
-        }
-        inline void Unlock()
-        {
-            mtx_.unlock();
-        }
-    private:
-        /// Copy-constructor not implemented.
-        Mutex(const Mutex &);
-        /// Copy-assignement operator not implemented.
-        Mutex & operator = (const Mutex &);
-        T mtx_;
-    };
+template <class T = std::mutex> class Mutex {
+public:
+  Mutex() {}
+  ~Mutex() {}
+  void Lock() { mtx_.lock(); }
+  inline void Unlock() { mtx_.unlock(); }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    ///  \class SingleThreaded
-    ///
-    ///  \ingroup ThreadingGroup
-    ///  Implementation of the ThreadingModel policy used by various classes
-    ///  Implements a single-threaded model; no synchronization
-    ////////////////////////////////////////////////////////////////////////////////
-    template <class Host, class MutexPolicy = LOKI_DEFAULT_MUTEX>
-    class SingleThreaded
-    {
-    public:
-        /// \struct Lock
-        /// Dummy Lock class
-        struct Lock
-        {
-            Lock() {}
-            explicit Lock(const SingleThreaded&) {}
-            explicit Lock(const SingleThreaded*) {}
-        };
+private:
+  /// Copy-constructor not implemented.
+  Mutex(const Mutex &);
+  /// Copy-assignement operator not implemented.
+  Mutex &operator=(const Mutex &);
+  T mtx_;
+};
 
-        typedef Host VolatileType;
+////////////////////////////////////////////////////////////////////////////////
+///  \class SingleThreaded
+///
+///  \ingroup ThreadingGroup
+///  Implementation of the ThreadingModel policy used by various classes
+///  Implements a single-threaded model; no synchronization
+////////////////////////////////////////////////////////////////////////////////
+template <class Host, class MutexPolicy = LOKI_DEFAULT_MUTEX>
+class SingleThreaded {
+public:
+  /// \struct Lock
+  /// Dummy Lock class
+  struct Lock {
+    Lock() {}
+    explicit Lock(const SingleThreaded &) {}
+    explicit Lock(const SingleThreaded *) {}
+  };
 
-        typedef int IntType;
-    };
+  typedef Host VolatileType;
 
+  typedef int IntType;
+};
 
-    ////////////////////////////////////////////////////////////////////////////////
-    ///  \class ObjectLevelLockable
-    ///
-    ///  \ingroup ThreadingGroup
-    ///  Implementation of the ThreadingModel policy used by various classes
-    ///  Implements a object-level locking scheme
-    ////////////////////////////////////////////////////////////////////////////////
-    template < class Host, class MutexPolicy = LOKI_DEFAULT_MUTEX >
-    class ObjectLevelLockable
-    {
-        mutable MutexPolicy mtx_;
+////////////////////////////////////////////////////////////////////////////////
+///  \class ObjectLevelLockable
+///
+///  \ingroup ThreadingGroup
+///  Implementation of the ThreadingModel policy used by various classes
+///  Implements a object-level locking scheme
+////////////////////////////////////////////////////////////////////////////////
+template <class Host, class MutexPolicy = LOKI_DEFAULT_MUTEX>
+class ObjectLevelLockable {
+  mutable MutexPolicy mtx_;
 
-    public:
-        ObjectLevelLockable() : mtx_() {}
+public:
+  ObjectLevelLockable() : mtx_() {}
 
-        ObjectLevelLockable(const ObjectLevelLockable&) : mtx_() {}
+  ObjectLevelLockable(const ObjectLevelLockable &) : mtx_() {}
 
-        ~ObjectLevelLockable() {}
+  ~ObjectLevelLockable() {}
 
-        class Lock;
-        friend class Lock;
+  class Lock;
+  friend class Lock;
 
-        ///  \struct Lock
-        ///  Lock class to lock on object level
-        class Lock
-        {
-        public:
+  ///  \struct Lock
+  ///  Lock class to lock on object level
+  class Lock {
+  public:
+    /// Lock object
+    explicit Lock(const ObjectLevelLockable &host) : host_(host) {
+      host_.mtx_.Lock();
+    }
 
-            /// Lock object
-            explicit Lock(const ObjectLevelLockable& host) : host_(host)
-            {
-                host_.mtx_.Lock();
-            }
+    /// Lock object
+    explicit Lock(const ObjectLevelLockable *host) : host_(*host) {
+      host_.mtx_.Lock();
+    }
 
-            /// Lock object
-            explicit Lock(const ObjectLevelLockable* host) : host_(*host)
-            {
-                host_.mtx_.Lock();
-            }
+    /// Unlock object
+    ~Lock() { host_.mtx_.Unlock(); }
 
-            /// Unlock object
-            ~Lock()
-            {
-                host_.mtx_.Unlock();
-            }
+  private:
+    /// private by design of the object level threading
+    Lock();
+    Lock(const Lock &);
+    Lock &operator=(const Lock &);
+    const ObjectLevelLockable &host_;
+  };
 
-        private:
-            /// private by design of the object level threading
-            Lock();
-            Lock(const Lock&);
-            Lock& operator=(const Lock&);
-            const ObjectLevelLockable& host_;
-        };
+  typedef volatile Host VolatileType;
+  static MutexPolicy atomic_mutex_;
+};
 
-        typedef volatile Host VolatileType;
-        static MutexPolicy atomic_mutex_;
-    };
+template <class Host, class MutexPolicy>
+MutexPolicy ObjectLevelLockable<Host, MutexPolicy>::atomic_mutex_;
 
-    template <class Host, class MutexPolicy>
-    MutexPolicy ObjectLevelLockable<Host, MutexPolicy>::atomic_mutex_;
+////////////////////////////////////////////////////////////////////////////////
+///  \class ClassLevelLockable
+///
+///  \ingroup ThreadingGroup
+///  Implementation of the ThreadingModel policy used by various classes
+///  Implements a class-level locking scheme
+////////////////////////////////////////////////////////////////////////////////
+template <class Host, class MutexPolicy = LOKI_DEFAULT_MUTEX>
+class ClassLevelLockable {
+  struct Initializer {
+    friend ClassLevelLockable;
 
-    ////////////////////////////////////////////////////////////////////////////////
-    ///  \class ClassLevelLockable
-    ///
-    ///  \ingroup ThreadingGroup
-    ///  Implementation of the ThreadingModel policy used by various classes
-    ///  Implements a class-level locking scheme
-    ////////////////////////////////////////////////////////////////////////////////
-    template <class Host, class MutexPolicy = LOKI_DEFAULT_MUTEX >
-    class ClassLevelLockable
-    {
-        struct Initializer
-        {
-            friend ClassLevelLockable;
+    static Initializer &GetIt(void) { return initializer_; }
 
-            static Initializer & GetIt( void )
-            {
-                return initializer_;
-            }
+    inline bool IsInit(void) { return init_; }
+    inline MutexPolicy &GetMutex(void) { return mtx_; }
 
-            inline bool IsInit( void ) { return init_; }
-            inline MutexPolicy & GetMutex( void ) { return mtx_; }
+  private:
+    bool init_;
+    MutexPolicy mtx_;
 
-        private:
-            bool init_;
-            MutexPolicy mtx_;
+    Initializer() : init_(false), mtx_() { init_ = true; }
 
-            Initializer() : init_(false), mtx_()
-            {
-                init_ = true;
-            }
+    ~Initializer() { assert(init_); }
 
-            ~Initializer()
-            {
-                assert(init_);
-            }
+    Initializer(const Initializer &) = delete;
+    Initializer &operator=(const Initializer &) = delete;
+  };
 
-            Initializer( const Initializer & ) = delete;
-            Initializer & operator = ( const Initializer & ) = delete;
-        };
+  static Initializer initializer_;
 
-        static Initializer initializer_;
+public:
+  class Lock;
+  friend class Lock;
 
-    public:
+  ///  \struct Lock
+  ///  Lock class to lock on class level
+  class Lock {
+  public:
+    /// Lock class
+    Lock() {
+      Initializer &initializer = Initializer::GetIt();
+      assert(initializer.IsInit());
+      initializer.GetMutex().Lock();
+    }
 
-        class Lock;
-        friend class Lock;
+    /// Lock class
+    explicit Lock(const ClassLevelLockable &) {
+      Initializer &initializer = Initializer::GetIt();
+      assert(initializer.IsInit());
+      initializer.GetMutex().Lock();
+    }
 
-        ///  \struct Lock
-        ///  Lock class to lock on class level
-        class Lock
-        {
-        public:
+    /// Lock class
+    explicit Lock(const ClassLevelLockable *) {
+      Initializer &initializer = Initializer::GetIt();
+      assert(initializer.IsInit());
+      initializer.GetMutex().Lock();
+    }
 
-            /// Lock class
-            Lock()
-            {
-                Initializer & initializer = Initializer::GetIt();
-                assert( initializer.IsInit() );
-                initializer.GetMutex().Lock();
-            }
+    /// Unlock class
+    ~Lock() {
+      Initializer &initializer = Initializer::GetIt();
+      assert(initializer.IsInit());
+      initializer.GetMutex().Unlock();
+    }
 
-            /// Lock class
-            explicit Lock(const ClassLevelLockable&)
-            {
-                Initializer & initializer = Initializer::GetIt();
-                assert( initializer.IsInit() );
-                initializer.GetMutex().Lock();
-            }
+  private:
+    Lock(const Lock &);
+    Lock &operator=(const Lock &);
+  };
 
-            /// Lock class
-            explicit Lock(const ClassLevelLockable*)
-            {
-                Initializer & initializer = Initializer::GetIt();
-                assert( initializer.IsInit() );
-                initializer.GetMutex().Lock();
-            }
+  typedef volatile Host VolatileType;
+  static MutexPolicy atomic_mutex_;
+};
 
-            /// Unlock class
-            ~Lock()
-            {
-                Initializer & initializer = Initializer::GetIt();
-                assert( initializer.IsInit() );
-                initializer.GetMutex().Unlock();
-            }
+template <class Host, class MutexPolicy>
+MutexPolicy ClassLevelLockable<Host, MutexPolicy>::atomic_mutex_;
 
-        private:
-            Lock(const Lock&);
-            Lock& operator=(const Lock&);
-        };
-
-        typedef volatile Host VolatileType;
-        static MutexPolicy atomic_mutex_;
-    };
-
-    template <class Host, class MutexPolicy>
-    MutexPolicy ClassLevelLockable<Host, MutexPolicy>::atomic_mutex_;
-
-    template <class Host, class MutexPolicy>
-    typename ClassLevelLockable< Host, MutexPolicy >::Initializer
-    ClassLevelLockable< Host, MutexPolicy >::initializer_;
+template <class Host, class MutexPolicy>
+typename ClassLevelLockable<Host, MutexPolicy>::Initializer
+    ClassLevelLockable<Host, MutexPolicy>::initializer_;
 } // namespace Loki
 
-
 #endif // end file guardian
-

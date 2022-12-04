@@ -32,47 +32,60 @@
 
 using namespace ::std;
 
-extern bool TestThreadLocalClassStaticValue( void );
+extern bool TestThreadLocalClassStaticValue(void);
 
-extern bool TestThreadLocalFunctionStaticValue( void );
+extern bool TestThreadLocalFunctionStaticValue(void);
 
-extern bool TestThreadLocalStaticValue( void );
-
+extern bool TestThreadLocalStaticValue(void);
 
 // ----------------------------------------------------------------------------
 
-int main( int argc, const char * const argv[] )
-{
-    (void)argc;
-    (void)argv;
+int main(int argc, const char *const argv[]) {
+  (void)argc;
+  (void)argv;
 
-    bool okay = true;
-    cout << "Starting ThreadLocal tests." << endl;
-    cout << "If any tests fail, or any assertions fail," << endl
-         << "then your compiler does not implement thread_local storage correctly." << endl;
+  bool okay = true;
+  cout << "Starting ThreadLocal tests." << endl;
+  cout
+      << "If any tests fail, or any assertions fail," << endl
+      << "then your compiler does not implement thread_local storage correctly."
+      << endl;
 
-    cout << endl << "Testing static thread_local storage inside classes." << endl;
-    okay = TestThreadLocalClassStaticValue();
-    if ( okay )
-        cout << "Your compiler correctly implements thread_local storage for class static values." << endl;
-    else
-        cout << "Your compiler does not properly implement thread_local storage for class static values." << endl;
+  cout << endl << "Testing static thread_local storage inside classes." << endl;
+  okay = TestThreadLocalClassStaticValue();
+  if (okay)
+    cout << "Your compiler correctly implements thread_local storage for class "
+            "static values."
+         << endl;
+  else
+    cout << "Your compiler does not properly implement thread_local storage "
+            "for class static values."
+         << endl;
 
-    cout << endl << "Testing static thread_local storage inside functions." << endl;
-    okay = TestThreadLocalFunctionStaticValue();
-    if ( okay )
-        cout << "Your compiler correctly implements thread_local storage for function static values." << endl;
-    else
-        cout << "Your compiler does not properly implement thread_local storage for function static values." << endl;
+  cout << endl
+       << "Testing static thread_local storage inside functions." << endl;
+  okay = TestThreadLocalFunctionStaticValue();
+  if (okay)
+    cout << "Your compiler correctly implements thread_local storage for "
+            "function static values."
+         << endl;
+  else
+    cout << "Your compiler does not properly implement thread_local storage "
+            "for function static values."
+         << endl;
 
-    cout << endl << "Testing standalone static thread_local storage." << endl;
-    okay = TestThreadLocalStaticValue();
-    if ( okay )
-        cout << "Your compiler correctly implements thread_local storage for standalone static values." << endl;
-    else
-        cout << "Your compiler does not properly implement thread_local storage for standalone static values." << endl;
+  cout << endl << "Testing standalone static thread_local storage." << endl;
+  okay = TestThreadLocalStaticValue();
+  if (okay)
+    cout << "Your compiler correctly implements thread_local storage for "
+            "standalone static values."
+         << endl;
+  else
+    cout << "Your compiler does not properly implement thread_local storage "
+            "for standalone static values."
+         << endl;
 
-    return 0;
+  return 0;
 }
 
 // ----------------------------------------------------------------------------

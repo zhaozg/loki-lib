@@ -29,17 +29,15 @@
 
 // $Id$
 
-
-#include <loki/Typelist.h>
-#include <loki/TypeTraits.h>
 #include <loki/EmptyType.h>
+#include <loki/TypeTraits.h>
+#include <loki/Typelist.h>
 
-namespace Loki
-{
+namespace Loki {
 #if defined(_MSC_VER) && _MSC_VER >= 1300
-#pragma warning( push )
- // 'class1' : base-class 'class2' is already a base-class of 'class3'
-#pragma warning( disable : 4584 )
+#pragma warning(push)
+// 'class1' : base-class 'class2' is already a base-class of 'class3'
+#pragma warning(disable : 4584)
 #endif // _MSC_VER
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,64 +49,54 @@ namespace Loki
 // template 'Unit' with the types contained in TList
 ////////////////////////////////////////////////////////////////////////////////
 
-    namespace Private
-    {
-        // The following type helps to overcome subtle flaw in the original
-        // implementation of GenScatterHierarchy.
-        // The flaw is revealed when the input type list of GenScatterHierarchy
-        // contains more then one element of the same type (e.g. LOKI_TYPELIST_2(int, int)).
-        // In this case GenScatterHierarchy will contain multiple bases of the same
-        // type and some of them will not be reachable (per 10.3).
-        // For example before the fix the first element of Tuple<LOKI_TYPELIST_2(int, int)>
-        // is not reachable in any way!
-        template<class, class>
-        struct ScatterHierarchyTag;
-    }
+namespace Private {
+// The following type helps to overcome subtle flaw in the original
+// implementation of GenScatterHierarchy.
+// The flaw is revealed when the input type list of GenScatterHierarchy
+// contains more then one element of the same type (e.g. LOKI_TYPELIST_2(int,
+// int)). In this case GenScatterHierarchy will contain multiple bases of the
+// same type and some of them will not be reachable (per 10.3). For example
+// before the fix the first element of Tuple<LOKI_TYPELIST_2(int, int)> is not
+// reachable in any way!
+template <class, class> struct ScatterHierarchyTag;
+} // namespace Private
 
-    template <class TList, template <class> class Unit>
-    class GenScatterHierarchy;
+template <class TList, template <class> class Unit> class GenScatterHierarchy;
 
-    template <class T1, class T2, template <class> class Unit>
-    class GenScatterHierarchy<Typelist<T1, T2>, Unit>
-        : public GenScatterHierarchy<Private::ScatterHierarchyTag<T1, T2>, Unit>
-        , public GenScatterHierarchy<T2, Unit>
-    {
-    public:
-        typedef Typelist<T1, T2> TList;
-        // Insure that LeftBase is unique and therefore reachable
-        typedef GenScatterHierarchy<Private::ScatterHierarchyTag<T1, T2>, Unit> LeftBase;
-        typedef GenScatterHierarchy<T2, Unit> RightBase;
-        template <typename T> struct Rebind
-        {
-            typedef Unit<T> Result;
-        };
-    };
+template <class T1, class T2, template <class> class Unit>
+class GenScatterHierarchy<Typelist<T1, T2>, Unit>
+    : public GenScatterHierarchy<Private::ScatterHierarchyTag<T1, T2>, Unit>,
+      public GenScatterHierarchy<T2, Unit> {
+public:
+  typedef Typelist<T1, T2> TList;
+  // Insure that LeftBase is unique and therefore reachable
+  typedef GenScatterHierarchy<Private::ScatterHierarchyTag<T1, T2>, Unit>
+      LeftBase;
+  typedef GenScatterHierarchy<T2, Unit> RightBase;
+  template <typename T> struct Rebind {
+    typedef Unit<T> Result;
+  };
+};
 
-    // In the middle *unique* class that resolve possible ambiguity
-    template <class T1, class T2, template <class> class Unit>
-    class GenScatterHierarchy<Private::ScatterHierarchyTag<T1, T2>, Unit>
-        : public GenScatterHierarchy<T1, Unit>
-    {
-    };
+// In the middle *unique* class that resolve possible ambiguity
+template <class T1, class T2, template <class> class Unit>
+class GenScatterHierarchy<Private::ScatterHierarchyTag<T1, T2>, Unit>
+    : public GenScatterHierarchy<T1, Unit> {};
 
-    template <class AtomicType, template <class> class Unit>
-    class GenScatterHierarchy : public Unit<AtomicType>
-    {
-        typedef Unit<AtomicType> LeftBase;
-        template <typename T> struct Rebind
-        {
-            typedef Unit<T> Result;
-        };
-    };
+template <class AtomicType, template <class> class Unit>
+class GenScatterHierarchy : public Unit<AtomicType> {
+  typedef Unit<AtomicType> LeftBase;
+  template <typename T> struct Rebind {
+    typedef Unit<T> Result;
+  };
+};
 
-    template <template <class> class Unit>
-    class GenScatterHierarchy<NullType, Unit>
-    {
-        template <typename T> struct Rebind
-        {
-            typedef Unit<T> Result;
-        };
-    };
+template <template <class> class Unit>
+class GenScatterHierarchy<NullType, Unit> {
+  template <typename T> struct Rebind {
+    typedef Unit<T> Result;
+  };
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // function template Field
@@ -119,30 +107,26 @@ namespace Loki
 // returns a reference to Unit<T>, where Unit is the template used to generate H
 ////////////////////////////////////////////////////////////////////////////////
 
-    template <class T, class H>
-    typename H::template Rebind<T>::Result& Field(H& obj)
-    {
-        return obj;
-    }
+template <class T, class H>
+typename H::template Rebind<T>::Result &Field(H &obj) {
+  return obj;
+}
 
-    template <class T, class H>
-    const typename H::template Rebind<T>::Result& Field(const H& obj)
-    {
-        return obj;
-    }
+template <class T, class H>
+const typename H::template Rebind<T>::Result &Field(const H &obj) {
+  return obj;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // function template TupleUnit
 // The building block of tuples
 ////////////////////////////////////////////////////////////////////////////////
 
-    template <class T>
-    struct TupleUnit
-    {
-        T value_;
-        operator T&() { return value_; }
-        operator const T&() const { return value_; }
-    };
+template <class T> struct TupleUnit {
+  T value_;
+  operator T &() { return value_; }
+  operator const T &() const { return value_; }
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // class template Tuple
@@ -150,77 +134,68 @@ namespace Loki
 //     access to them via the Field function (below)
 ////////////////////////////////////////////////////////////////////////////////
 
-    template <class TList>
-    struct Tuple : public GenScatterHierarchy<TList, TupleUnit>
-    {
-    };
+template <class TList>
+struct Tuple : public GenScatterHierarchy<TList, TupleUnit> {};
 
 ////////////////////////////////////////////////////////////////////////////////
 // helper class template FieldHelper
 // See Field below
 ////////////////////////////////////////////////////////////////////////////////
 
-    template <class H, unsigned int i> struct FieldHelper;
+template <class H, unsigned int i> struct FieldHelper;
 
-    template <class H>
-    struct FieldHelper<H, 0>
-    {
-        typedef typename H::TList::Head ElementType;
-        typedef typename H::template Rebind<ElementType>::Result UnitType;
+template <class H> struct FieldHelper<H, 0> {
+  typedef typename H::TList::Head ElementType;
+  typedef typename H::template Rebind<ElementType>::Result UnitType;
 
-        enum
-        {
-            isTuple = Conversion<UnitType, TupleUnit<ElementType> >::sameType,
-            isConst = TypeTraits<H>::isConst
-        };
+  enum {
+    isTuple = Conversion<UnitType, TupleUnit<ElementType>>::sameType,
+    isConst = TypeTraits<H>::isConst
+  };
 
-        typedef const typename H::LeftBase ConstLeftBase;
+  typedef const typename H::LeftBase ConstLeftBase;
 
-        typedef typename Select<isConst, ConstLeftBase,
-            typename H::LeftBase>::Result LeftBase;
+  typedef typename Select<isConst, ConstLeftBase, typename H::LeftBase>::Result
+      LeftBase;
 
-        typedef typename Select<isTuple, ElementType,
-            UnitType>::Result UnqualifiedResultType;
+  typedef typename Select<isTuple, ElementType, UnitType>::Result
+      UnqualifiedResultType;
 
-        typedef typename Select<isConst, const UnqualifiedResultType,
-                        UnqualifiedResultType>::Result ResultType;
+  typedef typename Select<isConst, const UnqualifiedResultType,
+                          UnqualifiedResultType>::Result ResultType;
 
-        static ResultType& Do(H& obj)
-        {
-            LeftBase& leftBase = obj;
-            return leftBase;
-        }
-    };
+  static ResultType &Do(H &obj) {
+    LeftBase &leftBase = obj;
+    return leftBase;
+  }
+};
 
-    template <class H, unsigned int i>
-    struct FieldHelper
-    {
-        typedef typename TL::TypeAt<typename H::TList, i>::Result ElementType;
-        typedef typename H::template Rebind<ElementType>::Result UnitType;
+template <class H, unsigned int i> struct FieldHelper {
+  typedef typename TL::TypeAt<typename H::TList, i>::Result ElementType;
+  typedef typename H::template Rebind<ElementType>::Result UnitType;
 
-        enum
-        {
-            isTuple = Conversion<UnitType, TupleUnit<ElementType> >::sameType,
-            isConst = TypeTraits<H>::isConst
-        };
+  enum {
+    isTuple = Conversion<UnitType, TupleUnit<ElementType>>::sameType,
+    isConst = TypeTraits<H>::isConst
+  };
 
-        typedef const typename H::RightBase ConstRightBase;
+  typedef const typename H::RightBase ConstRightBase;
 
-        typedef typename Select<isConst, ConstRightBase,
-            typename H::RightBase>::Result RightBase;
+  typedef
+      typename Select<isConst, ConstRightBase, typename H::RightBase>::Result
+          RightBase;
 
-        typedef typename Select<isTuple, ElementType,
-            UnitType>::Result UnqualifiedResultType;
+  typedef typename Select<isTuple, ElementType, UnitType>::Result
+      UnqualifiedResultType;
 
-        typedef typename Select<isConst, const UnqualifiedResultType,
-                        UnqualifiedResultType>::Result ResultType;
+  typedef typename Select<isConst, const UnqualifiedResultType,
+                          UnqualifiedResultType>::Result ResultType;
 
-        static ResultType& Do(H& obj)
-        {
-            RightBase& rightBase = obj;
-            return FieldHelper<RightBase, i - 1>::Do(rightBase);
-        }
-    };
+  static ResultType &Do(H &obj) {
+    RightBase &rightBase = obj;
+    return FieldHelper<RightBase, i - 1>::Do(rightBase);
+  }
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // function template Field
@@ -232,12 +207,10 @@ namespace Loki
 //     and T is the i-th type in the typelist
 ////////////////////////////////////////////////////////////////////////////////
 
-    template <int i, class H>
-    typename FieldHelper<H, i>::ResultType&
-    Field(H& obj)
-    {
-        return FieldHelper<H, i>::Do(obj);
-    }
+template <int i, class H>
+typename FieldHelper<H, i>::ResultType &Field(H &obj) {
+  return FieldHelper<H, i>::Do(obj);
+}
 
 //    template <int i, class H>
 //    const typename FieldHelper<H, i>::ResultType&
@@ -253,51 +226,26 @@ namespace Loki
 // GenScatterHierarchy<TList, Unit>
 ////////////////////////////////////////////////////////////////////////////////
 
-    template
-    <
-        class TList,
-        template <class AtomicType, class Base> class Unit,
-        class Root = EmptyType
-    >
-    class GenLinearHierarchy;
+template <class TList, template <class AtomicType, class Base> class Unit,
+          class Root = EmptyType>
+class GenLinearHierarchy;
 
-    template
-    <
-        class T1,
-        class T2,
-        template <class, class> class Unit,
-        class Root
-    >
-    class GenLinearHierarchy<Typelist<T1, T2>, Unit, Root>
-        : public Unit< T1, GenLinearHierarchy<T2, Unit, Root> >
-    {
-    };
+template <class T1, class T2, template <class, class> class Unit, class Root>
+class GenLinearHierarchy<Typelist<T1, T2>, Unit, Root>
+    : public Unit<T1, GenLinearHierarchy<T2, Unit, Root>> {};
 
-    template
-    <
-        class T,
-        template <class, class> class Unit,
-        class Root
-    >
-    class GenLinearHierarchy<Typelist<T, NullType>, Unit, Root>
-        : public Unit<T, Root>
-    {
-    };
+template <class T, template <class, class> class Unit, class Root>
+class GenLinearHierarchy<Typelist<T, NullType>, Unit, Root>
+    : public Unit<T, Root> {};
 
-    template
-    <
-        template <class, class> class Unit,
-        class Root
-    >
-    class GenLinearHierarchy<NullType , Unit, Root>
-        : public Root // is this better: Unit<NullType, Root> ?
-    {
-    };
+template <template <class, class> class Unit, class Root>
+class GenLinearHierarchy<NullType, Unit, Root>
+    : public Root // is this better: Unit<NullType, Root> ?
+{};
 
 #if defined(_MSC_VER) && _MSC_VER >= 1300
-#pragma warning( pop )
+#pragma warning(pop)
 #endif
-}   // namespace Loki
+} // namespace Loki
 
 #endif // end file guardian
-

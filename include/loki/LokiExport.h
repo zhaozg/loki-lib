@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
-// Copyright (c) 2006 by Peter Kümmel
+// Copyright (c) 2006 by Peter Ké»°mel
 // Code covered by the MIT License
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,11 +26,10 @@
 
 // $Id$
 
-
 #ifdef __GNUC__
 
 #ifdef _HAVE_GCC_VISIBILITY
-#define LOKI_EXPORT_SPEC __attribute__ ((visibility("default")))
+#define LOKI_EXPORT_SPEC __attribute__((visibility("default")))
 #define LOKI_IMPORT_SPEC
 #else
 #define LOKI_EXPORT_SPEC
@@ -49,9 +48,8 @@
 
 #endif
 
-
-#if (defined(LOKI_MAKE_DLL) && defined(LOKI_DLL)) || \
-    (defined(LOKI_MAKE_DLL) && defined(LOKI_STATIC)) || \
+#if (defined(LOKI_MAKE_DLL) && defined(LOKI_DLL)) ||                           \
+    (defined(LOKI_MAKE_DLL) && defined(LOKI_STATIC)) ||                        \
     (defined(LOKI_DLL) && defined(LOKI_STATIC))
 #error export macro error: you could not build AND use the library
 #endif
@@ -76,6 +74,4 @@
 #error export macro error: LOKI_EXPORT was not defined, disable EXPLICIT_EXPORT or define a export specification
 #endif
 
-
 #endif // end file guardian
-

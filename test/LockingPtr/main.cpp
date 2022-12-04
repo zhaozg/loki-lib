@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
-// Copyright (c) 2006 Peter Kümmel
+// Copyright (c) 2006 Peter Ké»°mel
 // Permission to use, copy, modify, distribute and sell this software for any
 //     purpose is hereby granted without fee, provided that the above copyright
 //     notice appear in all copies and that both that copyright notice and this
@@ -11,7 +11,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // $Id$
-
 
 #define LOKI_CLASS_LEVEL_THREADING
 
@@ -30,125 +29,136 @@ int g;
 int numThreads = 10;
 int loop = 5;
 
+struct A {
+  A() {}
 
-struct A
-{
-    A(){}
+#define DO                                                                     \
+  for (int i = 0; i < 10000000; i++)                                           \
+    g++;
 
-#define  DO for(int i=0; i<10000000; i++) g++;
-
-    void print(void* id) const
-    {
-        DO;Printf("%p: ----------------\n")(id);
-        DO;Printf("%p: ---------------\n")(id);
-        DO;Printf("%p: --------------\n")(id);
-        DO;Printf("%p: -------------\n")(id);
-        DO;Printf("%p: ------------\n")(id);
-        DO;Printf("%p: -----------\n")(id);
-        DO;Printf("%p: ----------\n")(id);
-        DO;Printf("%p: ---------\n")(id);
-        DO;Printf("%p: --------\n")(id);
-        DO;Printf("%p: -------\n")(id);
-        DO;Printf("%p: ------\n")(id);
-        DO;Printf("%p: -----\n")(id);
-        DO;Printf("%p: ----\n")(id);
-        DO;Printf("%p: ---\n")(id);
-        DO;Printf("%p: --\n")(id);
-        DO;Printf("%p: -\n")(id);
-        DO;Printf("%p: \n")(id);
-        DO;Printf("%p: \n")(id);
-    }
+  void print(void *id) const {
+    DO;
+    Printf("%p: ----------------\n")(id);
+    DO;
+    Printf("%p: ---------------\n")(id);
+    DO;
+    Printf("%p: --------------\n")(id);
+    DO;
+    Printf("%p: -------------\n")(id);
+    DO;
+    Printf("%p: ------------\n")(id);
+    DO;
+    Printf("%p: -----------\n")(id);
+    DO;
+    Printf("%p: ----------\n")(id);
+    DO;
+    Printf("%p: ---------\n")(id);
+    DO;
+    Printf("%p: --------\n")(id);
+    DO;
+    Printf("%p: -------\n")(id);
+    DO;
+    Printf("%p: ------\n")(id);
+    DO;
+    Printf("%p: -----\n")(id);
+    DO;
+    Printf("%p: ----\n")(id);
+    DO;
+    Printf("%p: ---\n")(id);
+    DO;
+    Printf("%p: --\n")(id);
+    DO;
+    Printf("%p: -\n")(id);
+    DO;
+    Printf("%p: \n")(id);
+    DO;
+    Printf("%p: \n")(id);
+  }
 };
 
-typedef Loki::LockingPtr<A,LOKI_DEFAULT_RECURSIVE_MUTEX,DontPropagateConst> UserLockingPtr;
-typedef Loki::LockingPtr<A,LOKI_DEFAULT_RECURSIVE_MUTEX,PropagateConst> ConstUserLockingPtr;
+typedef Loki::LockingPtr<A, LOKI_DEFAULT_RECURSIVE_MUTEX, DontPropagateConst>
+    UserLockingPtr;
+typedef Loki::LockingPtr<A, LOKI_DEFAULT_RECURSIVE_MUTEX, PropagateConst>
+    ConstUserLockingPtr;
 
-void* RunLocked(void *id)
-{
-    volatile A a;
-    static LOKI_DEFAULT_RECURSIVE_MUTEX m;
-    for(int i=0; i<loop; i++)
-    {
-        UserLockingPtr l(a,m);
-        l->print(id);
-    }
-    return 0;
+void *RunLocked(void *id) {
+  volatile A a;
+  static LOKI_DEFAULT_RECURSIVE_MUTEX m;
+  for (int i = 0; i < loop; i++) {
+    UserLockingPtr l(a, m);
+    l->print(id);
+  }
+  return 0;
 }
 
-void* RunConstLocked(void *id)
-{
-    const volatile A a;
-    static LOKI_DEFAULT_RECURSIVE_MUTEX m;
-    for(int i=0; i<loop; i++)
-    {
-        ConstUserLockingPtr l(a,m);
-        l->print(id);
-    }
-    return 0;
+void *RunConstLocked(void *id) {
+  const volatile A a;
+  static LOKI_DEFAULT_RECURSIVE_MUTEX m;
+  for (int i = 0; i < loop; i++) {
+    ConstUserLockingPtr l(a, m);
+    l->print(id);
+  }
+  return 0;
 }
 
-void* Run(void *id)
-{
-    A a;
-    for(int i=0; i<loop; i++)
-        a.print(id);
-    return 0;
+void *Run(void *id) {
+  A a;
+  for (int i = 0; i < loop; i++)
+    a.print(id);
+  return 0;
 }
 
-int main ()
-{
-    std::vector<Thread*> threads;
+int main() {
+  std::vector<Thread *> threads;
 
-    Printf("--------------------------------------------------------------------------------------\n");
+  Printf("---------------------------------------------------------------------"
+         "-----------------\n");
 
-    for(int i=0; i<numThreads; i++)
-    {
-        Printf("Creating thread %d\n")(i);
-        threads.push_back(new Thread(RunLocked,reinterpret_cast<void*>(i)));
-    }
-    for(int i=0; i<numThreads; i++)
-        threads.at(i)->start();
+  for (int i = 0; i < numThreads; i++) {
+    Printf("Creating thread %d\n")(i);
+    threads.push_back(new Thread(RunLocked, reinterpret_cast<void *>(i)));
+  }
+  for (int i = 0; i < numThreads; i++)
+    threads.at(i)->start();
 
-    Thread::JoinThreads(threads);
-    Thread::DeleteThreads(threads);
+  Thread::JoinThreads(threads);
+  Thread::DeleteThreads(threads);
 
-    Printf("--------------------------------------------------------------------------------------\n");
+  Printf("---------------------------------------------------------------------"
+         "-----------------\n");
 
-    for(int i=0; i<numThreads; i++)
-    {
-        Printf("Creating thread %d\n")(i);
-        threads.push_back(new Thread(RunConstLocked,reinterpret_cast<void*>(i)));
-    }
-    for(int i=0; i<numThreads; i++)
-        threads.at(i)->start();
+  for (int i = 0; i < numThreads; i++) {
+    Printf("Creating thread %d\n")(i);
+    threads.push_back(new Thread(RunConstLocked, reinterpret_cast<void *>(i)));
+  }
+  for (int i = 0; i < numThreads; i++)
+    threads.at(i)->start();
 
-    Thread::JoinThreads(threads);
-    Thread::DeleteThreads(threads);
+  Thread::JoinThreads(threads);
+  Thread::DeleteThreads(threads);
 
-    Printf("--------------------------------------------------------------------------------------\n");
+  Printf("---------------------------------------------------------------------"
+         "-----------------\n");
 
-    for(int i=0; i<numThreads; i++)
-    {
-        Printf("Creating thread %d\n")(i);
-        threads.push_back(new Thread(Run,reinterpret_cast<void*>(i)));
-    }
-    for(int i=0; i<numThreads; i++)
-        threads.at(i)->start();
+  for (int i = 0; i < numThreads; i++) {
+    Printf("Creating thread %d\n")(i);
+    threads.push_back(new Thread(Run, reinterpret_cast<void *>(i)));
+  }
+  for (int i = 0; i < numThreads; i++)
+    threads.at(i)->start();
 
-    Thread::JoinThreads(threads);
-    Thread::DeleteThreads(threads);
+  Thread::JoinThreads(threads);
+  Thread::DeleteThreads(threads);
 
-    Printf("--------------------------------------------------------------------------------------\n");
+  Printf("---------------------------------------------------------------------"
+         "-----------------\n");
 
-    // test pair ctor
-    volatile A a;
-    LOKI_DEFAULT_RECURSIVE_MUTEX m;
-    UserLockingPtr::Pair pair(&a,&m);
-    UserLockingPtr l( pair );
+  // test pair ctor
+  volatile A a;
+  LOKI_DEFAULT_RECURSIVE_MUTEX m;
+  UserLockingPtr::Pair pair(&a, &m);
+  UserLockingPtr l(pair);
 
-    ConstUserLockingPtr::Pair cpair(&a,&m);
-    ConstUserLockingPtr cl( cpair );
-
+  ConstUserLockingPtr::Pair cpair(&a, &m);
+  ConstUserLockingPtr cl(cpair);
 }
-
-

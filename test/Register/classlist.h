@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
-// Copyright (c) 2006 Peter Kümmel
+// Copyright (c) 2006 Peter Ké»°mel
 // Permission to use, copy, modify, distribute and sell this software for any
 //     purpose is hereby granted without fee, provided that the above copyright
 //     notice appear in all copies and that both that copyright notice and this
@@ -14,25 +14,19 @@
 
 // $Id$
 
-
 #include <string>
 
 #include <loki/Sequence.h>
 
-
-struct Base
-{
-    virtual void foo() = 0;
-    virtual ~Base();
+struct Base {
+  virtual void foo() = 0;
+  virtual ~Base();
 };
 
-bool registerClass(std::string, Base*(*)() );
+bool registerClass(std::string, Base *(*)());
 
-typedef Loki::Seq
-<
-    struct Foo,
-    struct Boo
+typedef Loki::Seq<struct Foo, struct Boo
 
->::Type ClassList;
+                  >::Type ClassList;
 
 #endif

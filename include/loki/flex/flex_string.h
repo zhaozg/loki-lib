@@ -15,16 +15,15 @@
 
 // $Id$
 
-
 // <THE> string
 #include "flex_string_shell.h"
 
 // Storage policies
-#include "simplestringstorage.h"
 #include "allocatorstringstorage.h"
-#include "vectorstringstorage.h"
-#include "smallstringopt.h"
 #include "cowstringopt.h"
-//#include "utf16encoding.h"
+#include "simplestringstorage.h"
+#include "smallstringopt.h"
+#include "vectorstringstorage.h"
+// #include "utf16encoding.h"
 
 #endif // FLEX_STRING_INC_

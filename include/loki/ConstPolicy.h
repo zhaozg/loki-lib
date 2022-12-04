@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
 // Copyright (c) 2006 Richard Sposato
-// Copyright (c) 2006 Peter Kümmel
+// Copyright (c) 2006 Peter Ké»°mel
 //
 // Code covered by the MIT License
 //
@@ -28,15 +28,12 @@
 
 // $Id$
 
-
-namespace Loki
-{
+namespace Loki {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @note These policy classes are used in LockingPtr and SmartPtr to define
 ///  how const is propagated from the pointee.
 ////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class DontPropagateConst
@@ -45,11 +42,9 @@ namespace Loki
 ///  Don't propagate constness of pointed or referred object.
 ////////////////////////////////////////////////////////////////////////////////
 
-    template< class T >
-    struct DontPropagateConst
-    {
-        typedef T Type;
-    };
+template <class T> struct DontPropagateConst {
+  typedef T Type;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class PropagateConst
@@ -58,11 +53,9 @@ namespace Loki
 ///  Propagate constness of pointed or referred object.
 ////////////////////////////////////////////////////////////////////////////////
 
-    template< class T >
-    struct PropagateConst
-    {
-        typedef const T Type;
-    };
+template <class T> struct PropagateConst {
+  typedef const T Type;
+};
 
 // default will not break existing code
 #ifndef LOKI_DEFAULT_CONSTNESS

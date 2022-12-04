@@ -19,87 +19,71 @@
 
 #if defined(_WIN32)
 
-    #include <windows.h>
-    #include <process.h>
+#include <process.h>
+#include <windows.h>
 
-    typedef unsigned int (WINAPI*ThreadFunction_)(void *);
+typedef unsigned int(WINAPI *ThreadFunction_)(void *);
 
-    #define LOKI_pthread_t HANDLE
+#define LOKI_pthread_t HANDLE
 
-    #define LOKI_pthread_create(handle,attr,func,arg) \
-        (int)((*handle=(HANDLE) _beginthreadex (NULL,0,(ThreadFunction_)func,arg,0,NULL))==NULL)
+#define LOKI_pthread_create(handle, attr, func, arg)                           \
+  (int)((*handle = (HANDLE)_beginthreadex(NULL, 0, (ThreadFunction_)func, arg, \
+                                          0, NULL)) == NULL)
 
-    #define LOKI_pthread_join(thread) \
-        ((WaitForSingleObject((thread),INFINITE)!=WAIT_OBJECT_0) || !CloseHandle(thread))
+#define LOKI_pthread_join(thread)                                              \
+  ((WaitForSingleObject((thread), INFINITE) != WAIT_OBJECT_0) ||               \
+   !CloseHandle(thread))
 
 #else
 
-      #define LOKI_pthread_t \
-                 pthread_t
-    #define LOKI_pthread_create(handle,attr,func,arg) \
-                 pthread_create(handle,attr,func,arg)
-    #define LOKI_pthread_join(thread) \
-                 pthread_join(thread, NULL)
+#define LOKI_pthread_t pthread_t
+#define LOKI_pthread_create(handle, attr, func, arg)                           \
+  pthread_create(handle, attr, func, arg)
+#define LOKI_pthread_join(thread) pthread_join(thread, NULL)
 
 #endif
 
-namespace Loki
-{
+namespace Loki {
 
+////////////////////////////////////////////////////////////////////////////////
+//  \class Thread
+//
+//  \ingroup ThreadingGroup
+//  Very simple Thread class
+////////////////////////////////////////////////////////////////////////////////
+class Thread {
+public:
+  typedef void *(*ThreadFunction)(void *);
 
-    ////////////////////////////////////////////////////////////////////////////////
-    //  \class Thread
-    //
-    //  \ingroup ThreadingGroup
-    //  Very simple Thread class
-    ////////////////////////////////////////////////////////////////////////////////
-    class Thread
-    {
-    public:
+  Thread(ThreadFunction func, void *parm) {
+    func_ = func;
+    parm_ = parm;
+  }
 
-        typedef void* (*ThreadFunction)(void *);
+  int start() { return LOKI_pthread_create(&pthread_, NULL, func_, parm_); }
 
-        Thread(ThreadFunction func, void* parm)
-        {
-            func_ = func;
-            parm_ = parm;
-        }
+  static int WaitForThread(const Thread &thread) {
+    return LOKI_pthread_join(thread.pthread_);
+  }
 
-        int start()
-        {
-            return LOKI_pthread_create(&pthread_, NULL, func_, parm_);
-        }
+  static void JoinThreads(const std::vector<Thread *> &threads) {
+    for (size_t i = 0; i < threads.size(); i++)
+      WaitForThread(*threads.at(i));
+  }
 
-        static int WaitForThread(const Thread& thread)
-        {
-            return LOKI_pthread_join(thread.pthread_);
-        }
+  static void DeleteThreads(std::vector<Thread *> &threads) {
+    for (size_t i = 0; i < threads.size(); i++) {
+      delete threads.at(i);
+    }
+    threads.clear();
+  }
 
-        static void JoinThreads(const std::vector<Thread*>& threads)
-        {
-            for(size_t i=0; i<threads.size(); i++)
-                WaitForThread(*threads.at(i));
-        }
-
-        static void DeleteThreads(std::vector<Thread*>& threads)
-        {
-            for(size_t i=0; i<threads.size(); i++)
-            {
-                delete threads.at(i);
-            }
-            threads.clear();
-        }
-
-    private:
-        LOKI_pthread_t pthread_;
-        ThreadFunction func_;
-        void* parm_;
-    };
-
-
-
+private:
+  LOKI_pthread_t pthread_;
+  ThreadFunction func_;
+  void *parm_;
+};
 
 } // namespace Loki
 
 #endif
-

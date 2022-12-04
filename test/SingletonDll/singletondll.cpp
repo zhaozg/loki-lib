@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The Loki Library
-// Copyright (c) 2006 Peter Kümmel
+// Copyright (c) 2006 Peter Ké»°mel
 // Permission to use, copy, modify, distribute and sell this software for any
 //     purpose is hereby granted without fee, provided that the above copyright
 //     notice appear in all copies and that both that copyright notice and this
@@ -12,11 +12,9 @@
 
 // $Id$
 
-
 #include "singletondll.h"
 
 #include "foo.h"
-
 
 typedef Loki::SingletonHolder<Foo> FooSingleton;
 
@@ -35,15 +33,10 @@ namespace Loki
 }
 */
 
-
-template<>
-Foo&  Singleton<Foo>::Instance()
-{
-    return Loki::SingletonHolder<Foo>::Instance();
+template <> Foo &Singleton<Foo>::Instance() {
+  return Loki::SingletonHolder<Foo>::Instance();
 }
-
 
 // explicit instantiations
 template class Singleton<Foo>;
 template class Loki::Singleton<Foo>;
-

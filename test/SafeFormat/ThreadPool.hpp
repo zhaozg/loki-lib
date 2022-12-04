@@ -24,86 +24,78 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-
 // ----------------------------------------------------------------------------
 
 #include <vector>
 
 #if defined(_WIN32)
 
-    #include <process.h>
-    #include <windows.h>
+#include <process.h>
+#include <windows.h>
 
-    typedef unsigned int ( WINAPI * ThreadFunction_ )( void * );
+typedef unsigned int(WINAPI *ThreadFunction_)(void *);
 
-    #define LOKI_pthread_t HANDLE
+#define LOKI_pthread_t HANDLE
 
-    #define LOKI_pthread_create( handle, attr, func, arg ) \
-        ( int )( ( *handle = ( HANDLE ) _beginthreadex ( NULL, 0, ( ThreadFunction_ )func, arg, 0, NULL ) ) == NULL )
+#define LOKI_pthread_create(handle, attr, func, arg)                           \
+  (int)((*handle = (HANDLE)_beginthreadex(NULL, 0, (ThreadFunction_)func, arg, \
+                                          0, NULL)) == NULL)
 
-    #define LOKI_pthread_join( thread ) \
-        ( ( WaitForSingleObject( ( thread ), INFINITE ) != WAIT_OBJECT_0 ) || !CloseHandle( thread ) )
+#define LOKI_pthread_join(thread)                                              \
+  ((WaitForSingleObject((thread), INFINITE) != WAIT_OBJECT_0) ||               \
+   !CloseHandle(thread))
 
 #else
 
-    #include <pthread.h>
+#include <pthread.h>
 
-    #define LOKI_pthread_t \
-                 pthread_t
-    #define LOKI_pthread_create(handle,attr,func,arg) \
-                 pthread_create(handle,attr,func,arg)
-    #define LOKI_pthread_join(thread) \
-                 pthread_join(thread, NULL)
+#define LOKI_pthread_t pthread_t
+#define LOKI_pthread_create(handle, attr, func, arg)                           \
+  pthread_create(handle, attr, func, arg)
+#define LOKI_pthread_join(thread) pthread_join(thread, NULL)
 
 #endif
 
 // ----------------------------------------------------------------------------
 
-class Thread
-{
+class Thread {
 public:
+  typedef void *(*CallFunction)(void *);
 
-    typedef void * ( * CallFunction )( void * );
+  Thread(CallFunction func, void *parm);
 
-    Thread( CallFunction func, void * parm );
+  void AssignTask(CallFunction func, void *parm);
 
-    void AssignTask( CallFunction func, void * parm );
+  int Start(void);
 
-    int Start( void );
-
-    int WaitForThread( void ) const;
+  int WaitForThread(void) const;
 
 private:
+  LOKI_pthread_t pthread_;
 
-    LOKI_pthread_t pthread_;
+  CallFunction func_;
 
-    CallFunction func_;
-
-    void * parm_;
-
+  void *parm_;
 };
 
 // ----------------------------------------------------------------------------
 
-class ThreadPool
-{
+class ThreadPool {
 public:
+  ThreadPool(void);
 
-    ThreadPool( void );
+  ~ThreadPool(void);
 
-    ~ThreadPool( void );
+  void Create(size_t threadCount, Thread::CallFunction function);
 
-    void Create( size_t threadCount, Thread::CallFunction function );
+  void Start(void);
 
-    void Start( void );
-
-    void Join( void ) const;
+  void Join(void) const;
 
 private:
+  typedef ::std::vector<Thread *> Threads;
 
-    typedef ::std::vector< Thread * > Threads;
-
-    Threads m_threads;
+  Threads m_threads;
 };
 
 // ----------------------------------------------------------------------------

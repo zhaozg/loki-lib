@@ -10,7 +10,6 @@
 
 // $Id$
 
-
 // This is an example of using the SetLongevity function for both
 // singletons and globally and locally defined dynamically allocated
 // objects.
@@ -54,139 +53,110 @@
 // $Header$
 
 #include <iostream>
-#include <loki/Singleton.h>   // for Loki::SingletonHolder
+#include <loki/Singleton.h> // for Loki::SingletonHolder
 
-using namespace std;   // okay for small programs
-using namespace Loki;  // okay for small programs
+using namespace std;  // okay for small programs
+using namespace Loki; // okay for small programs
 
 // These globals allow the priority for each object to be
 // set in main() but used anywhere in the program.
-int  globalPriority;
-int  localPriority;
-int  keyboardPriority;
-int  logPriority;
-
-
+int globalPriority;
+int localPriority;
+int keyboardPriority;
+int logPriority;
 
 // A generic example class that stores and echoes a const char.
 //
-class Example
-{
+class Example {
 public:
-    Example(const char * s)
-    {
-        msg = s;
-    }
-    virtual ~Example()
-    {
-        echo(msg);
-    }
-    void echo(const char *s)
-    {
-        cout << s << endl;
-    }
-protected:
-    const char *msg;
-};
+  Example(const char *s) { msg = s; }
+  virtual ~Example() { echo(msg); }
+  void echo(const char *s) { cout << s << endl; }
 
+protected:
+  const char *msg;
+};
 
 // A singleton Keyboard object derived from the Example class.
 // Its longevity is set by the user on the command line.
 //
-class Keyboard : public Example
-{
+class Keyboard : public Example {
 public:
-    Keyboard() : Example("Destroying Keyboard")
-    {  }
-}
-;
+  Keyboard() : Example("Destroying Keyboard") {}
+};
 
-inline unsigned int GetLongevity(Keyboard *)
-{
-    return keyboardPriority;
-}
+inline unsigned int GetLongevity(Keyboard *) { return keyboardPriority; }
 
-typedef SingletonHolder<Keyboard, CreateUsingNew, SingletonWithLongevity> keyboard;
-
+typedef SingletonHolder<Keyboard, CreateUsingNew, SingletonWithLongevity>
+    keyboard;
 
 // A singleton LogClass object derived from the Example class.
 // Its longevity is set by the user on the command line.
 //
-class LogClass : public Example
-{
+class LogClass : public Example {
 public:
-    LogClass() : Example("Destroying LogClass")
-    {  }
-}
-;
+  LogClass() : Example("Destroying LogClass") {}
+};
 
-inline unsigned int GetLongevity(LogClass *)
-{
-    return logPriority;
-}
+inline unsigned int GetLongevity(LogClass *) { return logPriority; }
 
-typedef SingletonHolder<LogClass, CreateUsingNew, SingletonWithLongevity> LogBook;
-
+typedef SingletonHolder<LogClass, CreateUsingNew, SingletonWithLongevity>
+    LogBook;
 
 // Instantiate a global Example object.  It's not a singleton
 // but because it's instantiated with new (and therefore it isn't
 // automatically destroyed) it can use the SetLongevity template function.
 // Its longevity is determined by the user on the command line.
 //
-Example* pGlobal( new Example("Destroying global Example") );
+Example *pGlobal(new Example("Destroying global Example"));
 
 // destGlobal() is called when the pGlobal object needs to be destroyed.
-static void destGlobal()
-{
-    cout << "Going to delete pGlobal\n";
-    delete pGlobal;
+static void destGlobal() {
+  cout << "Going to delete pGlobal\n";
+  delete pGlobal;
 }
 
-void help(const char *s)
-{
-    cout << "To use:\n";
-    cout << s << " par1 par2 par3 par4\n";
-    cout << "  where each par is a number that represents the object's ";
-    cout << " longevity:\n";
-    cout << "    par1: global object\n";
-    cout << "    par2: local object\n";
-    cout << "    par3: keyboard singleton\n";
-    cout << "    par4: LogBook singleton\n";
-    cout << "Example:  " << s << " 1 2 3 4" << endl;
+void help(const char *s) {
+  cout << "To use:\n";
+  cout << s << " par1 par2 par3 par4\n";
+  cout << "  where each par is a number that represents the object's ";
+  cout << " longevity:\n";
+  cout << "    par1: global object\n";
+  cout << "    par2: local object\n";
+  cout << "    par3: keyboard singleton\n";
+  cout << "    par4: LogBook singleton\n";
+  cout << "Example:  " << s << " 1 2 3 4" << endl;
 }
 
-
-int main(int argc, char *argv[])
-{
-    if (argc != 5)
-    {
-        help(argv[0]);
-        return 0;
-    }
-
-    globalPriority = atoi(argv[1]);
-    localPriority = atoi(argv[2]);
-    keyboardPriority = atoi(argv[3]);
-    logPriority = atoi(argv[4]);
-
-    // Use an adapter functor to tie the destGlobal function to the
-    // destruction priority for pGlobal.
-    Loki::Private::Adapter<Example> exampleAdapter = { &destGlobal };
-    SetLongevity(pGlobal, globalPriority, exampleAdapter);
-
-    // Use Loki's private Deleter template function to destroy the
-    // pLocal object for a user-defined priority.
-    Example *pLocal = new Example("Destroying local Example");
-    SetLongevity<Example, void (*)(Example*)>(pLocal, localPriority, &Loki::Private::Deleter<Example>::Delete);
-
-    // Make the global and local objects announce their presense.
-    pGlobal->echo("pGlobal created during program initialization.");
-    pLocal->echo("pLocal created after main() started.");
-
-    // Instantiate both singletons by calling them...
-    LogBook::Instance().echo("LogClass singleton instantiated");
-    keyboard::Instance().echo("Keyboard singleton instantiated");
-
+int main(int argc, char *argv[]) {
+  if (argc != 5) {
+    help(argv[0]);
     return 0;
-}
+  }
 
+  globalPriority = atoi(argv[1]);
+  localPriority = atoi(argv[2]);
+  keyboardPriority = atoi(argv[3]);
+  logPriority = atoi(argv[4]);
+
+  // Use an adapter functor to tie the destGlobal function to the
+  // destruction priority for pGlobal.
+  Loki::Private::Adapter<Example> exampleAdapter = {&destGlobal};
+  SetLongevity(pGlobal, globalPriority, exampleAdapter);
+
+  // Use Loki's private Deleter template function to destroy the
+  // pLocal object for a user-defined priority.
+  Example *pLocal = new Example("Destroying local Example");
+  SetLongevity<Example, void (*)(Example *)>(
+      pLocal, localPriority, &Loki::Private::Deleter<Example>::Delete);
+
+  // Make the global and local objects announce their presense.
+  pGlobal->echo("pGlobal created during program initialization.");
+  pLocal->echo("pLocal created after main() started.");
+
+  // Instantiate both singletons by calling them...
+  LogBook::Instance().echo("LogClass singleton instantiated");
+  keyboard::Instance().echo("Keyboard singleton instantiated");
+
+  return 0;
+}

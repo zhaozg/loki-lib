@@ -31,10 +31,9 @@
 
 // $Id$
 
-
 #include <loki/Typelist.h>
 
-//Reference version
+// Reference version
 
 /************************************************************************************
 // class template GenData
@@ -59,72 +58,48 @@ Loki::IterateTypes<parameter_tl, ExtractDataType> gendata;
 std::vector<some_type> stuff;
 gendata(std::back_inserter(stuff));
 *******************************************************************************/
-namespace Loki
-{
-    namespace TL
-        {
-        template<typename T>
-        struct nameof_type
-            {
-            const char* operator()()
-                {
-                return typeid(T).name();
-                }
-            };
-        template<typename T>
-        struct sizeof_type
-            {
-            size_t operator()()
-                {
-                return sizeof(T);
-                }
-            };
-    template <class TList, template <class> class GenFunc>
-    struct IterateTypes;
+namespace Loki {
+namespace TL {
+template <typename T> struct nameof_type {
+  const char *operator()() { return typeid(T).name(); }
+};
+template <typename T> struct sizeof_type {
+  size_t operator()() { return sizeof(T); }
+};
+template <class TList, template <class> class GenFunc> struct IterateTypes;
 
-    template <class T1, class T2, template <class> class GenFunc>
-    struct IterateTypes<Typelist<T1, T2>, GenFunc>
-    {
-    typedef IterateTypes<T1, GenFunc> head_t;
-    head_t head;
-    typedef IterateTypes<T2, GenFunc> tail_t;
-    tail_t tail;
-    template<class II>
-    void operator()(II ii)
-        {
-        head.operator()(ii);
-        tail.operator()(ii);
-        }
-    };
+template <class T1, class T2, template <class> class GenFunc>
+struct IterateTypes<Typelist<T1, T2>, GenFunc> {
+  typedef IterateTypes<T1, GenFunc> head_t;
+  head_t head;
+  typedef IterateTypes<T2, GenFunc> tail_t;
+  tail_t tail;
+  template <class II> void operator()(II ii) {
+    head.operator()(ii);
+    tail.operator()(ii);
+  }
+};
 
-    template <class AtomicType, template <class> class GenFunc>
-    struct IterateTypes
-    {
-    template<class II>
-    void operator()(II ii)
-        {
-        GenFunc<AtomicType> genfunc;
-        *ii = genfunc();
-        ++ii; //Is this even needed?
-        }
-    };
+template <class AtomicType, template <class> class GenFunc>
+struct IterateTypes {
+  template <class II> void operator()(II ii) {
+    GenFunc<AtomicType> genfunc;
+    *ii = genfunc();
+    ++ii; // Is this even needed?
+  }
+};
 
-    template <template <class> class GenFunc>
-    struct IterateTypes<NullType, GenFunc>
-    {
-    template<class II>
-    void operator()(II ii)
-        {}
-    };
+template <template <class> class GenFunc>
+struct IterateTypes<NullType, GenFunc> {
+  template <class II> void operator()(II ii) {}
+};
 
-    template<typename Types, template <class> class UnitFunc, typename II>
-    void iterate_types(II ii)
-        {
-        Loki::TL::IterateTypes<Types, UnitFunc> it;
-        it(ii);
-        }
-    }//ns TL
-}//ns Loki
+template <typename Types, template <class> class UnitFunc, typename II>
+void iterate_types(II ii) {
+  Loki::TL::IterateTypes<Types, UnitFunc> it;
+  it(ii);
+}
+} // namespace TL
+} // namespace Loki
 
 #endif // end file guardian
-

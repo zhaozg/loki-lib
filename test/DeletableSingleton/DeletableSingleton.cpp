@@ -10,7 +10,6 @@
 
 // $Id$
 
-
 // Show an example of a Loki policy that uses DeletableSingleton.
 //
 // Expected output:
@@ -26,54 +25,37 @@
 //
 
 #include <iostream>
-#include <loki/Singleton.h>   // for Loki::SingletonHolder
+#include <loki/Singleton.h> // for Loki::SingletonHolder
 
-using namespace std;   // okay for small programs
-using namespace Loki;  // okay for small programs
+using namespace std;  // okay for small programs
+using namespace Loki; // okay for small programs
 
 // A singleton LogClass object derived from the Example class.
 // Its longevity is set by the user on the command line.
 //
-class LogClass
-{
+class LogClass {
 public:
-    LogClass()
-    {
-        print("LogClass::LogClass()");
-    }
-    ~LogClass()
-    {
-        print("LogClass::~LogClass()");
-    }
-    void print(const char *s)
-    {
-        cout << s << endl;
-    }
+  LogClass() { print("LogClass::LogClass()"); }
+  ~LogClass() { print("LogClass::~LogClass()"); }
+  void print(const char *s) { cout << s << endl; }
 };
 
 typedef SingletonHolder<LogClass, CreateUsingNew, DeletableSingleton> LogBook;
 
-class Example
-{
+class Example {
 public:
-    void method()
-    {
-        cout << "test\n";
-    }
+  void method() { cout << "test\n"; }
 };
 
+int main() {
+  // Instantiate both singletons by calling them...
+  LogBook::Instance().print("LogClass singleton instantiated");
+  LogBook::Instance().print("Going to manually delete LogBook.");
 
-int main()
-{
-    // Instantiate both singletons by calling them...
-    LogBook::Instance().print("LogClass singleton instantiated");
-    LogBook::Instance().print("Going to manually delete LogBook.");
+  DeletableSingleton<LogClass>::GracefulDelete();
 
-    DeletableSingleton<LogClass>::GracefulDelete();
+  LogBook::Instance().print("LogClass reinstantiated.");
+  LogBook::Instance().print("Going to terminate program now.");
 
-    LogBook::Instance().print("LogClass reinstantiated.");
-    LogBook::Instance().print("Going to terminate program now.");
-
-    return 0;
+  return 0;
 }
-
