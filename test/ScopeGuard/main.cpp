@@ -162,17 +162,9 @@ void User::AddFriendGuarded(User &newFriend) {
 void User::AddFriendGuardedMacros(User &) {
   ScopeGuard invariantGuard =
       MakeObjGuard(*this, &User::CheckIfValid, __FUNCTION__, __LINE__);
-  (void)invariantGuard;
   LOKI_ON_BLOCK_EXIT_OBJ(friends_, &UserCont::pop_back);
   (void)LOKI_ANONYMOUS_VARIABLE(scopeGuard);
-  // GCC 4.2 Bug
-#if defined(__GNUC__)
-#define GCC_VERSION (__GNUC__ * 10 + __GNUC_MINOR__ * 1)
-#endif
-#if !defined(__GNUC__) || (GCC_VERSION < 42) || (GCC_VERSION > 42)
-  LOKI_ON_BLOCK_EXIT(Decrement, Loki::ByRef(fCount));
-  (void)LOKI_ANONYMOUS_VARIABLE(scopeGuard);
-#endif
+  (void)invariantGuard;
 }
 
 void DoStandaloneFunctionTests() {
