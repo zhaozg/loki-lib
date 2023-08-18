@@ -379,7 +379,7 @@ private:
 
   // update the counter
   template <class T>
-  struct updateCounter : public std::unary_function<T, void> {
+  struct updateCounter : public std::function<void(T)> {
     updateCounter(const DT &key) : key_(key) {}
     void operator()(T x) {
       x.second =
@@ -693,13 +693,13 @@ private:
   }
 
   // delete the object
-  template <class T> struct deleteObject : public std::unary_function<T, void> {
+  template <class T> struct deleteObject : public std::function<void(T)> {
     void operator()(T x) { delete x; }
   };
 
   // delete the objects in the vector
   template <class T>
-  struct deleteVectorObjects : public std::unary_function<T, void> {
+  struct deleteVectorObjects : public std::function<void(T)> {
     void operator()(T x) {
       ObjVector &vec(x.second);
       std::for_each(vec.begin(), vec.end(),
@@ -709,7 +709,7 @@ private:
 
   // delete the keys of the map
   template <class T>
-  struct deleteMapKeys : public std::unary_function<T, void> {
+  struct deleteMapKeys : public std::function<void(T)> {
     void operator()(T x) { delete x.first; }
   };
 
