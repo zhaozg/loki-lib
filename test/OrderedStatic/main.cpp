@@ -67,7 +67,7 @@ Loki::OrderedStatic<2, L2> l2;
 Loki::OrderedStatic<1, std::string, std::string (*)()> s1(&func);
 Loki::OrderedStatic<2, std::string, Loki::Seq<const char *>> s2("s2");
 
-Loki::OrderedStatic<1, Loki::Functor<int>, Loki::Seq<int (*)()>> f1(f);
+Loki::OrderedStatic<1, Loki::Functor<int, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL>, Loki::Seq<int (*)()>> f1(f);
 
 #else
 

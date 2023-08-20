@@ -20,20 +20,12 @@
 
 // $Id$
 
-#define USE_SEQUENCE
-
 #include <cassert>
 #include <cstring>
 #include <iostream>
 #include <loki/Factory.h>
 
-#ifdef LOKI_DISABLE_TYPELIST_MACROS
-#define USE_WQUENCE
-#endif
-
-#ifdef USE_SEQUENCE
 #include <loki/Sequence.h>
-#endif
 
 #include <loki/CachedFactory.h>
 
@@ -132,13 +124,13 @@ template <class CCache> bool unitTestCacheOverhead(int loop) {
 void testCacheOverhead() {
   const int loop(1000000);
   cout << "Starting cache overhead test with " << loop << " loops" << endl;
-  typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+  typedef CachedFactory<AbstractProduct, int, SimplePointer,
                         AmountLimitedCreation, EvictRandom>
       CRandomEvict;
-  typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+  typedef CachedFactory<AbstractProduct, int, SimplePointer,
                         AmountLimitedCreation, EvictLRU>
       CLRUEvict;
-  typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+  typedef CachedFactory<AbstractProduct, int, SimplePointer,
                         AmountLimitedCreation, EvictAging>
       CAgingEvict;
   bool test1 =
@@ -239,7 +231,7 @@ void testTypicalUse() {
   cout << "# Cache contains max " << maxObjectCount << " objects" << endl;
   cout << "# Test performs " << maxIteration << " iterations" << endl;
   {
-    typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+    typedef CachedFactory<AbstractProduct, int, SimplePointer,
                           AlwaysCreate, EvictRandom, SimpleStatisticPolicy>
         CRandomEvict;
     CRandomEvict cache;
@@ -247,14 +239,14 @@ void testTypicalUse() {
                                     maxIteration);
   }
   {
-    typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+    typedef CachedFactory<AbstractProduct, int, SimplePointer,
                           AlwaysCreate, EvictLRU, SimpleStatisticPolicy>
         CLRUEvict;
     CLRUEvict cache;
     displayTypicalUse(cache, objectKind, maxObjectCount, maxIteration);
   }
   {
-    typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+    typedef CachedFactory<AbstractProduct, int, SimplePointer,
                           AlwaysCreate, EvictAging, SimpleStatisticPolicy>
         CAgingEvict;
     CAgingEvict cache;
@@ -283,13 +275,13 @@ template <class Cache> bool testEvictionError() {
 }
 
 bool testAllEvictionError() {
-  typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+  typedef CachedFactory<AbstractProduct, int, SimplePointer,
                         AmountLimitedCreation, EvictRandom>
       CRandomEvict;
-  typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+  typedef CachedFactory<AbstractProduct, int, SimplePointer,
                         AmountLimitedCreation, EvictLRU>
       CLRUEvict;
-  typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+  typedef CachedFactory<AbstractProduct, int, SimplePointer,
                         AmountLimitedCreation, EvictAging>
       CAgingEvict;
   bool test1 = dispResult("Random policy", testEvictionError<CRandomEvict>());
@@ -299,7 +291,7 @@ bool testAllEvictionError() {
 }
 
 bool testAmountLimitedCreation() {
-  typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+  typedef CachedFactory<AbstractProduct, int, SimplePointer,
                         AmountLimitedCreation, EvictRandom,
                         SimpleStatisticPolicy>
       CCache;
@@ -320,7 +312,7 @@ bool testAmountLimitedCreation() {
 }
 
 bool testRateLimitedFetchPolicy(bool waitBetweenFetch) {
-  typedef CachedFactory<AbstractProduct, int, NullType, SimplePointer,
+  typedef CachedFactory<AbstractProduct, int, SimplePointer,
                         RateLimitedCreation>
       CCache;
   CCache CC;
@@ -375,7 +367,10 @@ bool testRelease() {
 }
 
 bool testCache() {
-  typedef CachedFactory<AbstractProduct, int, Seq<int, int>> CCache2Parm;
+  typedef CachedFactory<AbstractProduct, int,
+          SimplePointer, AlwaysCreate, EvictRandom, NoStatisticPolicy,
+          DefaultFactoryError, std::vector<AbstractProduct *>,
+          int, int> CCache2Parm;
 
   CCache2Parm CC2;
   CC2.Register(intID, createProductInt);
@@ -397,7 +392,7 @@ bool testCache() {
 template <class T> class SmartPointer_OneTArg : public SmartPointer<T> {};
 
 bool testSmartPointer() {
-  typedef CachedFactory<AbstractProduct, int, NullType, SmartPointer_OneTArg,
+  typedef CachedFactory<AbstractProduct, int, SmartPointer_OneTArg,
                         AlwaysCreate, EvictRandom, SimpleStatisticPolicy>
       CFactory;
   CFactory factory;

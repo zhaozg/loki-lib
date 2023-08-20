@@ -11,21 +11,12 @@
 
 // #define CLASS_LEVEL_THERADING
 
-#define USE_SEQUENCE
-
 #include <iostream>
 #include <loki/Factory.h>
 #include <loki/Functor.h>
 #include <string>
 
-#ifdef LOKI_DISABLE_TYPELIST_MACROS
-#define USE_WQUENCE
-#endif
-
-#ifdef USE_SEQUENCE
 #include <loki/Sequence.h>
-
-#endif
 
 using namespace Loki;
 using std::cout;
@@ -48,7 +39,8 @@ public:
 // Factory for creation a Product object without parameters
 ///////////////////////////////////////////////////////////
 
-typedef SingletonHolder<Factory<AbstractProduct, int>, CreateUsingNew,
+typedef SingletonHolder<Factory<AbstractProduct, int, DefaultFactoryError>,
+                        CreateUsingNew,
                         Loki::LongevityLifetime::DieAsSmallObjectChild>
     PFactoryNull;
 
@@ -57,11 +49,7 @@ typedef SingletonHolder<Factory<AbstractProduct, int>, CreateUsingNew,
 /////////////////////////////////////////////////////////////
 
 typedef SingletonHolder<
-#ifndef USE_SEQUENCE
-    Factory<AbstractProduct, std::string, LOKI_TYPELIST_2(int, int)>,
-#else
-    Factory<AbstractProduct, std::string, Seq<int, int>>,
-#endif
+    Factory<AbstractProduct, std::string, DefaultFactoryError, int, int>,
     CreateUsingNew, Loki::LongevityLifetime::DieAsSmallObjectChild>
     PFactory;
 
@@ -135,18 +123,10 @@ public:
 // get creator functions on runntime
 ///////////////////////////////////////////////////////////////
 
-#ifndef USE_SEQUENCE
-typedef Functor<Product *, LOKI_TYPELIST_2(int, int)> CreateFunctor;
-#else
-typedef Functor<Product *, Seq<int, int>> CreateFunctor;
-#endif
+typedef Functor<Product *, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, int, int> CreateFunctor;
 
 typedef SingletonHolder<
-#ifndef USE_SEQUENCE
-    Factory<AbstractProduct, int, LOKI_TYPELIST_3(CreateFunctor, int, int)>,
-#else
-    Factory<AbstractProduct, int, Seq<CreateFunctor, int, int>>,
-#endif
+    Factory<AbstractProduct, int, DefaultFactoryError, CreateFunctor, int, int>,
     CreateUsingNew, Loki::LongevityLifetime::DieAsSmallObjectChild>
     PFactoryFunctorParm;
 

@@ -78,7 +78,7 @@ public:
   /// type returned by operator*
   typedef T &ReferenceType;
   /// type of the Functor to set
-  typedef Functor<void, Seq<void *>> FunctorType;
+  typedef Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, void *> FunctorType;
 
   FunctionStorage() : pointee_(Default()), functor_() {}
 

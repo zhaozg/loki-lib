@@ -46,46 +46,22 @@ public:
         TestClass testClass;
 
 
-#ifndef LOKI_DISABLE_TYPELIST_MACROS
-
-        Functor<void,LOKI_TYPELIST_1(bool &)> function(testFunction);
-        Functor<void,LOKI_TYPELIST_1(bool &)> function2(testFunction);
-        Functor<void,LOKI_TYPELIST_1(bool &)> functor(testFunctor);
-        Functor<void,LOKI_TYPELIST_1(bool &)> functor2(testFunctor);
-        Functor<void,LOKI_TYPELIST_1(bool &)> classFunctor(&testClass,&TestClass::member);
-        Functor<void,LOKI_TYPELIST_1(bool &)> classFunctor2(&testClass,&TestClass::member);
-        Functor<void,LOKI_TYPELIST_1(bool &)> functorCopy(function);
-        Functor<void,LOKI_TYPELIST_1(bool &)> functorCopy2(function);
-
-        Functor<void,NullType> bindFunctor(BindFirst(function,testResult));
-        Functor<void,NullType> bindFunctor2(BindFirst(function,testResult));
-
-        Functor<void> chainFunctor(Chain(bindFunctor,bindFunctor));
-        Functor<void> chainFunctor2(Chain(bindFunctor,bindFunctor));
-
-        Functor<void,LOKI_TYPELIST_1(bool &)> member_func(&testClass,&TestClass::member);
-        Functor<void,LOKI_TYPELIST_1(bool &)> free_func(&free_function);
-        Functor<void,LOKI_TYPELIST_1(bool &)> NULL_func;
-        Functor<void,LOKI_TYPELIST_1(bool &)> NULL_func0;
-#else
-
-        Functor<void,Seq<bool &> > function(testFunction);
-        Functor<void,Seq<bool &> > function2(testFunction);
-        Functor<void,Seq<bool &> > functor(testFunctor);
-        Functor<void,Seq<bool &> > functor2(testFunctor);
-        Functor<void,Seq<bool &> > classFunctor(&testClass,&TestClass::member);
-        Functor<void,Seq<bool &> > classFunctor2(&testClass,&TestClass::member);
-        Functor<void,Seq<bool &> > functorCopy(function);
-        Functor<void,Seq<bool &> > functorCopy2(function);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> function(testFunction);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> function2(testFunction);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> functor(testFunctor);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> functor2(testFunctor);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> classFunctor(&testClass,&TestClass::member);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> classFunctor2(&testClass,&TestClass::member);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> functorCopy(function);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> functorCopy2(function);
 
         //TODO:
         // BindFirst and Chainer
 
-        Functor<void,Seq<bool &> > member_func(&testClass,&TestClass::member);
-        Functor<void,Seq<bool &> > free_func(&free_function);
-        Functor<void,Seq<bool &> > NULL_func;
-        Functor<void,Seq<bool &> > NULL_func0;
-#endif
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> member_func(&testClass,&TestClass::member);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> free_func(&free_function);
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> NULL_func;
+        Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, bool &> NULL_func0;
 
         testResult=false;
         function(testResult);
@@ -120,12 +96,6 @@ public:
         bool null4 = member_func != NULL_func;
 
 
-#ifndef LOKI_DISABLE_TYPELIST_MACROS
-
-        bool bindFunctorCompare = bindFunctor==bindFunctor2;
-        bool chainFunctorCompare = chainFunctor==chainFunctor2;
-#endif
-
         bool compare =  functionCompare &&
                         functorCompare &&
                         classFunctorCompare &&
@@ -137,35 +107,15 @@ public:
                         null2 &&
                         null3 &&
                         null4
-#ifndef LOKI_DISABLE_TYPELIST_MACROS
-                        && bindFunctorCompare
-                        && chainFunctorCompare;
-#else
                         ;
-#endif
-
 #else
 
         bool compare=true;
 #endif //LOKI_FUNCTORS_ARE_COMPARABLE
 
 
-#ifndef LOKI_DISABLE_TYPELIST_MACROS
-
-        testResult=false;
-        bindFunctor();
-        bool bindFunctorResult=testResult;
-
-        testResult=false;
-        chainFunctor();
-        bool chainFunctorResult=testResult;
-
-        r=functionResult && functorResult && classFunctorResult && functorCopyResult && bindFunctorResult &&
-          chainFunctorResult && compare;
-#else
-        //TODO!
+       //TODO!
         r=functionResult && functorResult && classFunctorResult && functorCopyResult && compare;
-#endif
 
         testAssert("Functor",r,result);
 

@@ -31,7 +31,6 @@
 
 #include <loki/NullType.h>
 #include <loki/TypeManip.h>
-#include <loki/TypelistMacros.h>
 
 namespace Loki {
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,21 +59,15 @@ namespace TL {
 // returns a typelist that is of T1, T2, ...
 ////////////////////////////////////////////////////////////////////////////////
 
-template <
-    typename T1 = NullType, typename T2 = NullType, typename T3 = NullType,
-    typename T4 = NullType, typename T5 = NullType, typename T6 = NullType,
-    typename T7 = NullType, typename T8 = NullType, typename T9 = NullType,
-    typename T10 = NullType, typename T11 = NullType, typename T12 = NullType,
-    typename T13 = NullType, typename T14 = NullType, typename T15 = NullType,
-    typename T16 = NullType, typename T17 = NullType, typename T18 = NullType>
+template <typename T = NullType,
+          typename ...Types>
 struct MakeTypelist {
 private:
   typedef
-      typename MakeTypelist<T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                            T14, T15, T16, T17, T18>::Result TailResult;
+      typename MakeTypelist<Types...>::Result TailResult;
 
 public:
-  typedef Typelist<T1, TailResult> Result;
+  typedef Typelist<T, TailResult> Result;
 };
 
 template <> struct MakeTypelist<> {

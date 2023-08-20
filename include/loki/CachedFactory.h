@@ -587,50 +587,31 @@ public:
  * Note this implementation do not retain ownership.
  */
 template <class AbstractProduct, typename IdentifierType,
-          typename CreatorParmTList = NullType,
           template <class> class EncapsulationPolicy = SimplePointer,
           class CreationPolicy = AlwaysCreate,
           template <typename, typename> class EvictionPolicy = EvictRandom,
           class StatisticPolicy = NoStatisticPolicy,
-          template <typename, class> class FactoryErrorPolicy =
-              DefaultFactoryError,
-          class ObjVector = std::vector<AbstractProduct *>>
+          template <typename, class> class FactoryErrorPolicy = DefaultFactoryError,
+          class ObjVector = std::vector<AbstractProduct *>,
+          typename... Parms>
 class CachedFactory : protected EncapsulationPolicy<AbstractProduct>,
                       public CreationPolicy,
                       public StatisticPolicy,
                       EvictionPolicy<AbstractProduct *, unsigned> {
 private:
-  typedef Factory<AbstractProduct, IdentifierType, CreatorParmTList,
-                  FactoryErrorPolicy>
-      MyFactory;
-  typedef FactoryImpl<AbstractProduct, IdentifierType, CreatorParmTList> Impl;
-  typedef Functor<AbstractProduct *, CreatorParmTList> ProductCreator;
+  typedef Factory<AbstractProduct, IdentifierType, FactoryErrorPolicy, Parms...> MyFactory;
+  typedef FactoryImpl<AbstractProduct, IdentifierType, Parms...> Impl;
+  typedef Functor<AbstractProduct *, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL, Parms...> ProductCreator;
   typedef EncapsulationPolicy<AbstractProduct> NP;
   typedef CreationPolicy CP;
   typedef StatisticPolicy SP;
   typedef EvictionPolicy<AbstractProduct *, unsigned> EP;
 
-  typedef typename Impl::Parm1 Parm1;
-  typedef typename Impl::Parm2 Parm2;
-  typedef typename Impl::Parm3 Parm3;
-  typedef typename Impl::Parm4 Parm4;
-  typedef typename Impl::Parm5 Parm5;
-  typedef typename Impl::Parm6 Parm6;
-  typedef typename Impl::Parm7 Parm7;
-  typedef typename Impl::Parm8 Parm8;
-  typedef typename Impl::Parm9 Parm9;
-  typedef typename Impl::Parm10 Parm10;
-  typedef typename Impl::Parm11 Parm11;
-  typedef typename Impl::Parm12 Parm12;
-  typedef typename Impl::Parm13 Parm13;
-  typedef typename Impl::Parm14 Parm14;
-  typedef typename Impl::Parm15 Parm15;
-
 public:
   typedef typename NP::ProductReturn ProductReturn;
 
 private:
-  typedef Key<Impl, IdentifierType> MyKey;
+  typedef Key<Impl, IdentifierType, Parms...> MyKey;
   typedef std::map<MyKey, ObjVector> KeyToObjVectorMap;
   typedef std::map<AbstractProduct *, MyKey> FetchedObjToKeyMap;
 
@@ -790,250 +771,12 @@ public:
     return factory.RegisteredIds();
   }
 
-  ProductReturn CreateObject(const IdentifierType &id) {
-    MyKey key(id);
+  ProductReturn CreateObject(const IdentifierType &id, Parms...parms) {
+    MyKey key(id, parms...);
     AbstractProduct *pProduct(
         getPointerToObjectInContainer(getContainerFromKey(key)));
     if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1) {
-    MyKey key(id, p1);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2) {
-    MyKey key(id, p1, p2);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3) {
-    MyKey key(id, p1, p2, p3);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2, key.p3);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4) {
-    MyKey key(id, p1, p2, p3, p4);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5) {
-    MyKey key(id, p1, p2, p3, p4, p5);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct =
-          factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4, key.p5);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4,
-                                      key.p5, key.p6);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6, Parm7 p7) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6, p7);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4,
-                                      key.p5, key.p6, key.p7);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6, Parm7 p7,
-                             Parm8 p8) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6, p7, p8);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4,
-                                      key.p5, key.p6, key.p7, key.p8);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6, Parm7 p7,
-                             Parm8 p8, Parm9 p9) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6, p7, p8, p9);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4,
-                                      key.p5, key.p6, key.p7, key.p8, key.p9);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6, Parm7 p7,
-                             Parm8 p8, Parm9 p9, Parm10 p10) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct =
-          factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4, key.p5,
-                               key.p6, key.p7, key.p8, key.p9, key.p10);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6, Parm7 p7,
-                             Parm8 p8, Parm9 p9, Parm10 p10, Parm11 p11) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4,
-                                      key.p5, key.p6, key.p7, key.p8, key.p9,
-                                      key.p10, key.p11);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6, Parm7 p7,
-                             Parm8 p8, Parm9 p9, Parm10 p10, Parm11 p11,
-                             Parm12 p12) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4,
-                                      key.p5, key.p6, key.p7, key.p8, key.p9,
-                                      key.p10, key.p11, key.p12);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6, Parm7 p7,
-                             Parm8 p8, Parm9 p9, Parm10 p10, Parm11 p11,
-                             Parm12 p12, Parm13 p13) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(key.id, key.p1, key.p2, key.p3, key.p4,
-                                      key.p5, key.p6, key.p7, key.p8, key.p9,
-                                      key.p10, key.p11, key.p12, key.p13);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6, Parm7 p7,
-                             Parm8 p8, Parm9 p9, Parm10 p10, Parm11 p11,
-                             Parm12 p12, Parm13 p13, Parm14 p14) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(
-          key.id, key.p1, key.p2, key.p3, key.p4, key.p5, key.p6, key.p7,
-          key.p8, key.p9, key.p10, key.p11, key.p12, key.p13, key.p14);
-      onCreate(pProduct);
-    }
-    onFetch(pProduct);
-    providedObjects[pProduct] = key;
-    return NP::encapsulate(pProduct);
-  }
-
-  ProductReturn CreateObject(const IdentifierType &id, Parm1 p1, Parm2 p2,
-                             Parm3 p3, Parm4 p4, Parm5 p5, Parm6 p6, Parm7 p7,
-                             Parm8 p8, Parm9 p9, Parm10 p10, Parm11 p11,
-                             Parm12 p12, Parm13 p13, Parm14 p14, Parm15 p15) {
-    MyKey key(id, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14,
-              p15);
-    AbstractProduct *pProduct(
-        getPointerToObjectInContainer(getContainerFromKey(key)));
-    if (shouldCreateObject(pProduct)) {
-      pProduct = factory.CreateObject(
-          key.id, key.p1, key.p2, key.p3, key.p4, key.p5, key.p6, key.p7,
-          key.p8, key.p9, key.p10, key.p11, key.p12, key.p13, key.p14, key.p15);
+      pProduct = factory.CreateObject(key.id, parms...);
       onCreate(pProduct);
     }
     onFetch(pProduct);

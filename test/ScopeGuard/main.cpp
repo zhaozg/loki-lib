@@ -163,8 +163,10 @@ void User::AddFriendGuardedMacros(User &) {
   ScopeGuard invariantGuard =
       MakeObjGuard(*this, &User::CheckIfValid, __FUNCTION__, __LINE__);
   LOKI_ON_BLOCK_EXIT_OBJ(friends_, &UserCont::pop_back);
+#if 0
   (void)LOKI_ANONYMOUS_VARIABLE(scopeGuard);
   (void)invariantGuard;
+#endif
 }
 
 void DoStandaloneFunctionTests() {

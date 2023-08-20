@@ -52,7 +52,7 @@ namespace FactoryTestPrivate
   Line *cloneLine(Line *) { return new Line; }
   Circle *cloneCircle(Circle *) { return new Circle; }
 
-  typedef Loki::Factory<Shape, int> FactoryType;
+  typedef Loki::Factory<Shape, int, Loki::DefaultFactoryError> FactoryType;
 
   bool testFactory()
   {

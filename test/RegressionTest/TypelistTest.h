@@ -35,15 +35,6 @@ public:
     using namespace Loki;
     using namespace Loki::TL;
 
-#ifndef LOKI_DISABLE_TYPELIST_MACROS
-    typedef LOKI_TYPELIST_1(char) CharList;
-    typedef LOKI_TYPELIST_3(char,int,double) CharIntDoubleList;
-    typedef LOKI_TYPELIST_4(char,int,double,char) CharIntDoubleCharList;
-    typedef LOKI_TYPELIST_3(Base,Derived1,Derived2) BaseDerived1Derived2List;
-    typedef LOKI_TYPELIST_3(Derived2,Derived1,Base) Derived2Derived1BaseList;
-    typedef LOKI_TYPELIST_4(Base,Derived1,Base,Derived2) BaseDerived1BaseDerived2List;
-    typedef LOKI_TYPELIST_4(Derived1,Base,Derived1,Derived2) Derived1BaseDerived1Derived2List;
-#else
     typedef Seq<char>::Type CharList;
     typedef Seq<char,int,double>::Type CharIntDoubleList;
     typedef Seq<char,int,double,char>::Type CharIntDoubleCharList;
@@ -51,7 +42,6 @@ public:
     typedef Seq<Derived2,Derived1,Base>::Type Derived2Derived1BaseList;
     typedef Seq<Base,Derived1,Base,Derived2>::Type BaseDerived1BaseDerived2List;
     typedef Seq<Derived1,Base,Derived1,Derived2>::Type Derived1BaseDerived1Derived2List;
-#endif
 
     bool r;
 
@@ -95,90 +85,6 @@ public:
 
     // Append, Erase, EraseAll, NoDuplicates, Replace, ReplaceAll, Reverse,
     // MostDerived and DerivedToFront doesn't work on MSVC 6.0
-
-#ifndef LOKI_DISABLE_TYPELIST_MACROS
-
-    r=SameType<Append<NullType,NullType>::Result,NullType>::value &&
-      SameType<Append<NullType,char>::Result,LOKI_TYPELIST_1(char)>::value &&
-      SameType<Append<NullType,CharList>::Result,CharList>::value &&
-      SameType<Append<CharList,NullType>::Result,CharList>::value &&
-      SameType<Append<CharList,int>::Result,LOKI_TYPELIST_2(char,int)>::value &&
-      SameType<Append<CharList,CharIntDoubleList>::Result,LOKI_TYPELIST_4(char,char,int,double)>::value;
-
-    testAssert("Append",r,result);
-
-    r=SameType<Erase<NullType,char>::Result,NullType>::value &&
-      SameType<Erase<CharList,char>::Result,NullType>::value &&
-      SameType<Erase<CharList,long>::Result,CharList>::value &&
-      SameType<Erase<CharIntDoubleList,int>::Result,LOKI_TYPELIST_2(char,double)>::value &&
-      SameType<Erase<CharIntDoubleList,double>::Result,LOKI_TYPELIST_2(char,int)>::value;
-
-    testAssert("Erase",r,result);
-
-    r=SameType<EraseAll<NullType,char>::Result,NullType>::value &&
-      SameType<EraseAll<CharList,char>::Result,NullType>::value &&
-      SameType<EraseAll<CharList,long>::Result,CharList>::value &&
-      SameType<EraseAll<CharIntDoubleList,int>::Result,LOKI_TYPELIST_2(char,double)>::value &&
-      SameType<EraseAll<CharIntDoubleList,double>::Result,LOKI_TYPELIST_2(char,int)>::value &&
-      SameType<EraseAll<CharIntDoubleCharList,char>::Result,LOKI_TYPELIST_2(int,double)>::value &&
-      SameType<EraseAll<CharIntDoubleCharList,int>::Result,LOKI_TYPELIST_3(char,double,char)>::value &&
-      SameType<EraseAll<CharIntDoubleCharList,double>::Result,LOKI_TYPELIST_3(char,int,char)>::value;
-
-    testAssert("EraseAll",r,result);
-
-    r=SameType<NoDuplicates<NullType>::Result,NullType>::value &&
-      SameType<NoDuplicates<CharList>::Result,CharList>::value &&
-      SameType<NoDuplicates<CharIntDoubleList>::Result,CharIntDoubleList>::value &&
-      SameType<NoDuplicates<CharIntDoubleCharList>::Result,CharIntDoubleList>::value;
-
-    testAssert("NoDuplicates",r,result);
-
-    r=SameType<Replace<NullType,char,long>::Result,NullType>::value &&
-      SameType<Replace<CharList,char,long>::Result,LOKI_TYPELIST_1(long)>::value &&
-      SameType<Replace<CharList,int,long>::Result,CharList>::value &&
-      SameType<Replace<CharIntDoubleList,char,long>::Result,LOKI_TYPELIST_3(long,int,double)>::value &&
-      SameType<Replace<CharIntDoubleList,long,char[16]>::Result,CharIntDoubleList>::value &&
-      SameType<Replace<CharIntDoubleCharList,char,long>::Result,LOKI_TYPELIST_4(long,int,double,char)>::value;
-
-    testAssert("Replace",r,result);
-
-    r=SameType<ReplaceAll<NullType,char,long>::Result,NullType>::value &&
-      SameType<ReplaceAll<CharList,char,long>::Result,LOKI_TYPELIST_1(long)>::value &&
-      SameType<ReplaceAll<CharList,int,long>::Result,CharList>::value &&
-      SameType<ReplaceAll<CharIntDoubleList,char,long>::Result,LOKI_TYPELIST_3(long,int,double)>::value &&
-      SameType<ReplaceAll<CharIntDoubleList,long,char[16]>::Result,CharIntDoubleList>::value &&
-      SameType<ReplaceAll<CharIntDoubleCharList,char,long>::Result,LOKI_TYPELIST_4(long,int,double,long)>::value;
-
-    testAssert("ReplaceAll",r,result);
-
-    r=SameType<Reverse<NullType>::Result,NullType>::value &&
-      SameType<Reverse<CharList>::Result,CharList>::value &&
-      SameType<Reverse<CharIntDoubleList>::Result,LOKI_TYPELIST_3(double,int,char)>::value;
-
-    testAssert("Reverse",r,result);
-
-    r=SameType<MostDerived<NullType,Base>::Result,Base>::value &&
-      SameType<MostDerived<BaseDerived1Derived2List,Base>::Result,Derived2>::value &&
-      SameType<MostDerived<BaseDerived1Derived2List,Derived1>::Result,Derived2>::value &&
-      SameType<MostDerived<BaseDerived1Derived2List,Derived2>::Result,Derived2>::value &&
-      SameType<MostDerived<Derived2Derived1BaseList,Base>::Result,Derived2>::value &&
-      SameType<MostDerived<Derived2Derived1BaseList,Derived1>::Result,Derived2>::value &&
-      SameType<MostDerived<Derived2Derived1BaseList,Derived2>::Result,Derived2>::value;
-
-    testAssert("MostDerived",r,result);
-
-    r=SameType<DerivedToFront<NullType>::Result,NullType>::value &&
-      SameType<DerivedToFront<CharList>::Result,CharList>::value &&
-      SameType<DerivedToFront<CharIntDoubleList>::Result,CharIntDoubleList>::value &&
-      SameType<DerivedToFront<CharIntDoubleCharList>::Result,CharIntDoubleCharList>::value &&
-      SameType<DerivedToFront<BaseDerived1Derived2List>::Result,Derived2Derived1BaseList>::value &&
-      SameType<DerivedToFront<Derived2Derived1BaseList>::Result,Derived2Derived1BaseList>::value &&
-      SameType<DerivedToFront<BaseDerived1BaseDerived2List>::Result,LOKI_TYPELIST_4(Derived2,Derived1,Base,Base)>::value &&
-      SameType<DerivedToFront<Derived1BaseDerived1Derived2List>::Result,LOKI_TYPELIST_4(Derived2,Derived1,Derived1,Base)>::value;
-
-      testAssert("DerivedToFront",r,result);
-
-#else //LOKI_DISABLE_TYPELIST_MACROS
 
     r=SameType<Append<NullType,NullType>::Result,NullType>::value &&
         SameType<Append<NullType,char>::Result,Seq<char>::Type >::value &&
@@ -259,10 +165,6 @@ public:
       SameType<DerivedToFront<Derived1BaseDerived1Derived2List>::Result,Seq<Derived2,Derived1,Derived1,Base>::Type >::value;
 
       testAssert("DerivedToFront",r,result);
-
-#endif //LOKI_DISABLE_TYPELIST_MACROS
-
-
 
     #else
 

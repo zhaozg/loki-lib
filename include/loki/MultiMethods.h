@@ -301,6 +301,7 @@ template <class BaseLhs, class BaseRhs = BaseLhs, typename ResultType = void,
           template <class, class, class, class> class DispatcherBackend =
               BasicDispatcher>
 class FunctorDispatcher {
+  // FIXME: LOKI_TYPELIST_2
   typedef LOKI_TYPELIST_2(BaseLhs &, BaseRhs &) ArgsList;
   typedef Functor<ResultType, ArgsList, LOKI_DEFAULT_THREADING> FunctorType;
 

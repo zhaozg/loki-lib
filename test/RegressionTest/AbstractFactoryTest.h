@@ -36,18 +36,6 @@ class BadSoldier : public Soldier {};
 class BadMonster : public Monster {};
 class BadSuperMonster : public SuperMonster {};
 
-#ifndef LOKI_DISABLE_TYPELIST_MACROS
-
-typedef Loki::AbstractFactory<LOKI_TYPELIST_3(Soldier, Monster, SuperMonster)> AbstractEnemyFactory;
-
-typedef Loki::ConcreteFactory<AbstractEnemyFactory, Loki::OpNewFactoryUnit,
-  LOKI_TYPELIST_3(SillySoldier, SillyMonster, SillySuperMonster)> EasyLevelEnemyFactory;
-
-typedef Loki::ConcreteFactory<AbstractEnemyFactory, Loki::OpNewFactoryUnit,
-  LOKI_TYPELIST_3(BadSoldier, BadMonster, BadSuperMonster)> HardLevelEnemyFactory;
-
-#else // LOKI_DISABLE_TYPELIST_MACROS
-
 typedef Loki::AbstractFactory<Seq<Soldier, Monster, SuperMonster>::Type > AbstractEnemyFactory;
 
 typedef Loki::ConcreteFactory<AbstractEnemyFactory, Loki::OpNewFactoryUnit,
@@ -55,8 +43,6 @@ Seq<SillySoldier, SillyMonster, SillySuperMonster>::Type > EasyLevelEnemyFactory
 
 typedef Loki::ConcreteFactory<AbstractEnemyFactory, Loki::OpNewFactoryUnit,
 Seq<BadSoldier, BadMonster, BadSuperMonster>::Type > HardLevelEnemyFactory;
-
-#endif
 
 class AbstractFactoryTest : public Test
 {

@@ -6,5 +6,17 @@
 .shared-dep/
 .static-dep/
 main
-*Test
+test/CachedFactory/CachedFactoryTest
+test/DeletableSingleton/DeletableSingleton
+test/Factory/Factory
+test/Function/FunctionTest
+test/Longevity/main2
+test/RegressionTest/Test
+test/SafeBits/SafeBitTest
+test/Singleton/Dependencies
+test/Singleton/Phoenix
+test/SingletonDll/client
+test/SmallObj/DefaultAlloc
+test/SmallObj/SmallObjBench
+test/SmallObj/SmallObjSingleton
 

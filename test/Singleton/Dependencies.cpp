@@ -63,12 +63,12 @@ typedef SingletonHolder<MySmallObject_DieAs, CreateUsingNew,
 
 struct MyFunctionObject_DieAs {
   MyFunctionObject_DieAs() {
-    functor = Functor<void>(this, &MyFunctionObject_DieAs::f);
+    functor = Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL>(this, &MyFunctionObject_DieAs::f);
     function = Function<void()>(this, &MyFunctionObject_DieAs::f);
   }
 
   void f() {}
-  Functor<void> functor;
+  Functor<void, LOKI_DEFAULT_THREADING_NO_OBJ_LEVEL> functor;
   Function<void()> function;
 };
 
