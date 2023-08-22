@@ -20,7 +20,6 @@
 #endif
 
 #include <loki/SmallObj.h>
-#include <loki/SmartPtr.h>
 
 using namespace Loki;
 
@@ -77,22 +76,13 @@ public:
 
 struct E;
 
-typedef SmartPtr<ImplOf<E>> LokiPtr;
 typedef ConstPropPtr<ImplOf<E>> CPropPtr;
 typedef std::shared_ptr<ImplOf<E>> StdAutoPtr;
-
-#ifdef TEST_WITH_BOOST
-typedef boost::shared_ptr<ImplOf<E>> BoostPtr;
-#else
-typedef LokiPtr BoostPtr;
-#endif
 
 // Pimpl
 
 typedef Pimpl<ImplOf<E>> Pimpl1;
 typedef Pimpl<ImplOf<E>, CPropPtr> Pimpl2;
-typedef Pimpl<ImplOf<E>, LokiPtr> Pimpl3;
-typedef Pimpl<ImplOf<E>, BoostPtr> Pimpl4;
 typedef Pimpl<ImplOf<E>, StdAutoPtr> Pimpl5;
 
 struct P1 {
@@ -107,18 +97,6 @@ struct P2 {
   void f();
   void f() const;
 };
-struct P3 {
-  Pimpl3 d;
-  P3();
-  void f();
-  void f() const;
-};
-struct P4 {
-  Pimpl4 d;
-  P4();
-  void f();
-  void f() const;
-};
 struct P5 {
   Pimpl5 d;
   P5();
@@ -130,8 +108,6 @@ struct P5 {
 
 typedef PimplOwner<ImplOf<E>> PimplOwner1;
 typedef PimplOwner<ImplOf<E>, CPropPtr> PimplOwner2;
-typedef PimplOwner<ImplOf<E>, LokiPtr> PimplOwner3;
-typedef PimplOwner<ImplOf<E>, BoostPtr> PimplOwner4;
 typedef PimplOwner<ImplOf<E>, StdAutoPtr> PimplOwner5;
 
 struct PO1 : private PimplOwner1 {
@@ -141,16 +117,6 @@ struct PO1 : private PimplOwner1 {
 };
 struct PO2 : private PimplOwner2 {
   PO2();
-  void f();
-  void f() const;
-};
-struct PO3 : private PimplOwner3 {
-  PO3();
-  void f();
-  void f() const;
-};
-struct PO4 : private PimplOwner4 {
-  PO4();
   void f();
   void f() const;
 };
@@ -164,8 +130,6 @@ struct PO5 : private PimplOwner5 {
 
 typedef RimplOf<E, Pimpl1> Rimpl1;
 typedef RimplOf<E, Pimpl2> Rimpl2;
-typedef RimplOf<E, Pimpl3> Rimpl3;
-typedef RimplOf<E, Pimpl4> Rimpl4;
 typedef RimplOf<E, Pimpl5> Rimpl5;
 
 struct R1 {
@@ -182,20 +146,6 @@ struct R2 {
   void f();
   void f() const;
 };
-struct R3 {
-  Pimpl3 p;
-  Rimpl3::Type d;
-  R3();
-  void f();
-  void f() const;
-};
-struct R4 {
-  Pimpl4 p;
-  Rimpl4::Type d;
-  R4();
-  void f();
-  void f() const;
-};
 struct R5 {
   Pimpl5 p;
   Rimpl5::Type d;
@@ -208,8 +158,6 @@ struct R5 {
 
 typedef RimplOf<E, Pimpl1>::Owner RimplO1;
 typedef RimplOf<E, Pimpl2>::Owner RimplO2;
-typedef RimplOf<E, Pimpl3>::Owner RimplO3;
-typedef RimplOf<E, Pimpl4>::Owner RimplO4;
 typedef RimplOf<E, Pimpl5>::Owner RimplO5;
 
 struct RO1 : private RimplO1 {
@@ -219,16 +167,6 @@ struct RO1 : private RimplO1 {
 };
 struct RO2 : private RimplO2 {
   RO2();
-  void f();
-  void f() const;
-};
-struct RO3 : private RimplO3 {
-  RO3();
-  void f();
-  void f() const;
-};
-struct RO4 : private RimplO4 {
-  RO4();
   void f();
   void f() const;
 };

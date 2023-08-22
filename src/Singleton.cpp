@@ -29,38 +29,13 @@
 
 #include <loki/Singleton.h>
 
-#ifdef LOKI_ENABLE_NEW_SETLONGLIVITY_HELPER_DATA_IMPL
-Loki::Private::TrackerArray *Loki::Private::pTrackerArray = 0;
-#else
 Loki::Private::TrackerArray Loki::Private::pTrackerArray = 0;
 unsigned int Loki::Private::elements = 0;
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // function AtExitFn
 // Ensures proper destruction of objects with longevity
 ////////////////////////////////////////////////////////////////////////////////
-
-#ifdef LOKI_ENABLE_NEW_SETLONGLIVITY_HELPER_DATA_IMPL
-
-void LOKI_C_CALLING_CONVENTION_QUALIFIER Loki::Private::AtExitFn() {
-  assert(pTrackerArray != 0 && !pTrackerArray->empty());
-
-  // Pick the element at the top of the stack
-  LifetimeTracker *pTop = pTrackerArray->back();
-  delete pTop;
-
-  // Remove that object off the stack _before_ deleting pTop
-  pTrackerArray->pop_back();
-
-  // Destroy stack when it's empty _after_ deleting pTop
-  if (pTrackerArray->empty()) {
-    delete pTrackerArray;
-    pTrackerArray = 0;
-  }
-}
-
-#else
 
 void LOKI_C_CALLING_CONVENTION_QUALIFIER Loki::Private::AtExitFn() {
   assert(elements > 0 && pTrackerArray != 0);
@@ -74,5 +49,3 @@ void LOKI_C_CALLING_CONVENTION_QUALIFIER Loki::Private::AtExitFn() {
   // Destroy the element
   delete pTop;
 }
-
-#endif

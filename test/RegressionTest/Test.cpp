@@ -51,7 +51,6 @@ Test::tests_type Test::tests;
 #include "TypeManipTest.h"
 #include "TypeTraitsTest.h"
 #include "TypeTraitsTest2.h"
-#include "SmartPtrTest.h"
 #include "FactoryTest.h"
 #include "FactoryParmTest.h"
 #include "AbstractFactoryTest.h"

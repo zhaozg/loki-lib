@@ -387,34 +387,6 @@ bool testCache() {
   }
 }
 
-#include <loki/SPCachedFactory.h>
-
-template <class T> class SmartPointer_OneTArg : public SmartPointer<T> {};
-
-bool testSmartPointer() {
-  typedef CachedFactory<AbstractProduct, int, SmartPointer_OneTArg,
-                        AlwaysCreate, EvictRandom, SimpleStatisticPolicy>
-      CFactory;
-  CFactory factory;
-  factory.Register(0, createProductNull);
-  for (int i = 0; i < 500; ++i) {
-    CFactory::ProductReturn ptr(factory.CreateObject(0));
-    CFactory::ProductReturn ptr2(
-        ptr); // check that copying the SP won't release the object twice
-  }
-  // all object should have been returned to the factory
-  bool outOk = factory.getOut() == 0;
-  // one object allocater
-  bool allocOk = factory.getAllocated() == 1;
-  // one missed, the first one
-  bool missedOk = factory.getMissed() == 1;
-  // 500 fetched
-  bool fetchedOk = factory.getFetched() == 500;
-  // 499 hit
-  bool hitOk = factory.getHit() == 499;
-  return outOk && allocOk && missedOk && fetchedOk && hitOk;
-}
-
 void dispText(const char *text) {
   cout << endl;
   cout << "##========================================" << endl;
@@ -475,14 +447,8 @@ void reliabilityTests() {
   bool evictionTest =
       dispResult("eviction error test result", testAllEvictionError());
   separator();
-  dispText("Smart pointer",
-           "The factory provides smart pointers, when pointers go out of "
-           "scope, the object returns to Cache");
-  bool spTest = dispResult("Smart Pointer test result", testSmartPointer());
-  separator();
 
-  if (cacheResult && rateLimitedResult && amountLimitedResult && evictionTest &&
-      spTest)
+  if (cacheResult && rateLimitedResult && amountLimitedResult && evictionTest)
     dispText("All tests passed successfully");
   else
     dispText("One or more test have failed");

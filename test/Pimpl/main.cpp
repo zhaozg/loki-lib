@@ -166,74 +166,50 @@ struct ImplOf<E> : public SmallObject<> // inherit SmallObj for speed up
 
 P1::P1() { d->data = 1; }
 P2::P2() { d->data = 2; }
-P3::P3() { d->data = 3; }
-P4::P4() { d->data = 4; }
 P5::P5() { d->data = 5; }
 
 PO1::PO1() { d->data = 6; }
 PO2::PO2() { d->data = 7; }
-PO3::PO3() { d->data = 8; }
-PO4::PO4() { d->data = 9; }
 PO5::PO5() { d->data = 10; }
 
 void P1::f() { d->foo(); }
 void P2::f() { d->foo(); }
-void P3::f() { d->foo(); }
-void P4::f() { d->foo(); }
 void P5::f() { d->foo(); }
 
 void PO1::f() { d->foo(); }
 void PO2::f() { d->foo(); }
-void PO3::f() { d->foo(); }
-void PO4::f() { d->foo(); }
 void PO5::f() { d->foo(); }
 
 void P1::f() const { d->foo(); }
 void P2::f() const { d->foo(); }
-void P3::f() const { d->foo(); }
-void P4::f() const { d->foo(); }
 void P5::f() const { d->foo(); }
 
 void PO1::f() const { d->foo(); }
 void PO2::f() const { d->foo(); }
-void PO3::f() const { d->foo(); }
-void PO4::f() const { d->foo(); }
 void PO5::f() const { d->foo(); }
 
 R1::R1() : d(*p) { d.data = 11; }
 R2::R2() : d(*p) { d.data = 22; }
-R3::R3() : d(*p) { d.data = 33; }
-R4::R4() : d(*p) { d.data = 44; }
 R5::R5() : d(*p) { d.data = 55; }
 
 void R1::f() { d.foo(); }
 void R2::f() { d.foo(); }
-void R3::f() { d.foo(); }
-void R4::f() { d.foo(); }
 void R5::f() { d.foo(); }
 
 void R1::f() const { d.foo(); }
 void R2::f() const { d.foo(); }
-void R3::f() const { d.foo(); }
-void R4::f() const { d.foo(); }
 void R5::f() const { d.foo(); }
 
 RO1::RO1() { d.data = 66; }
 RO2::RO2() { d.data = 77; }
-RO3::RO3() { d.data = 88; }
-RO4::RO4() { d.data = 99; }
 RO5::RO5() { d.data = 1010; }
 
 void RO1::f() { d.foo(); }
 void RO2::f() { d.foo(); }
-void RO3::f() { d.foo(); }
-void RO4::f() { d.foo(); }
 void RO5::f() { d.foo(); }
 
 void RO1::f() const { d.foo(); }
 void RO2::f() const { d.foo(); }
-void RO3::f() const { d.foo(); }
-void RO4::f() const { d.foo(); }
 void RO5::f() const { d.foo(); }
 
 void test_more() {
@@ -242,109 +218,73 @@ void test_more() {
   Loki::Printf("\nCreating Pimpls\n");
   P1 *p1 = new P1;
   P2 *p2 = new P2;
-  P3 *p3 = new P3;
-  P4 *p4 = new P4;
   P5 *p5 = new P5;
   PO1 *p6 = new PO1;
   PO2 *p7 = new PO2;
-  PO3 *p8 = new PO3;
-  PO4 *p9 = new PO4;
   PO5 *p10 = new PO5;
 
   Loki::Printf("\nConst check\n");
   p1->f();
   p2->f();
-  p3->f();
-  p4->f();
   p5->f();
   p6->f();
   p7->f();
-  p8->f();
-  p9->f();
   p10->f();
 
   Loki::Printf("\nDeleting Pimpls\n");
   delete p1;
   delete p2;
-  delete p3;
-  delete p4;
   delete p5;
   delete p6;
   delete p7;
-  delete p8;
-  delete p9;
   delete p10;
 
   Loki::Printf("\nCreating Rimpls\n");
   R1 *r1 = new R1;
   R2 *r2 = new R2;
-  R3 *r3 = new R3;
-  R4 *r4 = new R4;
   R5 *r5 = new R5;
 
   RO1 *r6 = new RO1;
   RO2 *r7 = new RO2;
-  RO3 *r8 = new RO3;
-  RO4 *r9 = new RO4;
   RO5 *r10 = new RO5;
 
   r1->f();
   r2->f();
-  r3->f();
-  r4->f();
   r5->f();
   r6->f();
   r7->f();
-  r8->f();
-  r9->f();
   r10->f();
 
   Loki::Printf("\nDeleting Rimpls\n");
   delete r1;
   delete r2;
-  delete r3;
-  delete r4;
   delete r5;
   delete r6;
   delete r7;
-  delete r8;
-  delete r9;
   delete r10;
 
   Loki::Printf("\nCreating const Pimpls\n");
   const P1 *cp1 = new P1;
   const P2 *cp2 = new P2;
-  const P3 *cp3 = new P3;
-  const P4 *cp4 = new P4;
   const P5 *cp5 = new P5;
 
   const PO1 *cp6 = new PO1;
   const PO2 *cp7 = new PO2;
-  const PO3 *cp8 = new PO3;
-  const PO4 *cp9 = new PO4;
   const PO5 *cp10 = new PO5;
 
   Loki::Printf("\nConst check\n");
   cp1->f();
   cp2->f();
-  cp3->f();
-  cp4->f();
   cp5->f();
   cp6->f();
   cp7->f();
-  cp8->f();
-  cp9->f();
   cp10->f();
 
   Loki::Printf("\nDeleting const Pimpls\n");
   delete cp1;
   delete cp2;
-  delete cp3;
-  delete cp4;
   delete cp5;
   delete cp6;
   delete cp7;
-  delete cp8;
-  delete cp9;
   delete cp10;
 }

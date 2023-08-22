@@ -73,19 +73,10 @@ void LOKI_EXPORT AtExitFn();
 
 class LifetimeTracker;
 
-#define LOKI_ENABLE_NEW_SETLONGLIVITY_HELPER_DATA_IMPL
-#ifdef LOKI_ENABLE_NEW_SETLONGLIVITY_HELPER_DATA_IMPL
-
-// Helper data
-// std::list because of the inserts
-typedef std::list<LifetimeTracker *> TrackerArray;
-extern LOKI_EXPORT TrackerArray *pTrackerArray;
-#else
 // Helper data
 typedef LifetimeTracker **TrackerArray;
 extern TrackerArray pTrackerArray;
 extern unsigned int elements;
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // class LifetimeTracker
@@ -122,7 +113,12 @@ public:
   ConcreteLifetimeTracker(T *p, unsigned int longevity, Destroyer d)
       : LifetimeTracker(longevity), pTracked_(p), destroyer_(d) {}
 
-  ~ConcreteLifetimeTracker() { destroyer_(pTracked_); }
+  ~ConcreteLifetimeTracker() {
+    if (pTracked_) {
+      destroyer_(pTracked_);
+      pTracked_ = NULL;
+    }
+  }
 
 private:
   /// Copy constructor is not implemented.
@@ -139,34 +135,6 @@ private:
 ///  Assigns an object a longevity; ensures ordered destructions of objects
 ///  registered thusly during the exit sequence of the application
 ////////////////////////////////////////////////////////////////////////////////
-
-#ifdef LOKI_ENABLE_NEW_SETLONGLIVITY_HELPER_DATA_IMPL
-
-template <typename T, typename Destroyer>
-void SetLongevity(T *pDynObject, unsigned int longevity, Destroyer d) {
-  using namespace Private;
-
-  // manage lifetime of stack manually
-  if (pTrackerArray == 0)
-    pTrackerArray = new TrackerArray;
-
-  // automatically delete the ConcreteLifetimeTracker object when a exception is
-  // thrown
-  LifetimeTracker *p =
-      new ConcreteLifetimeTracker<T, Destroyer>(pDynObject, longevity, d);
-
-  // Find correct position
-  TrackerArray::iterator pos =
-      std::upper_bound(pTrackerArray->begin(), pTrackerArray->end(), p,
-                       LifetimeTracker::Compare);
-
-  // Insert the pointer to the ConcreteLifetimeTracker object into the queue
-  pTrackerArray->insert(pos, p);
-  // Register a call to AtExitFn
-  std::atexit(Private::AtExitFn);
-}
-
-#else
 
 template <typename T, typename Destroyer>
 void SetLongevity(T *pDynObject, unsigned int longevity, Destroyer d) {
@@ -194,8 +162,6 @@ void SetLongevity(T *pDynObject, unsigned int longevity, Destroyer d) {
   // Register a call to AtExitFn
   std::atexit(Private::AtExitFn);
 }
-
-#endif
 
 template <typename T>
 void SetLongevity(

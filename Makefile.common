@@ -1,8 +1,9 @@
 VERSION := 0.1.7
 OS ?= $(shell uname -s)
-CXXFLAGS += -std=c++11
+CXXFLAGS += -std=c++11 -g -fsanitize=address
 CXXWARNFLAGS := -Wall -Wold-style-cast -Wundef -Wsign-compare -Wconversion -Wpointer-arith -pedantic
 CXXFLAGS += $(CXXWARNFLAGS) -g3 -Og -fPIC
+LDFLAGS += -g -fsanitize=address
 
 ifeq ($(OS), Windows)
 WINE ?= wine

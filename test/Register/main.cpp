@@ -33,7 +33,7 @@ struct NumMeth {
 
   std::vector<IdxType> called_for_;
 };
-#if 0
+
 void test_typelist_foreach_forward() {
   typedef Loki::TL::MakeTypelist<int, int, double, unsigned int> MyTypeList;
 
@@ -53,8 +53,8 @@ void test_typelist_foreach_forward() {
   assert(called_for[2] == NumMeth::IdxType(2, dou_typename));
   assert(called_for[3] == NumMeth::IdxType(3, uin_typename));
 }
-#endif
-#if 0
+
+
 void test_typelist_foreach_backward() {
   typedef Loki::TL::MakeTypelist<double, std::string, int>::Result MyTypeList;
 
@@ -74,7 +74,6 @@ void test_typelist_foreach_backward() {
   assert(called_for[1] == NumMeth::IdxType(1, str_typename));
   assert(called_for[2] == NumMeth::IdxType(2, dou_typename));
 }
-#endif
 
 typedef Loki::SingletonHolder<Loki::Factory<Base, std::string>> BaseFactory;
 
@@ -85,7 +84,6 @@ bool registerClass(std::string key, Base *(*creator)()) {
 int main() {
   // register test
   {
-#if 0 //mem crash
     Loki::RegisterOnCreateSet<ClassList> registerAllClasses;
     Loki::UnRegisterOnDeleteSet<ClassList> unregisterAllClasses;
     (void)registerAllClasses;
@@ -99,13 +97,10 @@ int main() {
 
     delete foo;
     delete boo;
-#endif
   }
 
   // typelist tests
-#if 0
   test_typelist_foreach_forward();
   test_typelist_foreach_backward();
-#endif
   return 0;
 }

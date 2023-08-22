@@ -75,7 +75,7 @@ bool operator==(const Key<F, I, Args...> &k1, const Key<F, I, Args...> &k2) {
   if (std::tuple_size<decltype(k1.values)>::value !=
       std::tuple_size<decltype(k2.values)>::value)
     return false;
-  return k1.values == k2.values;
+  return k1.id == k2.id && k1.values == k2.values;
 }
 
 template <class F, typename I, typename... Args>
