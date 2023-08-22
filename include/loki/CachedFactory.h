@@ -505,14 +505,14 @@ protected:
  * \brief	Simple statistics
  *
  * Provides the following informations about the cache :
- * 		- Created objects
- * 		- Fetched objects
- * 		- Destroyed objects
- * 		- Cache hit
- * 		- Cache miss
- * 		- Currently allocated
- * 		- Currently out
- * 		- Cache overall efficiency
+ *   - Created objects
+ *   - Fetched objects
+ *   - Destroyed objects
+ *   - Cache hit
+ *   - Cache miss
+ *   - Currently allocated
+ *   - Currently out
+ *   - Cache overall efficiency
  */
 class SimpleStatisticPolicy {
 private:
@@ -811,6 +811,17 @@ public:
     cout << "## + Statistics    " << SP::name() << endl;
     cout << "############################" << endl;
   }
+};
+template <class AbstractProduct, typename IdentifierType,
+          class StatisticPolicy,
+          typename... Parms>
+class CustomStatisticCachedFactory
+  : public CachedFactory<AbstractProduct, IdentifierType,
+                         SimplePointer, AlwaysCreate, EvictRandom,
+                         StatisticPolicy,
+                         DefaultFactoryError,
+                         std::vector<AbstractProduct *>,
+                         Parms...> {
 };
 } // namespace Loki
 
