@@ -33,7 +33,6 @@
 
 #include <loki/Functor.h>
 #include <loki/LokiTypeInfo.h>
-#include <loki/Sequence.h>
 #include <loki/SmallObj.h>
 
 #include <map>

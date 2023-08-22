@@ -32,7 +32,6 @@
 #include <stdexcept>
 
 #include <loki/Functor.h>
-#include <loki/Sequence.h>
 
 namespace Loki {
 

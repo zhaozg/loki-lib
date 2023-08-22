@@ -31,7 +31,6 @@
 // $Id$
 
 #include <loki/HierarchyGenerators.h>
-#include <loki/Sequence.h>
 #include <loki/TypeManip.h>
 #include <loki/Typelist.h>
 

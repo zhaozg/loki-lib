@@ -54,7 +54,6 @@ void test_typelist_foreach_forward() {
   assert(called_for[3] == NumMeth::IdxType(3, uin_typename));
 }
 
-
 void test_typelist_foreach_backward() {
   typedef Loki::TL::MakeTypelist<double, std::string, int>::Result MyTypeList;
 

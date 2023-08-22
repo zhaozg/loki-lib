@@ -16,8 +16,6 @@
 #include <loki/Functor.h>
 #include <string>
 
-#include <loki/Sequence.h>
-
 using namespace Loki;
 using std::cout;
 using std::endl;

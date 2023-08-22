@@ -32,7 +32,6 @@
 
 #include "loki/NullType.h"
 #include <loki/EmptyType.h>
-#include <loki/Sequence.h>
 #include <loki/SmallObj.h>
 #include <loki/TypeTraits.h>
 #include <loki/Typelist.h>

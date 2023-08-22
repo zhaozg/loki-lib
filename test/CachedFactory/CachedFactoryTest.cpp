@@ -25,8 +25,6 @@
 #include <iostream>
 #include <loki/Factory.h>
 
-#include <loki/Sequence.h>
-
 #include <loki/CachedFactory.h>
 
 typedef long milliSec;
