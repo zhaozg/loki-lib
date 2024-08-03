@@ -35,8 +35,8 @@
 #include <algorithm>
 #include <cassert>
 #include <functional>
+#include <sstream>
 #include <iostream>
-#include <iterator>
 #include <loki/Key.h>
 #include <map>
 #include <time.h> ///< For clock_t definition.
@@ -522,24 +522,24 @@ protected:
   SimpleStatisticPolicy()
       : allocated(0), created(0), hit(0), out(0), fetched(0) {}
 
-  void onDebug() {
+  void onDebug(std::stringstream &ss) {
     using namespace std;
-    cout << "############################" << endl;
-    cout << "## About this cache " << this << endl;
-    cout << "## + Created objects     : " << created << endl;
-    cout << "## + Fetched objects     : " << fetched << endl;
-    cout << "## + Destroyed objects   : " << created - allocated << endl;
-    cout << "## + Cache hit           : " << hit << endl;
-    cout << "## + Cache miss          : " << fetched - hit << endl;
-    cout << "## + Currently allocated : " << allocated << endl;
-    cout << "## + Currently out       : " << out << endl;
-    cout << "############################" << endl;
+    ss << "############################" << endl;
+    ss << "## About this cache " << this << endl;
+    ss << "## + Created objects     : " << created << endl;
+    ss << "## + Fetched objects     : " << fetched << endl;
+    ss << "## + Destroyed objects   : " << created - allocated << endl;
+    ss << "## + Cache hit           : " << hit << endl;
+    ss << "## + Cache miss          : " << fetched - hit << endl;
+    ss << "## + Currently allocated : " << allocated << endl;
+    ss << "## + Currently out       : " << out << endl;
+    ss << "############################" << endl;
     if (fetched != 0) {
-      cout << "## Overall efficiency " << 100 * double(hit) / fetched << "%"
+      ss << "## Overall efficiency " << 100 * double(hit) / fetched << "%"
            << endl;
-      cout << "############################" << endl;
+      ss << "############################" << endl;
     }
-    cout << endl;
+    ss << endl;
   }
 
   void onFetch() {
@@ -731,7 +731,9 @@ public:
   ~CachedFactory() {
     using namespace std;
     // debug information
-    SP::onDebug();
+    std::stringstream ss;
+    SP::onDebug(ss);
+    std::cout << ss.str();
     // cleaning the Cache
     for_each(fromKeyToObjVector.begin(), fromKeyToObjVector.end(),
              deleteVectorObjects<typename KeyToObjVectorMap::value_type>());
@@ -801,15 +803,14 @@ public:
   }
 
   /// display the cache configuration
-  void displayCacheType() {
-    using namespace std;
-    cout << "############################" << endl;
-    cout << "## Cache configuration" << endl;
-    cout << "## + Encapsulation " << NP::name() << endl;
-    cout << "## + Creating      " << CP::name() << endl;
-    cout << "## + Eviction      " << EP::name() << endl;
-    cout << "## + Statistics    " << SP::name() << endl;
-    cout << "############################" << endl;
+  void GetConfigure(std::stringstream& ss) {
+    ss << "############################" << std::endl;
+    ss << "## Cache configuration" << std::endl;
+    ss << "## + Encapsulation " << NP::name() << std::endl;
+    ss << "## + Creating      " << CP::name() << std::endl;
+    ss << "## + Eviction      " << EP::name() << std::endl;
+    ss << "## + Statistics    " << SP::name() << std::endl;
+    ss << "############################" << std::endl;
   }
 };
 template <class AbstractProduct, typename IdentifierType,
