@@ -25,4 +25,4 @@
 1. ☐ fix all warnings
 2. ☐ Mutex optimize
 3. ☐ SmallObj check
-
+4. ☐ How to destroy object cached in ChacedFactory.h

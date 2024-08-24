@@ -728,12 +728,8 @@ public:
   CachedFactory()
       : factory(), fromKeyToObjVector(), providedObjects(), outObjects(0) {}
 
-  ~CachedFactory() {
+  virtual ~CachedFactory() {
     using namespace std;
-    // debug information
-    std::stringstream ss;
-    SP::onDebug(ss);
-    std::cout << ss.str();
     // cleaning the Cache
     for_each(fromKeyToObjVector.begin(), fromKeyToObjVector.end(),
              deleteVectorObjects<typename KeyToObjVectorMap::value_type>());
@@ -750,6 +746,10 @@ public:
       for_each(providedObjects.begin(), providedObjects.end(),
                deleteMapKeys<typename FetchedObjToKeyMap::value_type>());
     }
+    // debug information
+    std::stringstream ss;
+    SP::onDebug(ss);
+    std::cout << ss.str();
   }
 
   ///////////////////////////////////
